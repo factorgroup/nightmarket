@@ -3,7 +3,8 @@
 A zero knowledge marketplace for Dark Forest coordinates.
 A 0xParc Learning Group project - work in progress.
 ## Potential Spec
-- Users can list and buy valid coordinates in DF plugin
+- Sellers can list valid Dark Forest coordinates
+- Multiple buyers can purchase these coordinates
 - Sellers can attest their planet has certain biomes. *Trivial? Listing circuit can just output: `biomeperlin(x, y)`*
 - [undedided] Buyers can bid. Theres a bidding mechanism
 
@@ -33,6 +34,6 @@ function close(TODO) // closes sale and issues refunds if any
 
 ## Acknowledgements
 - 0xParc
+- @phated and @ichub plugins [DF plugins](https://github.com/darkforest-eth/plugins)
 - [DF Circuits](https://github.com/darkforest-eth/circuits)
 - [EthMarketPlace](https://github.com/nulven/EthDataMarketplace)
-- [DF plugins](https://github.com/darkforest-eth/plugins)
