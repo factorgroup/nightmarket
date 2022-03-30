@@ -1,0 +1,28 @@
+{
+  "name": "df-zkmarketplace",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "circomlib": "^2.0.3",
+    "hardhat": "^2.9.1",
+    "hardhat-circom": "^3.0.1"
+  },
+  "engines": {
+    "node": ">=16"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/0xSage/df-zkmarketplace.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/0xSage/df-zkmarketplace/issues"
+  },
+  "homepage": "https://github.com/0xSage/df-zkmarketplace#readme"
+}
