@@ -42,7 +42,7 @@ template List () {
     component hasher = ...;
     hasher.in <== key;
     hasher.k <== ?;
-    key_commitment <== hasher.out 
+    key_commitment <== hasher.out
 
     // Commit to planet_id, so contract can verify the coordinate is in game
     component mimc = MiMCSponge(2, 220, 1);
