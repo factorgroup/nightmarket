@@ -20,7 +20,7 @@ module.exports = {
 				// (optional) Input path for witness input file, inferred from `name` if unspecified
 				input: "list.json",
 				// (optional) Output path for wasm file, inferred from `name` if unspecified
-				wasm: "circuits/exchange/list.wasm",
+				wasm: "circuits/list/list.wasm",
 				// (optional) Output path for zkey file, inferred from `name` if unspecified
 				zkey: "list.zkey",
 				// Used when specifying `--deterministic` instead of the default of all 0s
@@ -33,7 +33,7 @@ module.exports = {
 				protocol: "groth16",
 				circuit: "sale.circom",
 				input: "sale.json",
-				wasm: "circuits/exchange/sale.wasm",
+				wasm: "circuits/sale/sale.wasm",
 				zkey: "sale.zkey",
 				beacon: "0102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
 			},
