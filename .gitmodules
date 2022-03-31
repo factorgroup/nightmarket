@@ -1,0 +1,3 @@
+[submodule "circuits/circuits"]
+	path = circuits/darkforest
+	url = https://github.com/darkforest-eth/circuits.git
