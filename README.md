@@ -13,7 +13,10 @@ A 0xParc Learning Group project - work in progress.
 - Deploy circuits: `circom:prod`
 
 ## Directory
-- Circuit dependencies (not on npm) are submoduled under `/circuits`
+- `/circuits`: Circom circuits including submoduled dependencies
+- `/circuits/test`: Circuit unit tests
+- `/client`: Dark Forest plugin code
+- `/contracts`: Contract and verifier code
 
 ## Potential Spec
 - Sellers can list valid Dark Forest coordinates at a fixed price
@@ -23,24 +26,24 @@ A 0xParc Learning Group project - work in progress.
 - [nice to have] Seller stakes penalty for nonresponsiveness
 - [nice to have] Buyers can put up bounties for planets they'd like to dox
 
-## Potential Circuit Design
+## Circuit Design
 #### LIST
-Prove: I have `DATA`, *i.e. xy coords*, and sell a `KEY` used to symmetrically encrypt this `DATA`
-- `hash(DATA,PLANETHASH_KEY) ==> valid_coord` // I know a valid data/coordinate
-- `sym_encrypt(DATA, KEY)` // I symmetrically encrypted data s.t. it can be decrypted with key
-- `hash(KEY)` // I commit to the secret key used for encryption
+Prove: Seller has (x,y) coords, and sell a `KEY` used to encrypt it
+- `hash(XY,PLANETHASH_KEY) ==> valid_coord` // I know a valid data/coordinate
+- `ENCODE(XY, KEY)` // I encrypted data with key, via OTP
+- `hash(KEY)` // I commit to the secret key
 
 #### SALE
-Prove: I encrypted `KEY` correctly with the `BUYER_PUBKEY`
-- `asym_encrypt(KEY, BUYER_PUBKEY) ==> output` // I asymmetrically encrypted a key with a buyers pubkey
+Prove: Seller encrypted `KEY` with a `SHARED_KEY` from a ECDH key exchange with Buyer
+- `SHAREDKEY <== ecdh(sellerPrivKey, buyerPubKey)` // An ECDH shared key
+- `ENCODE(KEY, SHARED_KEY)` // Encrypt KEY, s.t. buyer can decrypt offline
 - `hash(KEY) ==> output` // I encrypted the correct key
 - `BUYER_PUBKEY ==> output` // I used the correct buyer key
 
-#### SYMMETRIC ENCRYPTION
-- TODO: Maybe a one time pad
-
-#### EDCSA ASYMMETRIC ENCRYPTION
-Hopefully can find existing library for this... otherwise, nontrivial
+#### ONETIMEPAD
+TODO: a symmetric encryption circuit: `secret + key`,
+- `ENCODE`
+- `DECODE`
 
 ## Escrow Contract (TODO)
 - function list(TODO)
@@ -53,4 +56,5 @@ Hopefully can find existing library for this... otherwise, nontrivial
 - [DF Circuits](https://github.com/darkforest-eth/circuits)
 - [EthMarketPlace](https://github.com/nulven/EthDataMarketplace)
 - [0xParc ECDSA](https://github.com/0xPARC/circom-ecdsa)
-- TODO: find ecdsa signWithPub circuit
+- [Maci](https://github.com/appliedzkp/maci/)
+- ...
