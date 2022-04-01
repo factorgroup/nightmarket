@@ -5,32 +5,45 @@ A 0xParc Learning Group project - work in progress.
 ## Quicklinks
 - [Figma specs](https://www.figma.com/file/PEnVhZNRhVW9TbZ8obqglX/zkdf-market?node-id=0%3A1)
 - [Team Brainstorm notes](https://hackmd.io/xrXO2QKeRJWY6WApxRrroQ)
+- [Demo slides](https://docs.google.com/presentation/d/1Dk9gZJF_GiitnknPJThJDwokEA1zd0ncwr6Jqawwtq0/edit?usp=sharing)
 
 ## Quickstart
 - Install: `yarn install`
 - Test circuits: `yarn test`
 - Deploy circuits: `circom:prod`
 
+## Directory
+- `/circuits`: Circom circuits including submoduled dependencies
+- `/circuits/test`: Circuit unit tests
+- `/client`: Dark Forest plugin code
+- `/contracts`: Contract and verifier code
+
 ## Potential Spec
 - Sellers can list valid Dark Forest coordinates at a fixed price
 - Multiple buyers can purchase these coordinates
-- Sellers can attest their planet has certain biomes. *Trivial? Listing circuit can just output: `biomeperlin(x, y)`*
-- [nice to have] Buyers can bid for coordinate.
+- Sellers can attest their planet has certain biomes
+- [nice to have] Buyers can bid for coordinate
 - [nice to have] Seller stakes penalty for nonresponsiveness
 - [nice to have] Buyers can put up bounties for planets they'd like to dox
 
-## Potential Circuit Design
+## Circuit Design
 #### LIST
-Prove: I have `DATA`, *i.e. xy coords*, and sell a `SECRET` used to encrypt/decrypt this `DATA`
-- `hash(DATA,PLANETHASH_KEY) ==> valid_coord` // output
-- `hash(DATA, SECRET)` // I encrypted data correctly
-- `hash(SECRET)` // I commit to the secret used for encryption
+Prove: Seller has (x,y) coords, and sell a `KEY` used to encrypt it
+- `hash(XY,PLANETHASH_KEY) ==> valid_coord` // I know a valid data/coordinate
+- `ENCODE(XY, KEY)` // I encrypted data with key, via OTP
+- `hash(KEY)` // I commit to the secret key
 
 #### SALE
-Prove: I encrypted `SECRET` correctly with the `BUYER_PUBKEY`
-- `hash(SECRET) ==> output` // checked by contract
-- `hash(SECRET, BUYER_PUBKEY) ==> output` // checked by contract
-- `BUYER_PUBKEY` // watermark, checked by contract
+Prove: Seller encrypted `KEY` with a `SHARED_KEY` from a ECDH key exchange with Buyer
+- `SHAREDKEY <== ecdh(sellerPrivKey, buyerPubKey)` // An ECDH shared key
+- `ENCODE(KEY, SHARED_KEY)` // Encrypt KEY, s.t. buyer can decrypt offline
+- `hash(KEY) ==> output` // I encrypted the correct key
+- `BUYER_PUBKEY ==> output` // I used the correct buyer key
+
+#### ONETIMEPAD
+TODO: a symmetric encryption circuit: `secret + key`,
+- `ENCODE`
+- `DECODE`
 
 ## Escrow Contract (TODO)
 - function list(TODO)
@@ -38,7 +51,10 @@ Prove: I encrypted `SECRET` correctly with the `BUYER_PUBKEY`
 - function close(TODO) // closes sale and issues refunds if any
 
 ## Acknowledgements
-- 0xParc
-- @phated and @ichub plugins [DF plugins](https://github.com/darkforest-eth/plugins)
+- 0xParc for study group
+- [DF plugins](https://github.com/darkforest-eth/plugins)
 - [DF Circuits](https://github.com/darkforest-eth/circuits)
 - [EthMarketPlace](https://github.com/nulven/EthDataMarketplace)
+- [0xParc ECDSA](https://github.com/0xPARC/circom-ecdsa)
+- [Maci](https://github.com/appliedzkp/maci/)
+- ...
