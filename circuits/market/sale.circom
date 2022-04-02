@@ -12,10 +12,9 @@ template Sale () {
     c <== a * b;
 }
 
-// TODO consider refactoring this out
-component main { public [ a ] } = Sale();
-
 /* INPUT = {
     "a": "5",
     "b": "77"
 } */
+
+component main { public [ a ] } = Sale();

@@ -10,7 +10,7 @@ describe("List coordinates test", function () {
 	this.timeout(100000);
 
 	it("Should create a list circuit", async () => {
-		const circuit = await wasm_tester(path.join(__dirname, "..", "list", "list.circom"));
+		const circuit = await wasm_tester(path.join(__dirname, "..", "market", "list.circom"));
 
 		let witness;
 		witness = await circuit.calculateWitness({ "a": 2, "b": 4 }, true);

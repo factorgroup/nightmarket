@@ -12,7 +12,7 @@ include "../../node_modules/circomlib/circuits/mimcsponge.circom"
 include "../darkforest/perlin/perlin.circom"
 
 template List () {
-	// Public Inputs
+    // Public Inputs
     signal input PLANETHASH_KEY;
     signal input SPACETYPE_KEY;
     signal input SCALE; // must be power of 2 at most 16384 so that DENOMINATOR works
