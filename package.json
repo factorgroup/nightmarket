@@ -10,12 +10,13 @@
     "test": "mocha circuits/test --max-old-space-size=4000"
   },
   "devDependencies": {
+    "chai": "^4.3.6",
+    "circom_tester": "^0.0.10",
     "circomlib": "^2.0.3",
     "hardhat": "^2.9.2",
     "hardhat-circom": "^3.0.1",
     "mocha": "^9.2.2",
-    "chai": "^4.3.6",
-    "circom_tester": "^0.0.10"
+    "ffjavascript": "^0.2.52"
   },
   "engines": {
     "node": ">=16"
