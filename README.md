@@ -1,4 +1,4 @@
-# WiP: df-zkmarketplace
+# WiP: NightMarket
 
 A zero knowledge marketplace for Dark Forest coordinates.
 A 0xParc Learning Group project - work in progress.
@@ -40,10 +40,9 @@ Prove: Seller encrypted `KEY` with a `SHARED_KEY` from a ECDH key exchange with 
 - `hash(KEY) ==> output` // I encrypted the correct key
 - `BUYER_PUBKEY ==> output` // I used the correct buyer key
 
-#### ONETIMEPAD
-TODO: a symmetric encryption circuit: `secret + key`,
-- `ENCODE`
-- `DECODE`
+#### POSEIDON ENCRYPT & DECRYPT
+Prove: ECDH friendly symmetric encryption & decryption scheme
+- TODO
 
 ## Escrow Contract (TODO)
 - function list(TODO)
@@ -55,6 +54,5 @@ TODO: a symmetric encryption circuit: `secret + key`,
 - [DF plugins](https://github.com/darkforest-eth/plugins)
 - [DF Circuits](https://github.com/darkforest-eth/circuits)
 - [EthMarketPlace](https://github.com/nulven/EthDataMarketplace)
-- [0xParc ECDSA](https://github.com/0xPARC/circom-ecdsa)
 - [Maci](https://github.com/appliedzkp/maci/)
-- ...
+- [Poseidon Encryption](https://github.com/iden3/circomlib/pull/60) [Paper](https://drive.google.com/file/d/1EVrP3DzoGbmzkRmYnyEDcIQcXVU7GlOd/view)

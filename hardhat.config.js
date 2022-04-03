@@ -20,7 +20,7 @@ module.exports = {
 				// (optional) Input path for witness input file, inferred from `name` if unspecified
 				input: "list.json",
 				// (optional) Output path for wasm file, inferred from `name` if unspecified
-				wasm: "circuits/list/list.wasm",
+				wasm: "circuits/market/list.wasm",
 				// (optional) Output path for zkey file, inferred from `name` if unspecified
 				zkey: "list.zkey",
 				// Used when specifying `--deterministic` instead of the default of all 0s
