@@ -1,3 +1,10 @@
+/*
+    Largely from DarkForest/circuits
+    Changelog:
+    - added GetWeight() for circom2 compatibility
+    - changed modulo() for circom2 compatibility
+*/
+
 pragma circom 2.0.3;
 
 include "../../node_modules/circomlib/circuits/mimcsponge.circom";
@@ -74,11 +81,35 @@ template Modulo(divisor_bits, SQRT_P) {
     signal output neg_remainder;
     neg_remainder <-- divisor - raw_remainder;
 
+    /* No longer allowed in Circom 2
     if (is_dividend_negative == 1 && raw_remainder != 0) {
         remainder <-- neg_remainder;
     } else {
         remainder <-- raw_remainder;
     }
+    */
+
+    // TODO(0xSage): find more elegant way to do if-else
+    component iz = IsZero();
+    iz.in <== raw_remainder; //1 if raw_rem is 0, 0 if not 0
+    signal raw_rem_check;
+    component ie = IsEqual();
+    ie.in[0] <== iz.out; // 1 if is 0, 0 if not
+    ie.in[1] <== 0;      // if...
+    raw_rem_check <== ie.out; // 1 if raw_remainder != 0
+
+    signal iff;
+    iff <== is_dividend_negative * raw_rem_check; // 1 iff both conditions
+    signal elsef;
+    component ie2 = IsEqual();
+    ie2.in[0] <== iff;
+    ie2.in[1] <== 0;
+    elsef <== ie2.out; // else ...
+
+    signal if_clause;
+    if_clause <== neg_remainder * iff;
+    remainder <==  raw_remainder * elsef + if_clause ;
+    // End modifications
 
     quotient <-- (dividend - remainder) / divisor; // (-8 - 2) / 5 = -2.
 
@@ -221,6 +252,38 @@ template GetCornersAndGradVectors(scale_bits, DENOMINATOR, SQRT_P) {
     grads[3][1] <== topRightGrad[1];
 }
 
+// @0xSage: consolidated template for Circom2 compatibility
+// In order: BL, BR, TL, TR
+template GetWeight(DENOMINATOR, WHICHCORNER) {
+    signal input corner[2];
+    signal input p[2];
+
+    signal diff[2];
+
+    if (WHICHCORNER == 0) {
+        diff[0] <== p[0] - corner[0];
+        diff[1] <== p[1] - corner[1];
+    } else if (WHICHCORNER == 1) {
+        diff[0] <== corner[0] - p[0];
+        diff[1] <== p[1] - corner[1];
+    } else if (WHICHCORNER == 2) {
+        diff[0] <== p[0] - corner[0];
+        diff[1] <== corner[1] - p[1];
+    } else {
+        diff[0] <== corner[0] - p[0];
+        diff[1] <== corner[1] - p[1];
+    }
+
+    signal factor[2];
+    factor[0] <== DENOMINATOR - diff[0];
+    factor[1] <== DENOMINATOR - diff[1];
+
+    signal nominator;
+    nominator <== factor[0] * factor[1];
+    signal output out;
+    out <-- nominator / DENOMINATOR;
+    nominator === out * DENOMINATOR;
+}
 
 // input: corner is FRAC NUMERATORS of scale x scale square, scaled down to unit square
 // p is FRAC NUMERATORS of a point inside a scale x scale that was scaled down to unit sqrt
@@ -327,10 +390,10 @@ template PerlinValue(DENOMINATOR) {
     signal input p[2];
 
     component getWeights[4];
-    getWeights[0] = GetWeightBL(DENOMINATOR);
-    getWeights[1] = GetWeightBR(DENOMINATOR);
-    getWeights[2] = GetWeightTL(DENOMINATOR);
-    getWeights[3] = GetWeightTR(DENOMINATOR);
+    getWeights[0] = GetWeight(DENOMINATOR,0);
+    getWeights[1] = GetWeight(DENOMINATOR,1);
+    getWeights[2] = GetWeight(DENOMINATOR,2);
+    getWeights[3] = GetWeight(DENOMINATOR,3);
 
     signal distVec[4][2];
     signal scaledDistVec[4][2];
