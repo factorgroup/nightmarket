@@ -92,23 +92,28 @@ template Modulo(divisor_bits, SQRT_P) {
     // TODO(0xSage): find more elegant way to do if-else
     component iz = IsZero();
     iz.in <== raw_remainder; //1 if raw_rem is 0, 0 if not 0
-    signal raw_rem_check;
+    
     component ie = IsEqual();
     ie.in[0] <== iz.out; // 1 if is 0, 0 if not
     ie.in[1] <== 0;      // if...
+    
+    signal raw_rem_check;
     raw_rem_check <== ie.out; // 1 if raw_remainder != 0
 
     signal iff;
     iff <== is_dividend_negative * raw_rem_check; // 1 iff both conditions
-    signal elsef;
+    
     component ie2 = IsEqual();
     ie2.in[0] <== iff;
     ie2.in[1] <== 0;
+    
+    signal elsef;
     elsef <== ie2.out; // else ...
 
     signal if_clause;
     if_clause <== neg_remainder * iff;
-    remainder <==  raw_remainder * elsef + if_clause ;
+
+    remainder <==  raw_remainder * elsef + if_clause;
     // End modifications
 
     quotient <-- (dividend - remainder) / divisor; // (-8 - 2) / 5 = -2.
