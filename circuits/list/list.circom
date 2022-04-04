@@ -20,33 +20,16 @@ template List () {
     signal input xMirror;           // 1 is true, 0 is false
     signal input yMirror;           // 1 is true, 0 is false
     signal input listing_id[4];     // buyer encrypts(xy, key[2])
-    
+    signal input nonce;             // Needed to decrypt key
+
     // Private inputs (Expected format: uint256)
     signal input x;
     signal input y;
     signal input key[2];            // the actual secret being sold
 	
-    // Public outputs
-    signal output nonce;            // Needed to decrypt key
-    signal output key_commitment;   // hash(key)
-    signal output planet_id;
+    signal output key_commitment;   // H(key[0], key[1], k=0)
+    signal output planet_id;        // H(x, y, k=PLANETHASH_KEY)
     signal output biomebase;
-
-    // Constrain that `listing_id` is correctly encrypted with `key`
-    component p = PoseidonEncryptCheck(2);
-    
-    for (var i = 0; i <4; i++) {
-        p.ciphertext[i] <== listing_id[i];
-    }
-
-    // TODO(0xSage): hash(xy coordinates) mod 2^128 bc nonce has to be < 2^128
-    p.nonce <== 0;
-
-    p.message[0] <== x;
-    p.message[1] <== y;
-    p.key[0] <== key[0];
-    p.key[1] <== key[1];
-    p.out === 1;
 
     // Commit to key[2], so seller has to provide the same upon sale
     component m = MultiMiMC7(2, 91);
@@ -71,6 +54,21 @@ template List () {
     perlin.yMirror <== yMirror;
     perlin.KEY <== BIOMEBASE_KEY;
     biomebase <== perlin.out;
+
+    // Constrain that `listing_id` is correctly encrypted with `key`
+    component p = PoseidonEncryptCheck(2);
+    
+    for (var i = 0; i <4; i++) {
+        p.ciphertext[i] <== listing_id[i];
+    }
+
+    // Implicit: nonce < 2^218
+    p.nonce <== nonce;
+    p.message[0] <== x;
+    p.message[1] <== y;
+    p.key[0] <== key[0];
+    p.key[1] <== key[1];
+    p.out === 1;
 }
 
-component main { public [ PLANETHASH_KEY, BIOMEBASE_KEY, SCALE, xMirror, yMirror, listing_id ] } = List();
+component main { public [ PLANETHASH_KEY, BIOMEBASE_KEY, SCALE, xMirror, yMirror, listing_id, nonce ] } = List();

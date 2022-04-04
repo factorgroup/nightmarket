@@ -37,6 +37,7 @@ describe("List coordinates test", function () {
 				x,
 				y,
 				key,
+				"nonce": 0,
 				listing_id
 			}, true);
 
