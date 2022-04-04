@@ -32,7 +32,7 @@ A 0xParc Learning Group project - work in progress.
 #### LIST
 Prove: Seller has (x,y) coords, and sell a `KEY` used to encrypt it
 - `hash(XY,PLANETHASH_KEY) ==> valid_coord` // I know a valid data/coordinate
-- `ENCODE(XY, KEY)` // I encrypted data with key, via OTP
+- `ENCODE(XY, KEY)` // I encrypted data with key
 - `hash(KEY)` // I commit to the secret key
 
 #### SALE
