@@ -13,8 +13,9 @@ A 0xParc Learning Group project - work in progress.
 - Deploy circuits: `circom:prod`
 
 ## Directory
-- `/circuits/list`: Circuits for generating a coordinate listing, including deps
-- `/circuits/sale`: Circuits for conducting a sale/exchange, including deps
+- `/circuits/list`: Circuits for generating a coordinate listing
+- `/circuits/sale`: Circuits for conducting a sale/exchange
+- `/circuits/utils`: Shared utility circuits
 - `/circuits/test`: Circuit unit tests
 - `/client`: Dark Forest plugin code
 - `/contracts`: Contract and verifier code

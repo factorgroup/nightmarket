@@ -8,6 +8,7 @@
 pragma circom 2.0.3;
 
 include "./poseidon_constants.circom";
+include "CalculateTotal.circom";
 include "../../node_modules/circomlib/circuits/comparators.circom";
 
 template Sigma() {
@@ -115,7 +116,7 @@ template PoseidonPerm(t) {
 }
 
 // Modified:
-// Checks ciphertext is correctly generated using input values
+// Checks ciphertext is correctly generated using input values, returns 1 if true
 // Note to self: message length (l) is always fixed in my use case
 template PoseidonEncryptCheck(l) {
     var decryptedLength = l;
@@ -128,7 +129,7 @@ template PoseidonEncryptCheck(l) {
     signal input ciphertext[decryptedLength+1];
 
     // private inputs, where hash(input) are public
-    signal input message;
+    signal input message[decryptedLength];
     signal input key[2];
 
     component pd = PoseidonDecrypt(l);
@@ -139,13 +140,24 @@ template PoseidonEncryptCheck(l) {
     for (var i = 0; i < decryptedLength + 1 ; i++) {
         pd.ciphertext[i] <== ciphertext[i];
     }
-
-    // Checking decryption result
-    // signal output out; use CalculateTotal() to make sure total === decryptedLength
+    
+    component calcTotal = CalculateTotal(decryptedLength);
+    component eqs[decryptedLength];
 
     for (var i = 0; i < decryptedLength; i++) {
-        message[i] === pd.decrypted[i];
+        eqs[i] = IsEqual();
+        eqs[i].in[0] <== message[i];
+        eqs[i].in[1] <== pd.decrypted[i];
+        calcTotal.in[i] <== eqs[i].out;
     }
+
+    component o = IsEqual();
+    o.in[0] <== calcTotal.out;
+    o.in[1] <== decryptedLength;
+    
+    // Returns 1 or 0
+    signal output out;
+    out <== o.out;
 }
 
 template PoseidonDecrypt(l) {
@@ -263,4 +275,3 @@ template PoseidonDecryptIterations(l) {
     decryptedLast <== strategies[n].out[1];
 }
 
-// component main = Poseidon();
