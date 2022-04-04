@@ -14,7 +14,7 @@ A 0xParc Learning Group project - work in progress.
 
 ## Directory
 - `/circuits/list`: Circuits for generating a coordinate listing
-- `/circuits/sale`: Circuits for conducting a sale/exchange
+- `/circuits/sale`: Circuits for fulfilling a sale to buyer
 - `/circuits/utils`: Shared utility circuits
 - `/circuits/test`: Circuit unit tests
 - `/client`: Dark Forest plugin code
