@@ -40,11 +40,13 @@ describe("Poseidon", function () {
 	// list:
 	// message[0] = x coordinate
 	// message[1] = y coordinate
-	// key[0] = left half of key
-	// key[1] = right half of key
+	// key[0] = left half of key being sold
+	// key[1] = right half of key being sold
 	// sale:
 	// message[0] = key[0]
 	// message[1] = key[1]
+	// key[0] = sharedkey k_x
+	// key[1] = sharedkey k_y
 	it("Should PoseidonEncryptCheck l = 2", async () => {
 		const circuit4 = await wasm_tester(path.join(__dirname, "circuits", "poseidon2_test.circom"));
 
