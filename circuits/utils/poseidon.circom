@@ -138,11 +138,8 @@ template PoseidonEncryptCheck(l) {
     pd.key[0] <== key[0];
     pd.key[1] <== key[1];
 
-    signal output debug_cipher[decryptedLength+1];
-
     for (var i = 0; i < decryptedLength + 1 ; i++) {
         pd.ciphertext[i] <== ciphertext[i];
-        debug_cipher[i] <== ciphertext[i];
     }
     
     component calcTotal = CalculateTotal(l);
