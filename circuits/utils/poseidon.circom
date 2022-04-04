@@ -127,7 +127,7 @@ template PoseidonEncryptCheck(l) {
     signal input nonce;
     signal input ciphertext[decryptedLength+1];
 
-    // private inputs
+    // private inputs, where hash(input) are public
     signal input message;
     signal input key[2];
 
@@ -141,7 +141,6 @@ template PoseidonEncryptCheck(l) {
     }
 
     // Checking decryption result
-    // No output needed? component instantiates when all inputs are set
     // signal output out; use CalculateTotal() to make sure total === decryptedLength
 
     for (var i = 0; i < decryptedLength; i++) {
