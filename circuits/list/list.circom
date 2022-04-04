@@ -15,9 +15,9 @@ template List () {
     // Public Inputs
     signal input PLANETHASH_KEY;
     signal input BIOMEBASE_KEY;
-    signal input SCALE; // must be power of 2 at most 16384 so that DENOMINATOR works
-    signal input xMirror; // 1 is true, 0 is false
-    signal input yMirror; // 1 is true, 0 is false
+    signal input SCALE;             // must be power of 2 at most 16384 so that DENOMINATOR works
+    signal input xMirror;           // 1 is true, 0 is false
+    signal input yMirror;           // 1 is true, 0 is false
 	
     // Private inputs (Expected format: uint256)
     signal input x;
@@ -25,8 +25,8 @@ template List () {
     signal input key;
 	
     // Public outputs
-    signal output listing_id;
-    signal output key_commitment;
+    signal output listing_id;       // encode(xy_coord, key)
+    signal output key_commitment;   // hash(key)
     signal output planet_id;
     signal output biomebase;
 

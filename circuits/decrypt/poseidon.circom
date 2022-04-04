@@ -1,7 +1,7 @@
 /*
     Poseidon adapted for ECDH symmetric encryption
     Largely copied from @kohweijie's https://github.com/iden3/circomlib/pull/60
-    Except PoseidonEncrypt template
+    Except PoseidonEncrypt(), a wrapper around PoseidonDecrypt()
     Not audited, no guarantees
 */
 
@@ -114,8 +114,39 @@ template PoseidonPerm(t) {
     }
 }
 
-template PoseidonEncrypt(l) {
+// Modified:
+// Checks ciphertext is correctly generated using input values
+// Note to self: message length (l) is always fixed in my use case
+template PoseidonEncryptCheck(l) {
+    var decryptedLength = l;
+    while (decryptedLength % 3 != 0) {
+        decryptedLength += 1;
+    }
 
+    // public inputs
+    signal input nonce;
+    signal input ciphertext[decryptedLength+1];
+
+    // private inputs
+    signal input message;
+    signal input key[2];
+
+    component pd = PoseidonDecrypt(l);
+    pd.nonce <== nonce;
+    pd.key[0] <== key[0];
+    pd.key[1] <== key[1];
+
+    for (var i = 0; i < decryptedLength + 1 ; i++) {
+        pd.ciphertext[i] <== ciphertext[i];
+    }
+
+    // Checking decryption result
+    // No output needed? component instantiates when all inputs are set
+    // signal output out; use CalculateTotal() to make sure total === decryptedLength
+
+    for (var i = 0; i < decryptedLength; i++) {
+        message[i] === pd.decrypted[i];
+    }
 }
 
 template PoseidonDecrypt(l) {

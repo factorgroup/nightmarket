@@ -41,9 +41,10 @@ Prove: Seller encrypted `KEY` with a `SHARED_KEY` from a ECDH key exchange with 
 - `hash(KEY) ==> output` // I encrypted the correct key
 - `BUYER_PUBKEY ==> output` // I used the correct buyer key
 
-#### POSEIDON ENCRYPT & DECRYPT
-Prove: ECDH friendly symmetric encryption & decryption scheme
-- TODO
+#### DECRYPT
+_For encoding coordinates and the key_
+- ECDH friendly symmetric encryption & decryption scheme
+- TODO: try out mimc7 + OTP, or poseidon 5 wide encrypt
 
 ## Escrow Contract (TODO)
 - function list(TODO)
