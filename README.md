@@ -55,4 +55,4 @@ Prove: ECDH friendly symmetric encryption & decryption scheme
 - [DF Circuits](https://github.com/darkforest-eth/circuits)
 - [EthMarketPlace](https://github.com/nulven/EthDataMarketplace)
 - [Maci](https://github.com/appliedzkp/maci/)
-- [Poseidon Encryption](https://github.com/iden3/circomlib/pull/60) [Paper](https://drive.google.com/file/d/1EVrP3DzoGbmzkRmYnyEDcIQcXVU7GlOd/view)
+- [Poseidon Encryption](https://github.com/iden3/circomlib/pull/60), [Paper](https://drive.google.com/file/d/1EVrP3DzoGbmzkRmYnyEDcIQcXVU7GlOd/view)

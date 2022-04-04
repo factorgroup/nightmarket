@@ -36,13 +36,13 @@ template List () {
     // sym_encrypt.ins[0] <== x;
     // sym_encrypt.ins[1] <== y;
     // sym_encrypt.k <== key;
-    listing_id <== 0; // sym_encrypt.outs[0];
+    listing_id <== 5; // sym_encrypt.outs[0];
 
     // Commit to this key, so seller has to provide the same upon sale
     // component hasher = ...;
     // hasher.in <== key;
     // hasher.k <== ?;
-    key_commitment <== 0; //hasher.out
+    key_commitment <== 4; //hasher.out
 
     // Commit to planet_id, so contract can verify the coordinate is in game
     component mimc = MiMCSponge(2, 220, 1);

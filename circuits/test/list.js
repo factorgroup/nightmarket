@@ -21,7 +21,7 @@ describe("List coordinates test", function () {
 		witness = await circuit.calculateWitness(
 			{
 				"PLANETHASH_KEY": 7,
-				"BIOMEBASE_KEY": 8,
+				"BIOMEBASE_KEY": 7,
 				"SCALE": 4096,
 				"xMirror": 0,
 				"yMirror": 0,
@@ -29,7 +29,11 @@ describe("List coordinates test", function () {
 				"y": "21888242871839275222246405745257275088548364400416034343698204186575808492485",
 				"key": 1
 			}, true);
-		console.log(witness);
+		await circuit.assertOut(witness, { listing_id: 5 });
+		await circuit.assertOut(witness, { key_commitment: 4 });
+		await circuit.assertOut(witness, { biomebase: 14 });
+		// TODO print out wtf is FR.e...
+		// TODO generate witness in the darkforest impl, compare with my witness
 		// assert(Fr.eq(Fr.e(witness[1]), Fr.e(1)));
 	});
 });
