@@ -1,6 +1,6 @@
 /*
     Prove: I have (x,y, key) such that:
-    - Encrypt(xy, key) => listing_id
+    - Poseidon_Encrypt(xy, key) => listing_id
     - MiMCSponge(x,y) = planet_id
     - Hash(key) = key_commitment
     - perlin(x, y) = biomebase
@@ -10,6 +10,7 @@ pragma circom 2.0.3;
 
 include "../../node_modules/circomlib/circuits/mimcsponge.circom";
 include "Perlin.circom";
+include "poseidon.circom";
 
 template List () {
     // Public Inputs
@@ -18,27 +19,33 @@ template List () {
     signal input SCALE;             // must be power of 2 at most 16384 so that DENOMINATOR works
     signal input xMirror;           // 1 is true, 0 is false
     signal input yMirror;           // 1 is true, 0 is false
-	
+    signal input listing_id[4];     // buyer encrypts(xy, key[2])
+    
     // Private inputs (Expected format: uint256)
     signal input x;
     signal input y;
-    signal input key;
+    signal input key[2];            // the actual secret being sold
 	
     // Public outputs
-    signal output listing_id;       // encode(xy_coord, key)
+    signal output nonce;            // Needed to decrypt key
     signal output key_commitment;   // hash(key)
     signal output planet_id;
     signal output biomebase;
 
-    // Constrain that seller correctly & symmetrically encrypted (x,y) with key
-    // TODO: replace with encryption/decryption function, not hash
-    // component sym_encrypt = ...;
-    // sym_encrypt.ins[0] <== x;
-    // sym_encrypt.ins[1] <== y;
-    // sym_encrypt.k <== key;
-    listing_id <== 5; // sym_encrypt.outs[0];
+    // Constrain that `listing_id` is correctly encrypted with `key`
+    component p = PoseidonEncryptCheck(2);
+    // TODO(0xSage): hash(xy coordinates) mod 2^128 bc nonce has to be < 2^128
+    p.nonce <== 0;
+    for (var i = 0; i <4; i++) {
+        p.ciphertext[i] <== listing_id[i];
+    }
+    p.message[0] <== x;
+    p.message[1] <== y;
+    p.key[0] <== key[0];
+    p.key[1] <== key[1];
+    p.out === 1;
 
-    // Commit to this key, so seller has to provide the same upon sale
+    // TODO: Commit to this key, so seller has to provide the same upon sale
     // component hasher = ...;
     // hasher.in <== key;
     // hasher.k <== ?;
