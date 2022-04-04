@@ -25,7 +25,12 @@ describe("Poseidon", function () {
 		const key = [123, 456];
 
 		const ciphertext = poseidonCipher.encrypt(message, key, 0);
+		console.log("Target ciphertext:");
+		console.log(ciphertext);
 		const decrypted = poseidonCipher.decrypt(ciphertext, key, 0, message.length);
+		console.log("Target message:");
+		console.log(decrypted);
+
 		const inputs = {
 			"nonce": 0,
 			key,
@@ -33,10 +38,8 @@ describe("Poseidon", function () {
 			message
 		};
 		const w = await circuit4.calculateWitness(inputs, true);
-		// await circuit4.assertOut(w, { "out": 0 });
-		// await circuit4.assertOut(w, { "out": 1 });
-		// await circuit4.assertOut(w, { "decrypted[0]": decrypted[0] });
-		// await circuit4.checkConstraints(w);
+		await circuit4.assertOut(w, { "out": 1 });
+		await circuit4.checkConstraints(w);
 	});
 
 	// it("Should encrypt", async () => {
