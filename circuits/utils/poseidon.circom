@@ -123,13 +123,14 @@ template PoseidonEncryptCheck(l) {
     while (decryptedLength % 3 != 0) {
         decryptedLength += 1;
     }
+    // e.g. l = 4; decryptedLength = 6
 
     // public inputs
     signal input nonce;
     signal input ciphertext[decryptedLength+1];
 
     // private inputs, where hash(input) are public
-    signal input message[decryptedLength];
+    signal input message[l];
     signal input key[2];
 
     component pd = PoseidonDecrypt(l);
@@ -141,10 +142,10 @@ template PoseidonEncryptCheck(l) {
         pd.ciphertext[i] <== ciphertext[i];
     }
     
-    component calcTotal = CalculateTotal(decryptedLength);
-    component eqs[decryptedLength];
+    component calcTotal = CalculateTotal(l);
+    component eqs[l];
 
-    for (var i = 0; i < decryptedLength; i++) {
+    for (var i = 0; i < l; i++) {
         eqs[i] = IsEqual();
         eqs[i].in[0] <== message[i];
         eqs[i].in[1] <== pd.decrypted[i];
@@ -153,7 +154,7 @@ template PoseidonEncryptCheck(l) {
 
     component o = IsEqual();
     o.in[0] <== calcTotal.out;
-    o.in[1] <== decryptedLength;
+    o.in[1] <== l;
     
     // Returns 1 or 0
     signal output out;
