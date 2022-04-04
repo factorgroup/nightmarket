@@ -1,5 +1,5 @@
 {
-  "name": "df-zkmarketplace",
+  "name": "nightmarket",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -23,12 +23,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/0xSage/df-zkmarketplace.git"
+    "url": "git+https://github.com/0xSage/nightmarket.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/0xSage/df-zkmarketplace/issues"
+    "url": "https://github.com/0xSage/nightmarket/issues"
   },
-  "homepage": "https://github.com/0xSage/df-zkmarketplace#readme"
+  "homepage": "https://github.com/0xSage/nightmarket#readme"
 }

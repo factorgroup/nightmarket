@@ -1,3 +1,5 @@
+require("hardhat-circom");
+
 module.exports = {
 	circom: {
 		// (optional) Base path for files being read, defaults to `./circuits/`
@@ -16,25 +18,16 @@ module.exports = {
 				// (optional) Protocol used to build circuits ("groth16" or "plonk"), defaults to "groth16"
 				protocol: "groth16",
 				// (optional) Input path for circuit file, inferred from `name` if unspecified
-				circuit: "list.circom",
+				circuit: "list/list.circom",
 				// (optional) Input path for witness input file, inferred from `name` if unspecified
-				input: "list.json",
+				input: "list/list.json",
 				// (optional) Output path for wasm file, inferred from `name` if unspecified
-				wasm: "circuits/market/list.wasm",
+				wasm: "list/list.wasm",
 				// (optional) Output path for zkey file, inferred from `name` if unspecified
-				zkey: "list.zkey",
+				zkey: "list/list.zkey",
+				r1cs: "list/list.r1cs",
+				vkey: "list/list.vkey.json",
 				// Used when specifying `--deterministic` instead of the default of all 0s
-				beacon: "0102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
-			},
-			{
-				// (required) The name of the circuit
-				name: "sale",
-				version: 2,
-				protocol: "groth16",
-				circuit: "sale.circom",
-				input: "sale.json",
-				wasm: "circuits/sale/sale.wasm",
-				zkey: "sale.zkey",
 				beacon: "0102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
 			},
 		],
