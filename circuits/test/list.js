@@ -45,7 +45,7 @@ describe("List coordinates test", function () {
 		await circuit.assertOut(witness, { planet_id: Fr.e("15744909102780347355599901106611655633588302959081107425005702788497286612323") });
 
 		// Check encryption steps
-		await circuit.assertOut(witness, { key_commitment: 4 });
+		await circuit.assertOut(witness, { key_commitment: Fr.e("15488153922764572103791346072220088476028580425369450813882298926667172836509") });
 		// TODO: impl this step
 		await circuit.assertOut(witness, { nonce: 0 });
 

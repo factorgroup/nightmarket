@@ -7,7 +7,7 @@
 */
 
 pragma circom 2.0.3;
-
+include "../../node_modules/circomlib/circuits/mimc.circom";
 include "../../node_modules/circomlib/circuits/mimcsponge.circom";
 include "Perlin.circom";
 include "poseidon.circom";
@@ -34,22 +34,26 @@ template List () {
 
     // Constrain that `listing_id` is correctly encrypted with `key`
     component p = PoseidonEncryptCheck(2);
-    // TODO(0xSage): hash(xy coordinates) mod 2^128 bc nonce has to be < 2^128
-    p.nonce <== 0;
+    
     for (var i = 0; i <4; i++) {
         p.ciphertext[i] <== listing_id[i];
     }
+
+    // TODO(0xSage): hash(xy coordinates) mod 2^128 bc nonce has to be < 2^128
+    p.nonce <== 0;
+
     p.message[0] <== x;
     p.message[1] <== y;
     p.key[0] <== key[0];
     p.key[1] <== key[1];
     p.out === 1;
 
-    // TODO: Commit to this key, so seller has to provide the same upon sale
-    // component hasher = ...;
-    // hasher.in <== key;
-    // hasher.k <== ?;
-    key_commitment <== 4; //hasher.out
+    // Commit to key[2], so seller has to provide the same upon sale
+    component m = MultiMiMC7(2, 91);
+    m.in[0] <== key[0];
+    m.in[1] <== key[1];
+    m.k <== 0;
+    key_commitment <== m.out;
 
     // Commit to planet_id, so contract can verify the coordinate is in game
     component mimc = MiMCSponge(2, 220, 1);
@@ -69,4 +73,4 @@ template List () {
     biomebase <== perlin.out;
 }
 
-component main { public [ PLANETHASH_KEY, BIOMEBASE_KEY, SCALE, xMirror, yMirror ] } = List();
+component main { public [ PLANETHASH_KEY, BIOMEBASE_KEY, SCALE, xMirror, yMirror, listing_id ] } = List();
