@@ -43,9 +43,17 @@ Prove: Seller encrypted `KEY` with a `SHARED_KEY` from a ECDH key exchange with 
 - `BUYER_PUBKEY ==> output` // I used the correct buyer key
 
 #### DECRYPT
-_For encoding coordinates and the key_
-- ECDH friendly symmetric encryption & decryption scheme
-- TODO: try out mimc7 + OTP, or poseidon 5 wide encrypt
+Scheme: Encryption using Poseidon hashes, 5-wide, `l = 2`, where
+- List: 
+	- message[0] = planet x coordinate
+	- message[1] = planet y coordinate
+	- key[0] = left half of `key` being sold
+	- key[1] = right half of `key` being sold
+- Sale:
+	- message[0] = key[0]
+	- message[1] = key[1]
+	- key[0] = k_x of shared key
+	- key[1] = k_y of shared key
 
 ## Escrow Contract (TODO)
 - function list(TODO)
