@@ -16,15 +16,15 @@ template List () {
     // Public Inputs
     signal input PLANETHASH_KEY;
     signal input BIOMEBASE_KEY;
-    signal input SCALE;             // must be power of 2 at most 16384 so that DENOMINATOR works
-    signal input xMirror;           // 1 is true, 0 is false
-    signal input yMirror;           // 1 is true, 0 is false
-    signal input listing_id[4];     // buyer encrypts(xy, key[2])
-    signal input nonce;             // Needed to decrypt key
+    signal input SCALE;
+    signal input xMirror;
+    signal input yMirror;
+    signal input listing_id[4];     // Seller encrypts(xy, key[2])
+    signal input nonce;             // Needed to encrypt/decrypt xy
 
-    // Private inputs (Expected format: uint256)
-    signal input x;
-    signal input y;
+    // Private inputs
+    signal input x;                 // preimage: x coordinate
+    signal input y;                 // preimage: y coordinate
     signal input key[2];            // the actual secret being sold
 	
     signal output key_commitment;   // H(key[0], key[1], k=0)
@@ -32,6 +32,8 @@ template List () {
     signal output biomebase;
 
     // Commit to key[2], so seller has to provide the same upon sale
+    // Q: Use MultiMiMc or Sponge? Just difference of execution? i.e. x^3 vs sponged
+    // Q: Why are they secure hashes if k is public? k is not a key?
     component m = MultiMiMC7(2, 91);
     m.in[0] <== key[0];
     m.in[1] <== key[1];
@@ -57,7 +59,7 @@ template List () {
 
     // Constrain that `listing_id` is correctly encrypted with `key`
     component p = PoseidonEncryptCheck(2);
-    
+
     for (var i = 0; i <4; i++) {
         p.ciphertext[i] <== listing_id[i];
     }
