@@ -44,11 +44,8 @@ describe("List coordinates test", function () {
 		await circuit.assertOut(witness, { biomebase: 12 });
 		await circuit.assertOut(witness, { planet_id: Fr.e("15744909102780347355599901106611655633588302959081107425005702788497286612323") });
 
-		// Check encryption steps
+		// Check commitments
 		await circuit.assertOut(witness, { key_commitment: Fr.e("15488153922764572103791346072220088476028580425369450813882298926667172836509") });
-		// TODO: impl this step
-		await circuit.assertOut(witness, { nonce: 0 });
-
-		// assert(Fr.eq(Fr.e(witness[1]), Fr.e(1)));
+		await circuit.checkConstraints(witness);
 	});
 });

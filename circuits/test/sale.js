@@ -11,44 +11,51 @@ const wasm_tester = require("circom_tester").wasm;
 
 const poseidonCipher = require("../../client/poseidonCipher.js");
 
+const Keypair = require("maci-domainobjs").Keypair;
+
 describe("Sale test", function () {
 
 	this.timeout(100000);
 
-	it("Should list correctly", async () => {
+	it("Should generate sale receipt correctly", async () => {
 		const circuit = await wasm_tester(path.join(__dirname, "..", "sale", "sale.circom"));
 
-		const x = "1764";
-		const y = "21888242871839275222246405745257275088548364400416034343698204186575808492485";
-		const message = [x, y];
 		const key = [123, 456];
+		const nonce = 0;
 
-		const listing_id = poseidonCipher.encrypt(message, key, 0);
+		const seller_keypair = new Keypair();
+		const buyer_keypair = new Keypair();
+
+		const shared_key = Keypair.genEcdhSharedKey(
+			seller_keypair.privKey,
+			buyer_keypair.pubKey,
+		)
+
+		const receipt_id = poseidonCipher.encrypt(key, shared_key, 0);
+
+		// Private intermediate signals
+		// const decrypted = poseidonCipher.decrypt(receipt_id, shared_key, 0, key.length);
+		// console.log(decrypted);
 
 		let witness;
 		witness = await circuit.calculateWitness(
 			{
-				"PLANETHASH_KEY": 7,
-				"BIOMEBASE_KEY": 8,
-				"SCALE": 4096,
-				"xMirror": 0,
-				"yMirror": 0,
-				x,
-				y,
-				key,
-				"nonce": 0,
-				listing_id
+				"buyer_pub_key": buyer_keypair.pubKey.asCircuitInputs(),
+				"seller_prv_key": seller_keypair.privKey.asCircuitInputs(),
+				receipt_id,
+				nonce,
+				key
 			}, true);
 
-		// Checked against output.json from https://github.com/darkforest-eth/circuits
-		await circuit.assertOut(witness, { biomebase: 12 });
-		await circuit.assertOut(witness, { planet_id: Fr.e("15744909102780347355599901106611655633588302959081107425005702788497286612323") });
+		// Shared key is correct
+		await circuit.assertOut(witness, { kx: shared_key[0] });
+		await circuit.assertOut(witness, { ky: shared_key[1] });
 
-		// Check encryption steps
+		// Key commitment should be same as list step
 		await circuit.assertOut(witness, { key_commitment: Fr.e("15488153922764572103791346072220088476028580425369450813882298926667172836509") });
-		// TODO: impl this step
-		await circuit.assertOut(witness, { nonce: 0 });
 
-		// assert(Fr.eq(Fr.e(witness[1]), Fr.e(1)));
+		//TODO(0xsage): Shared key commitment is correct
+
+		await circuit.checkConstraints(witness);
 	});
 });
