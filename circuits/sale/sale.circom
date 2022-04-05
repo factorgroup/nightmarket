@@ -1,15 +1,27 @@
+/*
+    Prove: I have (...) such that:
+    - ECDH(buyerPubKey, myPrivKey) => sharedkey
+    - Encrypt(key[0], key[1], sharedkey) => receipt
+    - MiMCSponge(x,y,PLANETKEY) = planet_id commitment
+    - Hash(key[0],key[1],0) = same key as before
+*/
+
 pragma circom 2.0.3;
 
-// TODO (just a placeholder circuit for now)
+include "ecdh.circom";
+
 template Sale () {
-	// public
-    signal input a;
-	// private
-    signal input b;
-	// output
+	// public inputs
+    signal input buyerPubKey;
+	
+    // private inputs
+    signal input sellerPrivKey;
+	
+    // outputs
     signal output c;
-    
-    c <== a * b;
+
+    // intermediate sigs
+    signal sharedKey;
 }
 
 /* INPUT = {
@@ -17,4 +29,4 @@ template Sale () {
     "b": "77"
 } */
 
-component main { public [ a ] } = Sale();
+component main { public [ buyerPubKey ] } = Sale();

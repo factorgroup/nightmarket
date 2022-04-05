@@ -35,7 +35,7 @@ template List () {
     component m = MultiMiMC7(2, 91);
     m.in[0] <== key[0];
     m.in[1] <== key[1];
-    m.k <== 0;
+    m.k <== 0;                      // TODO double check this
     key_commitment <== m.out;
 
     // Commit to planet_id, so contract can verify the coordinate is in game

@@ -4,6 +4,9 @@
 
 pragma circom 2.0.3;
 
+include "../../node_modules/circomlib/circuits/mimc.circom";
+include "../../node_modules/circomlib/circuits/escalarmulany.circom";
+
 // TODO: Check if public key is on the point
 template Ecdh() {
   // Note: private key

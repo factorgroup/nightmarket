@@ -17,7 +17,6 @@ describe("List coordinates test", function () {
 
 	it("Should list correctly", async () => {
 		const circuit = await wasm_tester(path.join(__dirname, "..", "list", "list.circom"));
-		const circuit4 = await wasm_tester(path.join(__dirname, "circuits", "poseidon2_test.circom"));
 
 		const x = "1764";
 		const y = "21888242871839275222246405745257275088548364400416034343698204186575808492485";
