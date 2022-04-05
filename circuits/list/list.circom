@@ -20,7 +20,7 @@ template List () {
     signal input xMirror;           // 1 is true, 0 is false
     signal input yMirror;           // 1 is true, 0 is false
     signal input listing_id[4];     // buyer encrypts(xy, key[2])
-    signal input nonce;             // Needed to decrypt key
+    signal input nonce;             // Needed to decrypt xy
 
     // Private inputs (Expected format: uint256)
     signal input x;
