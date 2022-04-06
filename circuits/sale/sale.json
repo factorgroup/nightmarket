@@ -1,4 +1,13 @@
 {
-	"a": "5",
-	"b": "77"
+	"buyer_pub_key": [
+		1,
+		2
+	],
+	"seller_prv_key": "3",
+	"nonce": 0,
+	"receipt_id": 0,
+	"key": [
+		4,
+		5
+	]
 }

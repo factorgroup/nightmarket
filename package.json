@@ -10,6 +10,7 @@
     "test": "mocha circuits/test --max-old-space-size=4000"
   },
   "devDependencies": {
+    "@darkforest_eth/hashing": "^6.7.19",
     "chai": "^4.3.6",
     "circom_tester": "^0.0.10",
     "circomlib": "^2.0.3",

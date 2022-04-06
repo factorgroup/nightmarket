@@ -1,3 +1,4 @@
+const { mimcHash } = require("@darkforest_eth/hashing");
 const chai = require("chai");
 const path = require("path");
 const assert = chai.assert;
@@ -12,6 +13,9 @@ const wasm_tester = require("circom_tester").wasm;
 const poseidonCipher = require("../../client/poseidonCipher.js");
 
 const Keypair = require("maci-domainobjs").Keypair;
+
+// mimc hashing helpers
+const mimc = require("@darkforest_eth/hashing").mimcHash;
 
 describe("Sale test", function () {
 
@@ -37,6 +41,9 @@ describe("Sale test", function () {
 		// const decrypted = poseidonCipher.decrypt(receipt_id, shared_key, 0, key.length);
 		// console.log(decrypted);
 
+		// Calculate shared key commitment
+		const shared_key_commitment = mimcHash(0)(shared_key[0], shared_key[1]).toString();
+
 		let witness;
 		witness = await circuit.calculateWitness(
 			{
@@ -51,11 +58,9 @@ describe("Sale test", function () {
 		await circuit.assertOut(witness, { kx: shared_key[0] });
 		await circuit.assertOut(witness, { ky: shared_key[1] });
 
-		// Key commitment should be same as list step
+		// Key commitments should be same as list step
 		await circuit.assertOut(witness, { key_commitment: Fr.e("15488153922764572103791346072220088476028580425369450813882298926667172836509") });
-
-		//TODO(0xsage): Shared key commitment is correct
-
+		await circuit.assertOut(witness, { shared_key_commitment: Fr.e(shared_key_commitment) });
 		await circuit.checkConstraints(witness);
 	});
 });
