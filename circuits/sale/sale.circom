@@ -13,7 +13,7 @@ include "ecdh.circom";
 // Q: include paths cannot be circular? Given: `a > b > c`, c include a => "duplicated callable simple ... template already in use"
 // I want to do "include ../util/poseidon.circom" instead of duplicating circuits
 include "poseidon.circom";
-include "../../node_modules/circomlib/circuits/mimc.circom";
+include "../../node_modules/circomlib/circuits/mimcsponge.circom";
 
 template Sale () {
 	// public inputs
@@ -50,11 +50,11 @@ template Sale () {
 
     // Commit H(shared_key) or calculate the seller's pub key (ECDSA privToPub is too many constraints?)
     // So buyer can check if seller used a correct private key s.t. they can reconstruct the shared key
-    component mm = MultiMiMC7(2, 91);
-    mm.in[0] <== kx;
-    mm.in[1] <== ky;
+    component mm = MiMCSponge(2, 220, 1);
+    mm.ins[0] <== kx;
+    mm.ins[1] <== ky;
     mm.k <== 0;
-    shared_key_commitment <== mm.out;
+    shared_key_commitment <== mm.outs[0];
 
     // Constrain that `key[2]` is correctly encrypted with shared_key
     component p = PoseidonEncryptCheck(2);
