@@ -44,6 +44,11 @@ describe("Sale test", function () {
 		// Calculate shared key commitment
 		const shared_key_commitment = mimcHash(0)(shared_key[0], shared_key[1]).toString();
 
+		// generate sale.json:
+		// console.log(buyer_keypair.pubKey.asCircuitInputs())
+		// console.log(seller_keypair.privKey.asCircuitInputs());
+		// console.log(receipt_id);
+
 		let witness;
 		witness = await circuit.calculateWitness(
 			{
