@@ -43,7 +43,7 @@ Prove: Seller encrypted `KEY` with a `SHARED_KEY` from a ECDH key exchange with 
 - `BUYER_PUBKEY ==> output` // I used the correct buyer key
 
 #### DECRYPT
-Scheme: Encryption using Poseidon hashes, 5-wide, `l = 2`, where
+Scheme: Encryption using a 5-wide Poseidon in SpongeWrap with (0, len=2, Kx ,Ky , N) as input.
 - List: 
 	- message[0] = planet x coordinate
 	- message[1] = planet y coordinate
