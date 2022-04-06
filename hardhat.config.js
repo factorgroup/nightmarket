@@ -30,6 +30,18 @@ module.exports = {
 				// Used when specifying `--deterministic` instead of the default of all 0s
 				beacon: "0102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
 			},
+			{
+				name: "sale",
+				version: 2,
+				protocol: "groth16",
+				circuit: "sale/sale.circom",
+				input: "sale/sale.json",
+				wasm: "sale/sale.wasm",
+				zkey: "sale/sale.zkey",
+				r1cs: "sale/sale.r1cs",
+				vkey: "sale/sale.vkey.json",
+				beacon: "0102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+			},
 		],
 	},
 };
