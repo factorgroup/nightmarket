@@ -1,4 +1,5 @@
 const { mimcHash } = require("@darkforest_eth/hashing");
+const { constants } = require("buffer");
 const chai = require("chai");
 const path = require("path");
 const assert = chai.assert;
@@ -43,19 +44,29 @@ describe("Sale test", function () {
 
 		// Calculate shared key commitment
 		const shared_key_commitment = mimcHash(0)(shared_key[0], shared_key[1]).toString();
+		const key_commitment = mimcHash(0)(key[0], key[1]).toString();
 
-		// generate sale.json:
+		// Used to generate sale.inputs.json:
+		// console.log("buyer pub key:");
 		// console.log(buyer_keypair.pubKey.asCircuitInputs())
-		// console.log(seller_keypair.privKey.asCircuitInputs());
+		// console.log("receipt_id:");
 		// console.log(receipt_id);
+		// console.log("shared:");
+		// console.log(shared_key_commitment);
+		// console.log("key commit:");
+		// console.log(key_commitment);
+		// console.log("seller priv:");
+		// console.log(seller_keypair.privKey.asCircuitInputs());
 
 		let witness;
 		witness = await circuit.calculateWitness(
 			{
 				"buyer_pub_key": buyer_keypair.pubKey.asCircuitInputs(),
-				"seller_prv_key": seller_keypair.privKey.asCircuitInputs(),
 				receipt_id,
 				nonce,
+				key_commitment,
+				shared_key_commitment,
+				"seller_prv_key": seller_keypair.privKey.asCircuitInputs(),
 				key
 			}, true);
 
@@ -63,9 +74,6 @@ describe("Sale test", function () {
 		await circuit.assertOut(witness, { kx: shared_key[0] });
 		await circuit.assertOut(witness, { ky: shared_key[1] });
 
-		// Key commitments should be same as list step
-		await circuit.assertOut(witness, { key_commitment: Fr.e("15488153922764572103791346072220088476028580425369450813882298926667172836509") });
-		await circuit.assertOut(witness, { shared_key_commitment: Fr.e(shared_key_commitment) });
 		await circuit.checkConstraints(witness);
 	});
 });

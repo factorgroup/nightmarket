@@ -18,23 +18,21 @@ include "../../node_modules/circomlib/circuits/mimcsponge.circom";
 template Sale () {
 	// public inputs
     signal input buyer_pub_key[2];
-    signal input receipt_id[4];         // Seller encrypts(key[2], kx,ky)
-	signal input nonce;                 // Needed to decrypt key[2]
+    signal input receipt_id[4];             // Seller encrypts(key[2], kx,ky)
+	signal input nonce;                     // Needed to decrypt key[2]
+    signal input key_commitment;            // Should be same as in the listing
+    signal input shared_key_commitment;    // Contract verifies buyer has the same
 
     // private inputs
     signal input seller_prv_key;
-    signal input key[2];                // Preimage: keys to unlock xy coordinates
+    signal input key[2];                    // Preimage: keys to unlock xy coordinates
 	
-    // outputs
-    signal output key_commitment;        // Should be same as in the listing
-    signal output shared_key_commitment; // Note: Buyer precalcs H(shared_key) upon purchse, verified by contract
-
-    // Commit to original key[2]
-    component m = MultiMiMC7(2, 91);
-    m.in[0] <== key[0];
-    m.in[1] <== key[1];
+    // Commit to the original key[2]
+    component m = MiMCSponge(2, 220, 1);
+    m.ins[0] <== key[0];
+    m.ins[1] <== key[1];
     m.k <== 0;
-    key_commitment <== m.out;
+    key_commitment === m.outs[0];
 
     // Verify shared key is calculated correctly
     component ecdh = Ecdh();
@@ -42,19 +40,18 @@ template Sale () {
     ecdh.public_key[1] <== buyer_pub_key[1];
     ecdh.private_key <== seller_prv_key;
 
-    // Shared key
+    // Shared key, interim signals
     signal kx;
     signal ky;
     kx <== ecdh.shared_key[0];
     ky <== ecdh.shared_key[1];
 
-    // Commit H(shared_key) or calculate the seller's pub key (ECDSA privToPub is too many constraints?)
-    // So buyer can check if seller used a correct private key s.t. they can reconstruct the shared key
+    // Constrain H(shared_key) is same as buyer's expectation
     component mm = MiMCSponge(2, 220, 1);
     mm.ins[0] <== kx;
     mm.ins[1] <== ky;
     mm.k <== 0;
-    shared_key_commitment <== mm.outs[0];
+    shared_key_commitment === mm.outs[0];
 
     // Constrain that `key[2]` is correctly encrypted with shared_key
     component p = PoseidonEncryptCheck(2);
@@ -72,4 +69,4 @@ template Sale () {
     p.out === 1;
 }
 
-component main { public [ buyer_pub_key, receipt_id, nonce ] } = Sale();
+component main { public [ buyer_pub_key, receipt_id, nonce, key_commitment, shared_key_commitment ] } = Sale();

@@ -3,8 +3,7 @@
 A zero knowledge marketplace for Dark Forest coordinates.
 A 0xParc Learning Group project - work in progress.
 ## Quicklinks
-- [Figma specs](https://www.figma.com/file/PEnVhZNRhVW9TbZ8obqglX/zkdf-market?node-id=0%3A1)
-- [Team Brainstorm notes](https://hackmd.io/xrXO2QKeRJWY6WApxRrroQ)
+- [Spec & Brainstorm notes](https://hackmd.io/xrXO2QKeRJWY6WApxRrroQ)
 - [Demo slides](https://docs.google.com/presentation/d/1Dk9gZJF_GiitnknPJThJDwokEA1zd0ncwr6Jqawwtq0/edit?usp=sharing)
 
 ## Quickstart
@@ -20,13 +19,10 @@ A 0xParc Learning Group project - work in progress.
 - `/client`: Dark Forest plugin code
 - `/contracts`: Contract and verifier code
 
-## Potential Spec
-- Sellers can list valid Dark Forest coordinates at a fixed price
+## Spec
+- Sellers list any valid Dark Forest coordinates at a fixed price
 - Multiple buyers can purchase these coordinates
 - Sellers can attest their planet has certain biomes
-- [nice to have] Buyers can bid for coordinate
-- [nice to have] Seller stakes penalty for nonresponsiveness
-- [nice to have] Buyers can put up bounties for planets they'd like to dox
 
 ## Circuit Design
 #### LIST
@@ -55,10 +51,8 @@ Scheme: Encryption using a 5-wide Poseidon in SpongeWrap with (0, len=2, Kx ,Ky 
 	- key[0] = k_x of shared key
 	- key[1] = k_y of shared key
 
-## Escrow Contract (TODO)
-- function list(TODO)
-- function bid(TODO) ??
-- function close(TODO) // closes sale and issues refunds if any
+## Escrow Contract
+- [WiP Specifications](https://hackmd.io/@Ly6HjY60Qki-GQ9UJ6n5Kw/H1aXQsWmc)
 
 ## Acknowledgements
 - 0xParc for study group
