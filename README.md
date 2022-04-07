@@ -55,10 +55,8 @@ Scheme: Encryption using a 5-wide Poseidon in SpongeWrap with (0, len=2, Kx ,Ky 
 	- key[0] = k_x of shared key
 	- key[1] = k_y of shared key
 
-## Escrow Contract (TODO)
-- function list(TODO)
-- function bid(TODO) ??
-- function close(TODO) // closes sale and issues refunds if any
+## Escrow Contract
+- [WiP Specifications](https://hackmd.io/@Ly6HjY60Qki-GQ9UJ6n5Kw/H1aXQsWmc)
 
 ## Acknowledgements
 - 0xParc for study group

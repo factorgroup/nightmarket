@@ -20,15 +20,19 @@ template Sale () {
     signal input buyer_pub_key[2];
     signal input receipt_id[4];         // Seller encrypts(key[2], kx,ky)
 	signal input nonce;                 // Needed to decrypt key[2]
+    signal input key_commitment;       // Should be same as in the listing
+    signal input seller_pub_key[2];    // Not required to gen sharedKey, but as a commitment to seller_priv_key
 
     // private inputs
     signal input seller_prv_key;
     signal input key[2];                // Preimage: keys to unlock xy coordinates
 	
-    // outputs
-    signal output key_commitment;        // Should be same as in the listing
-    signal output shared_key_commitment; // Note: Buyer precalcs H(shared_key) upon purchse, verified by contract
-
+    // TODO: make seller ecdha prove their pkey corresponds with public key
+    component ecdsa = ECDSAPrivToPub();
+    ecdsa.privkey[] <== ;
+    seller_pub_key[0] === ecdsa.pubkey[0];
+    seller_pub_key[1] === ecdsa.pubkey[1];
+    
     // Commit to original key[2]
     component m = MultiMiMC7(2, 91);
     m.in[0] <== key[0];
@@ -72,4 +76,4 @@ template Sale () {
     p.out === 1;
 }
 
-component main { public [ buyer_pub_key, receipt_id, nonce ] } = Sale();
+component main { public [ buyer_pub_key, receipt_id, nonce, key_commitment, seller_pub_key ] } = Sale();
