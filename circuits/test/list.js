@@ -44,11 +44,15 @@ describe("List coordinates test", function () {
 				key_commitment,
 				planet_id,
 				"biomebase": 12,
+				"seller_address": 1234,
 				x,
 				y,
 				key,
 
 			}, true);
+
+		// Check watermark (arbirary test but demonstrates the purpose)
+		await circuit.assertOut(witness, { seller_address: 1234 });
 
 		await circuit.checkConstraints(witness);
 	});

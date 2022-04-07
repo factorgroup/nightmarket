@@ -13,6 +13,7 @@ include "poseidon.circom";
 
 template List () {
     // Public constant inputs
+    // TODO(later): just use constants here?
     signal input PLANETHASH_KEY;
     signal input BIOMEBASE_KEY;
     signal input SCALE;
@@ -24,12 +25,17 @@ template List () {
     signal input nonce;             // Needed to encrypt/decrypt xy
     signal input key_commitment;    // H(key[0], key[1], k=0)
     signal input planet_id;         // H(x, y, k=PLANETHASH_KEY)
-    signal input biomebase;
+    signal input biomebase;         // Biomebase depends on knowledge of xy
+    signal input seller_address;    // Watermarks proof to the seller
 
     // Private inputs
     signal input x;                 // preimage: x coordinate
     signal input y;                 // preimage: y coordinate
     signal input key[2];            // the actual secret being sold
+
+    // Watermark proofs to the seller address
+    signal seller_square;
+    seller_square <== seller_address * seller_address;
 
     // Commit to key[2], so seller has to provide the same upon sale
     component m = MiMCSponge(2, 220, 1);
@@ -71,4 +77,4 @@ template List () {
     p.out === 1;
 }
 
-component main { public [ PLANETHASH_KEY, BIOMEBASE_KEY, SCALE, xMirror, yMirror, listing_id, nonce, key_commitment, planet_id, biomebase ] } = List();
+component main { public [ PLANETHASH_KEY, BIOMEBASE_KEY, SCALE, xMirror, yMirror, listing_id, nonce, key_commitment, planet_id, biomebase, seller_address ] } = List();
