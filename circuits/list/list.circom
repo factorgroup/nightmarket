@@ -7,7 +7,6 @@
 */
 
 pragma circom 2.0.3;
-include "../../node_modules/circomlib/circuits/mimc.circom";
 include "../../node_modules/circomlib/circuits/mimcsponge.circom";
 include "Perlin.circom";
 include "poseidon.circom";
@@ -33,12 +32,11 @@ template List () {
     signal input key[2];            // the actual secret being sold
 
     // Commit to key[2], so seller has to provide the same upon sale
-    // TODO: Maybe use mimc sponge?
-    component m = MultiMiMC7(2, 91);
-    m.in[0] <== key[0];
-    m.in[1] <== key[1];
+    component m = MiMCSponge(2, 220, 1);
+    m.ins[0] <== key[0];
+    m.ins[1] <== key[1];
     m.k <== 0;
-    key_commitment === m.out;
+    key_commitment === m.outs[0];
 
     // Commit to planet_id, so contract can verify the coordinate is in game
     component mimc = MiMCSponge(2, 220, 1);
