@@ -8,11 +8,8 @@
 
 pragma circom 2.0.3;
 
-include "ecdh.circom";
-
-// Q: include paths cannot be circular? Given: `a > b > c`, c include a => "duplicated callable simple ... template already in use"
-// I want to do "include ../util/poseidon.circom" instead of duplicating circuits
-include "poseidon.circom";
+include "../util/ecdh.circom";
+include "../util/poseidon.circom";
 include "../../node_modules/circomlib/circuits/mimcsponge.circom";
 
 template Sale () {
