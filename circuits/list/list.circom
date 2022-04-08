@@ -7,9 +7,8 @@
 */
 
 pragma circom 2.0.3;
-include "../../node_modules/circomlib/circuits/mimcsponge.circom";
-include "Perlin.circom";
-include "poseidon.circom";
+include "../util/perlin.circom";
+include "../util/poseidon.circom";
 
 template List () {
     // Public constant inputs
@@ -32,17 +31,6 @@ template List () {
     signal input x;                 // preimage: x coordinate
     signal input y;                 // preimage: y coordinate
     signal input key[2];            // the actual secret being sold
-
-    // Watermark proofs to the seller address
-    signal seller_square;
-    seller_square <== seller_address * seller_address;
-
-    // Commit to key[2], so seller has to provide the same upon sale
-    component m = MiMCSponge(2, 220, 1);
-    m.ins[0] <== key[0];
-    m.ins[1] <== key[1];
-    m.k <== 0;
-    key_commitment === m.outs[0];
 
     // Commit to planet_id, so contract can verify the coordinate is in game
     component mimc = MiMCSponge(2, 220, 1);
@@ -75,6 +63,17 @@ template List () {
     p.key[0] <== key[0];
     p.key[1] <== key[1];
     p.out === 1;
+
+    // Commit to key[2], so seller has to provide the same upon sale
+    component m = MiMCSponge(2, 220, 1);
+    m.ins[0] <== key[0];
+    m.ins[1] <== key[1];
+    m.k <== 0;
+    key_commitment === m.outs[0];
+
+    // Watermark proofs to the seller address
+    signal seller_square;
+    seller_square <== seller_address * seller_address;
 }
 
 component main { public [ PLANETHASH_KEY, BIOMEBASE_KEY, SCALE, xMirror, yMirror, listing_id, nonce, key_commitment, planet_id, biomebase, seller_address ] } = List();

@@ -8,11 +8,9 @@
 pragma circom 2.0.3;
 
 include "../../node_modules/circomlib/circuits/mimcsponge.circom";
-include "../../node_modules/circomlib/circuits/comparators.circom";
 include "../../node_modules/circomlib/circuits/sign.circom";
-include "../../node_modules/circomlib/circuits/bitify.circom";
-include "RangeProof.circom";
-include "QuinSelector.circom";
+include "rangeProof.circom";
+include "quinSelector.circom";
 
 // input: three field elements: x, y, scale (all absolute value < 2^32)
 // output: pseudorandom integer in [0, 15]
