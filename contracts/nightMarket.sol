@@ -5,48 +5,66 @@ import "../github/OpenZeppelin/openzeppelin-contracts/contracts/security/Reentra
 import {WithStorage, SnarkConstants, GameConstants} from "../github/darkforest-eth/eth/contracts/libraries/LibStorage.sol";
 import {Verifier as ListVerifier} from "./listVerifier.sol";
 import {Verifier as SaleVerifier} from "./saleVerifier.sol";
+
+// DF imports
 import {GetterInterface} from "./GetterInterface.sol";
 
-function boolToUInt(bool x) pure returns (uint256 r) {
-    assembly {
-        r := x
-    }
+// Type imports
+import {
+    // RevealedCoords,
+    // ArrivalData,
+    // Planet,
+    // PlanetExtendedInfo,
+    // PlanetExtendedInfo2,
+    // PlanetEventType,
+    // PlanetEventMetadata,
+    // PlanetDefaultStats,
+    PlanetData
+    // Player,
+    // ArtifactWithMetadata,
+    // Upgrade,
+    // Artifact
+} from "../github/darkforest-eth/eth/contracts/DFTypes.sol";
+
+function boolToUInt(bool x) pure returns (uint r) {
+  assembly { r := x }
 }
 
 /**
  * @title NightMarket
  * @author @0xSage
  * @notice
- * @dev
+ * @dev 
  * @custom:experimental
  */
 contract NightMarket is ReentrancyGuard {
+
     //  Type
     struct Order {
         // Address buyer , now used as key, TODO: check potential bugs on this...
-        uint256 expectedSharedKeyHash;
-        uint64 created; // when order was created
-        bool isActive; // inactive after refund/sale
+        uint expectedSharedKeyHash;
+        uint64 created;                     // when order was created
+        bool isActive;                      // inactive after refund/sale
     }
 
     struct Listing {
         address payable seller;
-        uint256 planetId;
-        uint256 biomebase;
-        uint256 keyCommitment; // H(key) being sold, can't store in events?
-        uint256 nonce;
-        uint256 price; // cost of key to coordinates
-        uint64 escrowTime; // time buyer's deposit is locked up for, use timers.sol
-        bool isActive; // depends on if we allow sellers to delist
-        mapping(uint256 => Order) orders; // uint is just buyer address, only 1 active buy/lsiting at atime, Make it public?
+        uint planetId;
+        uint biomebase;
+        uint keyCommitment;                 // H(key) being sold, can't store in events?
+        uint nonce;
+        uint price;                         // cost of key to coordinates
+        uint64 escrowTime;                  // time buyer's deposit is locked up for, use timers.sol
+        bool isActive;                      // depends on if we allow sellers to delist 
+        mapping (uint => Order ) orders;    // uint is just buyer address, only 1 active buy/lsiting at atime, Make it public?
     }
 
     // Game Constants
     SnarkConstants gameConstants;
 
     // States
-    uint256 public numListings; // incremental, maybe use Counters.sol
-    mapping(uint256 => Listing) public listings; // uint is incremental; make this public?
+    uint public numListings;                       // incremental, maybe use Counters.sol
+    mapping (uint => Listing) public listings;     // uint is incremental; make this public?
 
     // DF storage contract
     GetterInterface df;
@@ -63,16 +81,23 @@ contract NightMarket is ReentrancyGuard {
     event Refunded();
 
     // Checks planet hash is actually in the game
-    modifier validPlanet(uint256 planetId) {
-        // TODO
-        // GameStorage has:
-        // planetIds array, planets mapping
-        // check location not in revealedPlanetIds, revealedCoords mapping
+    // TODO write test for this
+    modifier validPlanet(uint locationId) {
+        uint256[] memory locIds = new uint256[](1);
+        ids[0] = locationId;
+        PlanetData[] memory p = df.bulkGetPlanetsDataByIds(ids);
+
+        // TODO: double check this is expected in game behavior
+        // planetevent metadata? DFPInitPlanetArgs
+        // location is loggedat 2 places, AdminCreatePlanetArgs, DFInitPlanetARgs
+        // Do both emit events?
+        // check is not revealed, check in getRevealedCoords(planethash) => .locationid
         require(true);
         _;
     }
 
-    constructor(
+    constructor
+    (
         ListVerifier _listVerifier,
         SaleVerifier _saleVerifier,
         address _dfGetterContract
@@ -81,38 +106,36 @@ contract NightMarket is ReentrancyGuard {
 
         listVerifier = _listVerifier;
         saleVerifier = _saleVerifier;
-
+        
         //TODO(later): initialize w/ diamond address with additional checks
         df = GetterInterface(_dfGetterContract);
-
+        
         // TODO: get this working with existing game contract
         require(df.getSnarkConstants().PLANETHASH_KEY == 12345);
-
         gameConstants = df.getSnarkConstants();
     }
 
     /**
-     * @notice Seller can list a secret Dark Forest coordinate for sale
-     * @dev `proof` is a zkSnarks proof defined in `list.circom`
-     * @param _proof The listing_id proof
-     */
+    * @notice Seller can list a secret Dark Forest coordinate for sale
+    * @dev `proof` is a zkSnarks proof defined in `list.circom`
+    * @param _proof The listing_id proof 
+    */
     function list(
-        uint256[8] memory _proof,
-        uint256[4] memory _listingId,
-        uint256 _nonce,
-        uint256 _keyCommitment,
-        uint256 _planetId,
-        uint256 _biomebase,
-        uint256 _price,
+        uint[8] memory _proof,
+        uint[4] memory _listingId,
+        uint _nonce,
+        uint _keyCommitment,
+        uint _locationId,
+        uint _biomebase,
+        uint _price,
         uint64 _escrowTime
     )
-        external
-        payable
+        external payable
         nonReentrant
-        validPlanet(_planetId)
-        returns (uint256 listingId)
+        validPlanet(_locationId)
+        returns (uint listingId)
     {
-        require(_nonce < 2 ^ 218);
+        require(_nonce < 2^218);
 
         uint256[15] memory publicInputs = [
             gameConstants.PLANETHASH_KEY,
@@ -127,11 +150,11 @@ contract NightMarket is ReentrancyGuard {
             _listingId[3],
             _nonce,
             _keyCommitment,
-            _planetId,
+            _locationId,
             _biomebase,
             uint256(uint160(address(msg.sender)))
         ];
-
+        
         require(
             listVerifier.verify(_proof, publicInputs),
             "Seller list coordinates: invalid proof"
@@ -150,32 +173,32 @@ contract NightMarket is ReentrancyGuard {
         numListings++;
 
         emit Listed();
-
-        return (numListings - 1);
+        
+        return(numListings-1);
     }
 
     /**
-     * TODO
-     */
-    function delist() external {
-        // good for seller to build reputation i guess
+    * TODO
+    */
+    function delist() external {                     // good for seller to build reputation i guess
+
     }
 
     /**
-     */
-    function ask() external payable {
-        //noreentrance? payable?
+    */
+    function ask() external payable {       //noreentrance? payable?
+
     }
 
     /**
-     */
-    function sale() external {
-        //norenentrance?
+    */
+    function sale() external {              //norenentrance?
+
     }
 
     /**
-     */
-    function refund() public {
-        //orderid, callable by anyone? or just buyer... becareful of contract buyers
+    */
+    function refund() public {        //orderid, callable by anyone? or just buyer... becareful of contract buyers
+
     }
 }
