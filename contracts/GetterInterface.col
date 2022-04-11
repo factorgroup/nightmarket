@@ -1,0 +1,8 @@
+// SPDX-License-Identifier: GPL-3.0
+pragma solidity >=0.8.0;
+
+import {WithStorage, SnarkConstants, GameConstants} from "../github/darkforest-eth/eth/contracts/libraries/LibStorage.sol";
+
+interface GetterInterface {
+    function getSnarkConstants() external pure returns (SnarkConstants memory);
+}
