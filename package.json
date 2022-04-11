@@ -4,10 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "postinstall": "./scripts/fix_circomtester_dep.sh",
+    "test": "mocha circuits/test --max-old-space-size=4000",
     "circom:dev": "hardhat circom --deterministic --debug --verbose",
     "circom:prod": "hardhat circom --verbose",
-    "postinstall": "./scripts/fix_circomtester_dep.sh",
-    "test": "mocha circuits/test --max-old-space-size=4000"
+    "verifier": "./scripts/reformat-verifier-sol.sh"
   },
   "devDependencies": {
     "@darkforest_eth/hashing": "^6.7.19",
@@ -19,7 +20,8 @@
     "hardhat-circom": "^3.0.1",
     "maci-crypto": "^1.0.4",
     "maci-domainobjs": "^1.0.4",
-    "mocha": "^9.2.2"
+    "mocha": "^9.2.2",
+    "typescript": "^4.6.3"
   },
   "engines": {
     "node": ">=16"
