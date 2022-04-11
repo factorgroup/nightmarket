@@ -1,5 +1,3 @@
-import * as path from 'path'
-import * as shelljs from 'shelljs'
 import * as fs from 'fs'
 
 const main = async (

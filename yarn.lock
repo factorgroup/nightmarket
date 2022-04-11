@@ -287,17 +287,17 @@
     minimist "^1.2.0"
 
 "@darkforest_eth/hashing@^6.7.19":
-  version "6.7.26"
-  resolved "https://registry.yarnpkg.com/@darkforest_eth/hashing/-/hashing-6.7.26.tgz#c0dc055ff016a76f56221c82b4a9d1572291ee39"
-  integrity sha512-lucpebAdp+13zX+AMNuqJAdLcm0uqLfbwbo8SK0ZYSRg0NxFyZm9veaUXbUSB7RKxL9vM3ciUQeGy5Mcz4iFlg==
+  version "6.7.28"
+  resolved "https://registry.yarnpkg.com/@darkforest_eth/hashing/-/hashing-6.7.28.tgz#16873a55697d1c01f8aa4e07afc05c638c6ef8b9"
+  integrity sha512-hYO/XE2W79UH1DMwvefIOT+4WerezwflndZIQtcnoL9FRVMziXJ2hBTBBP1797UuOu7kRASskgrIlnCyt04Z4Q==
   dependencies:
-    "@darkforest_eth/types" "6.7.26"
+    "@darkforest_eth/types" "6.7.28"
     big-integer "^1.6.48"
 
-"@darkforest_eth/types@6.7.26":
-  version "6.7.26"
-  resolved "https://registry.yarnpkg.com/@darkforest_eth/types/-/types-6.7.26.tgz#4c512b22c383d5af4bef7a65d553438f9687b79c"
-  integrity sha512-Rf/7+tBHam+k46lZhL9ZDh44Evj+NGPs6YqGyrdcqdaFVUJ4iaC3Jl1gXAr2nzd5cevUY2vaTr2Yzh3WDTKdsA==
+"@darkforest_eth/types@6.7.28":
+  version "6.7.28"
+  resolved "https://registry.yarnpkg.com/@darkforest_eth/types/-/types-6.7.28.tgz#32810392b5ddc2868979350690d1ae6e19a2a7c4"
+  integrity sha512-AKOiGR/8zgFQyQVUfyLJ7uUKGI/t9TvTu1GFzJ6vPCCIrhRkfPYvkbO2n1VzUfQVEtJtOkaSr/1Lg71y/J6FaQ==
   dependencies:
     "@types/gl-matrix" "^3.2.0"
     big-integer "^1.6.48"
@@ -1643,9 +1643,9 @@ blake2b-wasm@^2.3.0, blake2b-wasm@^2.4.0:
     b4a "^1.0.1"
     nanoassert "^2.0.0"
 
-"blake2b-wasm@https://github.com/jbaylina/blake2b-wasm.git":
+"blake2b-wasm@git+https://github.com/jbaylina/blake2b-wasm.git":
   version "2.1.0"
-  resolved "https://github.com/jbaylina/blake2b-wasm.git#0d5f024b212429c7f50a7f533aa3a2406b5b42b3"
+  resolved "git+https://github.com/jbaylina/blake2b-wasm.git#0d5f024b212429c7f50a7f533aa3a2406b5b42b3"
   dependencies:
     nanoassert "^1.0.0"
 
@@ -6092,7 +6092,7 @@ shebang-regex@^3.0.0:
   resolved "https://registry.yarnpkg.com/shebang-regex/-/shebang-regex-3.0.0.tgz#ae16f1644d873ecad843b0307b143362d4c42172"
   integrity sha512-7++dFhtcx3353uBaq8DDR4NuxBetBzC7ZQOhmTQInHEd6bSrXdiEyzCvG07Z44UYdLShWUyXt5M/yhz8ekcb1A==
 
-shelljs@^0.8.4, shelljs@^0.8.5:
+shelljs@^0.8.4:
   version "0.8.5"
   resolved "https://registry.yarnpkg.com/shelljs/-/shelljs-0.8.5.tgz#de055408d8361bed66c669d2f000538ced8ee20c"
   integrity sha512-TiwcRcrkhHvbrZbnRcFYMLl30Dfov3HKqzp5tO5b4pt6G/SezKcYhmDg15zXVBswHmctSAQKznqNW2LO5tTDow==
@@ -6195,7 +6195,7 @@ snarkjs@0.4.10:
     r1csfile "0.0.33"
     readline "^1.3.0"
 
-snarkjs@^0.4.14, snarkjs@^0.4.16:
+snarkjs@^0.4.14:
   version "0.4.16"
   resolved "https://registry.yarnpkg.com/snarkjs/-/snarkjs-0.4.16.tgz#d855e0a16f053806e514d12b8600c4f4b3f0eb97"
   integrity sha512-Q5nTANzZNp2VI/2ZLeWazioYs4P2tn0gzQfG/fctibLEZh8UgF2RX1xst42CFw6WrsytB8WqPRH1JghN5OrEyg==
