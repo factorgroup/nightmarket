@@ -11,10 +11,10 @@ import {GetterInterface} from "./GetterInterface.sol";
 
 // Type imports
 import {
-    // RevealedCoords,
+    RevealedCoords,
     // ArrivalData,
     // Planet,
-    // PlanetExtendedInfo,
+    PlanetExtendedInfo,
     // PlanetExtendedInfo2,
     // PlanetEventType,
     // PlanetEventMetadata,
@@ -49,7 +49,7 @@ contract NightMarket is ReentrancyGuard {
 
     struct Listing {
         address payable seller;
-        uint planetId;
+        uint locationId;
         uint biomebase;
         uint keyCommitment;                 // H(key) being sold, can't store in events?
         uint nonce;
@@ -59,15 +59,15 @@ contract NightMarket is ReentrancyGuard {
         mapping (uint => Order ) orders;    // uint is just buyer address, only 1 active buy/lsiting at atime, Make it public?
     }
 
-    // Game Constants
-    SnarkConstants gameConstants;
-
     // States
     uint public numListings;                       // incremental, maybe use Counters.sol
     mapping (uint => Listing) public listings;     // uint is incremental; make this public?
 
     // DF storage contract
     GetterInterface df;
+
+    // Game Constants
+    SnarkConstants public gameConstants;
 
     // Verifier functions
     ListVerifier public listVerifier;
@@ -80,19 +80,16 @@ contract NightMarket is ReentrancyGuard {
     event Sold();
     event Refunded();
 
-    // Checks planet hash is actually in the game
     // TODO write test for this
     modifier validPlanet(uint locationId) {
-        uint256[] memory locIds = new uint256[](1);
-        ids[0] = locationId;
-        PlanetData[] memory p = df.bulkGetPlanetsDataByIds(ids);
-
-        // TODO: double check this is expected in game behavior
-        // planetevent metadata? DFPInitPlanetArgs
-        // location is loggedat 2 places, AdminCreatePlanetArgs, DFInitPlanetARgs
-        // Do both emit events?
-        // check is not revealed, check in getRevealedCoords(planethash) => .locationid
-        require(true);
+        require(
+            df.planetsExtendedInfo(locationId).isInitialized,
+            "Planet doesn't exit or is not initialized"
+        );
+        require(
+            df.revealedCoords(locationId).locationId != locationId,
+            "Planet coordinates have already been revealed"
+        );
         _;
     }
 
@@ -102,23 +99,21 @@ contract NightMarket is ReentrancyGuard {
         SaleVerifier _saleVerifier,
         address _dfGetterContract
     ) {
-        // Reference the deployed verifier contracts
-
+        // Initialize with verifier contracts
         listVerifier = _listVerifier;
         saleVerifier = _saleVerifier;
         
-        //TODO(later): initialize w/ diamond address with additional checks
+        //TODO(later): initialize w/ diamond address rather than DFGetterFacet contract?
         df = GetterInterface(_dfGetterContract);
         
-        // TODO: get this working with existing game contract
-        require(df.getSnarkConstants().PLANETHASH_KEY == 12345);
         gameConstants = df.getSnarkConstants();
     }
 
     /**
     * @notice Seller can list a secret Dark Forest coordinate for sale
     * @dev `proof` is a zkSnarks proof defined in `list.circom`
-    * @param _proof The listing_id proof 
+    * @param _proof The listing_id proof
+    * @return listingId as in listings[listingId] => Listing 
     */
     function list(
         uint[8] memory _proof,
@@ -162,7 +157,7 @@ contract NightMarket is ReentrancyGuard {
 
         Listing storage l = listings[numListings];
         l.seller = payable(msg.sender);
-        l.planetId = _planetId;
+        l.locationId = _locationId;
         l.biomebase = _biomebase;
         l.keyCommitment = _keyCommitment;
         l.nonce = _nonce;
