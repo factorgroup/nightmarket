@@ -36,6 +36,7 @@ describe("List coordinates test", function () {
 			{
 				PLANETHASH_KEY,
 				"BIOMEBASE_KEY": 8,
+				"SPACETYPE_KEY": 0,
 				"SCALE": 4096,
 				"xMirror": 0,
 				"yMirror": 0,
