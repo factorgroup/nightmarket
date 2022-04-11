@@ -1,0 +1,37 @@
+// SPDX-License-Identifier: GPL-3.0
+pragma solidity >=0.8.0;
+
+// Storage imports
+import {WithStorage, SnarkConstants, GameConstants} from "../github/darkforest-eth/eth/contracts/libraries/LibStorage.sol";
+
+// Type imports
+import {
+    RevealedCoords,
+    // ArrivalData,
+    // Planet,
+    PlanetExtendedInfo,
+    // PlanetExtendedInfo2,
+    // PlanetEventType,
+    // PlanetEventMetadata,
+    // PlanetDefaultStats,
+    PlanetData
+    // Player,
+    // ArtifactWithMetadata,
+    // Upgrade,
+    // Artifact
+} from "../github/darkforest-eth/eth/contracts/DFTypes.sol";
+
+
+// A subset of functions here: https://github.com/darkforest-eth/eth/blob/master/contracts/facets/DFGetterFacet.sol
+interface GetterInterface {
+    // Main game queries
+    function getSnarkConstants() external pure returns (SnarkConstants memory);
+    function planetsExtendedInfo(uint256 key) external view returns (PlanetExtendedInfo memory);
+    function revealedCoords(uint256 key) external view returns (RevealedCoords memory);
+
+    // function planetIds(uint256 idx) external view returns (uint256);
+    // function revealedPlanetIds(uint256 idx) external view returns (uint256);
+    // function getNPlanets() external view returns (uint256);
+    // function getNRevealedPlanets() external view returns (uint256);
+    // function bulkGetPlanetsDataByIds(uint256[] calldata ids) external view returns (PlanetData[] memory ret);
+}

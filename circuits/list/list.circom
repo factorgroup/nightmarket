@@ -11,10 +11,10 @@ include "../util/perlin.circom";
 include "../util/poseidon.circom";
 
 template List () {
-    // Public constant inputs
-    // TODO(later): just use constants here?
+    // Public game-level constants
     signal input PLANETHASH_KEY;
     signal input BIOMEBASE_KEY;
+    signal input SPACETYPE_KEY;
     signal input SCALE;
     signal input xMirror;
     signal input yMirror;
@@ -76,4 +76,4 @@ template List () {
     seller_square <== seller_address * seller_address;
 }
 
-component main { public [ PLANETHASH_KEY, BIOMEBASE_KEY, SCALE, xMirror, yMirror, listing_id, nonce, key_commitment, planet_id, biomebase, seller_address ] } = List();
+component main { public [ PLANETHASH_KEY, BIOMEBASE_KEY, SPACETYPE_KEY, SCALE, xMirror, yMirror, listing_id, nonce, key_commitment, planet_id, biomebase, seller_address ] } = List();
