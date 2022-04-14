@@ -2,12 +2,15 @@
 pragma solidity >=0.8.0;
 
 import "../github/OpenZeppelin/openzeppelin-contracts/contracts/security/ReentrancyGuard.sol";
-import {WithStorage, SnarkConstants, GameConstants} from "../github/darkforest-eth/eth/contracts/libraries/LibStorage.sol";
 import {Verifier as ListVerifier} from "./listVerifier.sol";
 import {Verifier as SaleVerifier} from "./saleVerifier.sol";
 
-// DF imports
-import {GetterInterface} from "./GetterInterface.sol";
+// DF interface imports
+import {WithStorage, SnarkConstants, GameConstants} from "../github/darkforest-eth/eth/contracts/libraries/LibStorage.sol";
+// import {IDiamondLoupe} from "../github/darkforest-eth/eth/contracts/vendor/interfaces/IDiamondLoupe.sol";
+
+// I need to use the ABI of a facet in Solidity code in order to call functions from a diamond.
+import {IGetter} from "./GetterInterface.sol";
 
 // Type imports
 import {
@@ -65,16 +68,17 @@ contract NightMarket is ReentrancyGuard {
     mapping (uint => Listing) public listings;     // Key starts at numListings=1
 
     // DF storage contract
-    GetterInterface df;
+    IGetter df;
 
     // Game Constants
-    SnarkConstants public gameConstants;
+    SnarkConstants public zkConstants;
 
     // Verifier functions
     ListVerifier public listVerifier;
     SaleVerifier public saleVerifier;
 
     // Events
+    event Contract(uint planetHash, uint SpacetypeHash);
     event Listed(address indexed seller, uint indexed listingId);
     event Delisted(address indexed seller, uint indexed listingId);
     event Asked();
@@ -98,14 +102,14 @@ contract NightMarket is ReentrancyGuard {
     (
         ListVerifier _listVerifier,
         SaleVerifier _saleVerifier,
-        address _dfGetterContract
+        address _gameContract
     ) {
         listVerifier = _listVerifier;
         saleVerifier = _saleVerifier;
-        
-        //TODO(later): initialize w/ diamond address rather than DFGetterFacet contract?
-        df = GetterInterface(_dfGetterContract);
-        gameConstants = df.getSnarkConstants();
+
+        df = IGetter(_gameContract);
+        zkConstants = df.getSnarkConstants();
+        emit Contract(zkConstants.PLANETHASH_KEY, zkConstants.SPACETYPE_KEY);
     }
 
     /**
@@ -132,12 +136,12 @@ contract NightMarket is ReentrancyGuard {
         require(_nonce < 2^218);
 
         uint256[15] memory publicInputs = [
-            gameConstants.PLANETHASH_KEY,
-            gameConstants.BIOMEBASE_KEY,
-            gameConstants.SPACETYPE_KEY,
-            gameConstants.PERLIN_LENGTH_SCALE,
-            boolToUInt(gameConstants.PERLIN_MIRROR_X),
-            boolToUInt(gameConstants.PERLIN_MIRROR_Y),
+            zkConstants.PLANETHASH_KEY,
+            zkConstants.BIOMEBASE_KEY,
+            zkConstants.SPACETYPE_KEY,
+            zkConstants.PERLIN_LENGTH_SCALE,
+            boolToUInt(zkConstants.PERLIN_MIRROR_X),
+            boolToUInt(zkConstants.PERLIN_MIRROR_Y),
             _coordEncryption[0],
             _coordEncryption[1],
             _coordEncryption[2],
