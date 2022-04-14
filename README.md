@@ -52,8 +52,11 @@ Scheme: Encryption using a 5-wide Poseidon in SpongeWrap with (0, len=2, Kx ,Ky 
 	- key[1] = k_y of shared key
 
 ## Escrow Contract
-- [WiP Specifications](https://hackmd.io/@Ly6HjY60Qki-GQ9UJ6n5Kw/H1aXQsWmc)
-
+- `list(..., listProof, price, escrowTime)`: sellers can list valid coordinates and vary `price` & `escrowTime` for better buyer UX. (Note: it prevents malicious-buyer race condition). Sellers can sell a single coordinate to multiple buyers.
+- `delist(...)`: sellers can delist coordinates if they plan to be offline. This helps with seller reputation as this zk marketplace has to be interactive.
+- `ask(...)`: buyers can create (duplicate) orders on listings and lock up a payment for `escrowTime` blocks.
+- `sale(..., saleProof)`: sellers can close a sale and fulfill a buyer order.
+- `refund(...)`: anyone can refund buyers deposit if seller delists or if the `escrowTime` lockup is over.
 ## Acknowledgements
 - 0xParc for study group
 - [DF plugins](https://github.com/darkforest-eth/plugins)
