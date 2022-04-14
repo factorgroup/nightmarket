@@ -2,12 +2,11 @@
 pragma solidity >=0.8.0;
 
 import "../github/OpenZeppelin/openzeppelin-contracts/contracts/security/ReentrancyGuard.sol";
-import {Verifier as ListVerifier} from "./listVerifier.sol";
-import {Verifier as SaleVerifier} from "./saleVerifier.sol";
+import {IVerifier as IListVerifier} from "./listVerifier.sol";
+import {IVerifier as ISaleVerifier} from "./saleVerifier.sol";
 
 // DF interface imports
 import {WithStorage, SnarkConstants, GameConstants} from "../github/darkforest-eth/eth/contracts/libraries/LibStorage.sol";
-// import {IDiamondLoupe} from "../github/darkforest-eth/eth/contracts/vendor/interfaces/IDiamondLoupe.sol";
 
 // I need to use the ABI of a facet in Solidity code in order to call functions from a diamond.
 import {IGetter} from "./GetterInterface.sol";
@@ -68,14 +67,14 @@ contract NightMarket is ReentrancyGuard {
     mapping (uint => Listing) public listings;     // Key starts at numListings=1
 
     // DF storage contract
-    IGetter df;
+    IGetter public immutable df;
 
     // Game Constants
     SnarkConstants public zkConstants;
 
     // Verifier functions
-    ListVerifier public listVerifier;
-    SaleVerifier public saleVerifier;
+    IListVerifier public immutable listVerifier;
+    ISaleVerifier public immutable saleVerifier;
 
     // Events
     event Contract(uint planetHash, uint SpacetypeHash);
@@ -98,10 +97,16 @@ contract NightMarket is ReentrancyGuard {
         _;
     }
 
+    /**
+        @dev The constructor
+        @param _listVerifier the address of SNARK List Verifier for this contract
+        @param _saleVerifier the address of SNARK Sale Verifier for this contract
+        @param _gameContract the address of the Dark Forest game
+    */
     constructor
     (
-        ListVerifier _listVerifier,
-        SaleVerifier _saleVerifier,
+        IListVerifier _listVerifier,
+        ISaleVerifier _saleVerifier,
         address _gameContract
     ) {
         listVerifier = _listVerifier;
