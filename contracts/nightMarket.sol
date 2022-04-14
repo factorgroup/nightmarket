@@ -45,7 +45,7 @@ contract NightMarket is ReentrancyGuard {
     struct Order {
         address payable buyer;
         uint expectedSharedKeyHash;
-        uint created;                       // block timestamp when order was created
+        uint created;                       // block number when order was created
         bool isActive;                      // inactive after refund/sale
     }
 
