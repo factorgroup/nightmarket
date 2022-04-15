@@ -4,8 +4,8 @@ pragma solidity >=0.8.0;
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
 // Zk verifiers
-import {IVerifier as IListVerifier} from "./listVerifier.sol";
-import {IVerifier as ISaleVerifier} from "./saleVerifier.sol";
+import {IVerifier as IListVerifier} from "./ListVerifier.sol";
+import {IVerifier as ISaleVerifier} from "./SaleVerifier.sol";
 
 // DF interface imports
 import {WithStorage, SnarkConstants, GameConstants} from "./darkforest/LibStorage.sol";
