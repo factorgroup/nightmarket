@@ -3,12 +3,34 @@ const { ethers } = require("hardhat");
 
 let nmFactory;
 let nm;
+let lv;
+let sv;
+let game;
+
 let seller;
 let buyer;
 let anyone;
 
-beforeEach(async function () {
+/**
+ * Generates a game mock contract and deploys the Verifiers
+ */
+before(async function () {
 	[seller, buyer, anyone, ...addrs] = await ethers.getSigners();
+
+	const lvFactory = await ethers.getContractFactory("ListVerifier");
+	lv = await NightMarket.deploy();
+
+	const svFactory = await ethers.getContractFactory("SaleVerifier");
+	sv = await NightMarket.deploy();
+
+	const gameFactory = await ethers.getContractFactory("MockGameContract");
+	game = await NightMarket.deploy();
+});
+
+/**
+ * Deploys fresh contract for each unit test
+ */
+beforeEach(async function () {
 
 	nmFactory = await ethers.getContractFactory("NightMarket");
 
