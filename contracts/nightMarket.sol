@@ -63,7 +63,7 @@ contract NightMarket is ReentrancyGuard {
     // Game Constants
     SnarkConstants public zkConstants;
 
-    // Verifier functions
+    // Verifiers
     IListVerifier public immutable listVerifier;
     ISaleVerifier public immutable saleVerifier;
 
