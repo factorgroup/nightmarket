@@ -8,8 +8,10 @@ A 0xParc Learning Group project - work in progress.
 
 ## Quickstart
 - Install: `yarn install`
-- Test circuits: `yarn test`
-- Deploy circuits: `circom:prod`
+- Test circuits: `yarn circom:test`
+- Deploy circuits: `yarn circom:prod`
+- Format verifier contracts: `yarn sol:verify`
+- Compile contracts: `yarn sol:compile`
 
 ## Directory
 - `/circuits/list`: Circuits for generating a coordinate listing
