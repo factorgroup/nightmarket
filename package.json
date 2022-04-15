@@ -12,6 +12,7 @@
     "sol:compile": "npx hardhat compile"
   },
   "devDependencies": {
+    "@darkforest_eth/contracts": "^6.7.29",
     "@darkforest_eth/hashing": "^6.7.19",
     "@nomiclabs/hardhat-ethers": "^2.0.5",
     "@nomiclabs/hardhat-waffle": "^2.0.3",

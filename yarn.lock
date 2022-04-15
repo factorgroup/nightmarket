@@ -286,6 +286,14 @@
     exec-sh "^0.3.2"
     minimist "^1.2.0"
 
+"@darkforest_eth/contracts@^6.7.29":
+  version "6.7.29"
+  resolved "https://registry.yarnpkg.com/@darkforest_eth/contracts/-/contracts-6.7.29.tgz#8714125e060c64c3b00e64ceb106fba523511244"
+  integrity sha512-XRQAeZwg1VxODi67oj4KROgTrP+Tuk15DdDYXXc0hvUswtMBLrqHkYqkfUNeHu+YzyFeJas4OU3nPNJ6V+/eBA==
+  dependencies:
+    "@ethersproject/providers" "^5.5.1"
+    ethers "^5.5.1"
+
 "@darkforest_eth/hashing@^6.7.19":
   version "6.7.28"
   resolved "https://registry.yarnpkg.com/@darkforest_eth/hashing/-/hashing-6.7.28.tgz#16873a55697d1c01f8aa4e07afc05c638c6ef8b9"
@@ -695,7 +703,7 @@
     bech32 "1.1.4"
     ws "7.4.6"
 
-"@ethersproject/providers@5.6.4":
+"@ethersproject/providers@5.6.4", "@ethersproject/providers@^5.5.1":
   version "5.6.4"
   resolved "https://registry.yarnpkg.com/@ethersproject/providers/-/providers-5.6.4.tgz#1a49c211b57b0b2703c320819abbbfa35c83dff7"
   integrity sha512-WAdknnaZ52hpHV3qPiJmKx401BLpup47h36Axxgre9zT+doa/4GC/Ne48ICPxTm0BqndpToHjpLP1ZnaxyE+vw==
