@@ -89,6 +89,7 @@ contract NightMarket is ReentrancyGuard {
             df.planetsExtendedInfo(locationId).isInitialized,
             "Planet doesn't exit or is not initialized"
         );
+
         require(
             df.revealedCoords(locationId).locationId != locationId,
             "Planet coordinates have already been revealed"
@@ -130,7 +131,7 @@ contract NightMarket is ReentrancyGuard {
         uint256 _locationId,
         uint256 _biomebase,
         uint256 _price,
-        uint64 _escrowTime
+        uint256 _escrowTime
     ) external validPlanet(_locationId) returns (uint256 listingId) {
         require(_nonce < 2 ^ 218, "Nonce must be smaller than 2^218");
 
