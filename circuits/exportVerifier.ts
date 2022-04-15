@@ -1,11 +1,15 @@
 import * as fs from 'fs'
 
+function Capitalize(string) {
+	return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
 const main = async (
 	circuitName: string
 ) => {
 
 	// Note: hardcoded paths here
-	const verifierSolPath = `./contracts/${circuitName}Verifier.sol`
+	const verifierSolPath = `./contracts/${Capitalize(circuitName)}Verifier.sol`
 	const verifierTemplatePath = `./circuits/verifierTemplate.sol`
 	const vkJsonPath = `./client/${circuitName}/${circuitName}.vkey.json`
 

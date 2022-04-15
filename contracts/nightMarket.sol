@@ -1,91 +1,85 @@
 // SPDX-License-Identifier: GPL-3.0
 pragma solidity >=0.8.0;
 
-import "../github/OpenZeppelin/openzeppelin-contracts/contracts/security/ReentrancyGuard.sol";
-import {IVerifier as IListVerifier} from "./listVerifier.sol";
-import {IVerifier as ISaleVerifier} from "./saleVerifier.sol";
+import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+
+// Zk verifiers
+import {IVerifier as IListVerifier} from "./ListVerifier.sol";
+import {IVerifier as ISaleVerifier} from "./SaleVerifier.sol";
 
 // DF interface imports
-import {WithStorage, SnarkConstants, GameConstants} from "../github/darkforest-eth/eth/contracts/libraries/LibStorage.sol";
+import {WithStorage, SnarkConstants, GameConstants} from "./darkforest/LibStorage.sol";
 
-// I need to use the ABI of a facet in Solidity code in order to call functions from a diamond.
-import {IGetter} from "./GetterInterface.sol";
+// DF type imports
+import {RevealedCoords, PlanetExtendedInfo, PlanetData} from "./darkforest/DFTypes.sol";
 
-// Type imports
-import {
-    RevealedCoords,
-    // ArrivalData,
-    // Planet,
-    PlanetExtendedInfo,
-    // PlanetExtendedInfo2,
-    // PlanetEventType,
-    // PlanetEventMetadata,
-    // PlanetDefaultStats,
-    PlanetData
-    // Player,
-    // ArtifactWithMetadata,
-    // Upgrade,
-    // Artifact
-} from "../github/darkforest-eth/eth/contracts/DFTypes.sol";
+// A (reduced) interface for DFGetterFacet
+import {IGetter} from "./darkforest/GetterInterface.sol";
 
-function boolToUInt(bool x) pure returns (uint r) {
-  assembly { r := x }
+/**
+ * @dev Converts boolean to int
+ */
+function boolToUInt(bool x) pure returns (uint256 r) {
+    assembly {
+        r := x
+    }
 }
 
 /**
  * @title NightMarket
  * @author @0xSage
  * @notice
- * @dev 
+ * @dev
  * @custom:experimental
  */
 contract NightMarket is ReentrancyGuard {
-
     //  Type
     struct Order {
         address payable buyer;
-        uint expectedSharedKeyHash;
-        uint created;                       // block number when order was created
-        bool isActive;                      // inactive after refund/sale
+        uint256 expectedSharedKeyHash;
+        uint256 created; // block number when order was created
+        bool isActive; // inactive after refund/sale
     }
 
     struct Listing {
         address payable seller;
-        uint locationId;                    // TODO: prob doesn't need to be stored, just emitted
-        uint biomebase;                     // TODO: prob doesn't need to be stored, just emitted
-        uint keyCommitment;                 // H(key) being sold, can't store in events?
-        uint nonce;                         // prob doesn't need to be stored, just emitted
-        uint price;                         // cost of key to coordinates
-        uint escrowTime;                    // Time in "number of blocks" a buyer's deposit is locked up for
-        bool isActive;                      // depends on if we allow sellers to delist
-        uint numOrders;
-        mapping (uint => Order ) orders;    // key starts at numOrders=1
+        uint256 locationId; // TODO: prob doesn't need to be stored, just emitted
+        uint256 biomebase; // TODO: prob doesn't need to be stored, just emitted
+        uint256 keyCommitment; // H(key) being sold, can't store in events?
+        uint256 nonce; // prob doesn't need to be stored, just emitted
+        uint256 price; // cost of key to coordinates
+        uint256 escrowTime; // Time in "number of blocks" a buyer's deposit is locked up for
+        bool isActive; // depends on if we allow sellers to delist
+        uint256 numOrders;
+        mapping(uint256 => Order) orders; // key starts at numOrders=1
     }
 
-    // States
-    uint public numListings;                       // TODO: maybe use Counters.sol for safer math
-    mapping (uint => Listing) public listings;     // Key starts at numListings=1
+    uint256 public numListings; // TODO: maybe use Counters.sol for safer math
+    mapping(uint256 => Listing) public listings; // Key starts at numListings=1
 
-    // DF storage contract
+    // DF storage getter
     IGetter public immutable df;
 
     // Game Constants
     SnarkConstants public zkConstants;
 
-    // Verifier functions
+    // Verifiers
     IListVerifier public immutable listVerifier;
     ISaleVerifier public immutable saleVerifier;
 
     // Events
-    event Contract(uint planetHash, uint SpacetypeHash);
-    event Listed(address indexed seller, uint indexed listingId);
-    event Delisted(address indexed seller, uint indexed listingId);
+    event Contract(uint256 planetHash, uint256 SpacetypeHash);
+    event Listed(address indexed seller, uint256 indexed listingId);
+    event Delisted(address indexed seller, uint256 indexed listingId);
     event Asked();
-    event Sold(uint nonce);
+    event Sold(uint256 nonce);
     event Refunded();
 
-    // TODO write test for this
-    modifier validPlanet(uint locationId) {
+    /**
+     * @notice Checks planet is in game and not revealed yet
+     * @param locationId The hash of xy coordinates
+     */
+    modifier validPlanet(uint256 locationId) {
         require(
             df.planetsExtendedInfo(locationId).isInitialized,
             "Planet doesn't exit or is not initialized"
@@ -98,13 +92,12 @@ contract NightMarket is ReentrancyGuard {
     }
 
     /**
-        @dev The constructor
-        @param _listVerifier the address of SNARK List Verifier for this contract
-        @param _saleVerifier the address of SNARK Sale Verifier for this contract
-        @param _gameContract the address of the Dark Forest game
-    */
-    constructor
-    (
+     * @dev The constructor
+     * @param _listVerifier the address of SNARK List Verifier for this contract
+     * @param _saleVerifier the address of SNARK Sale Verifier for this contract
+     * @param _gameContract the address of the Dark Forest game
+     */
+    constructor(
         IListVerifier _listVerifier,
         ISaleVerifier _saleVerifier,
         address _gameContract
@@ -118,27 +111,23 @@ contract NightMarket is ReentrancyGuard {
     }
 
     /**
-    * @notice Seller can list a secret Dark Forest coordinate for sale
-    * @dev Seller generates `_proof` offchain in `list.circom`.
-    * @param _proof The listing_id proof from seller
-    * @param _coordEncryption The pre-encrypted coordinates from seller
-    * @return listingId indexes at 1
-    */
+     * @notice Seller can list a secret Dark Forest coordinate for sale
+     * @dev Seller generates `_proof` offchain in `list.circom`.
+     * @param _proof The listing_id proof from seller
+     * @param _coordEncryption The pre-encrypted coordinates from seller
+     * @return listingId indexes at 1
+     */
     function list(
-        uint[8] memory _proof,
-        uint[4] memory _coordEncryption,
-        uint _nonce,
-        uint _keyCommitment,
-        uint _locationId,
-        uint _biomebase,
-        uint _price,
+        uint256[8] memory _proof,
+        uint256[4] memory _coordEncryption,
+        uint256 _nonce,
+        uint256 _keyCommitment,
+        uint256 _locationId,
+        uint256 _biomebase,
+        uint256 _price,
         uint64 _escrowTime
-    )
-        external
-        validPlanet(_locationId)
-        returns (uint listingId)
-    {
-        require(_nonce < 2^218, "Nonce must be smaller than 2^218");
+    ) external validPlanet(_locationId) returns (uint256 listingId) {
+        require(_nonce < 2 ^ 218, "Nonce must be smaller than 2^218");
 
         uint256[15] memory publicInputs = [
             zkConstants.PLANETHASH_KEY,
@@ -157,7 +146,7 @@ contract NightMarket is ReentrancyGuard {
             _biomebase,
             uint256(uint160(address(msg.sender)))
         ];
-        
+
         require(
             listVerifier.verify(_proof, publicInputs),
             "Seller list coordinates: invalid proof"
@@ -180,11 +169,11 @@ contract NightMarket is ReentrancyGuard {
     }
 
     /**
-    * @notice Seller can delist an active listing
-    * @dev Sellers who care about reputation will use this fn, otherwise, unlikely
-    * @param _listingId the ID from list() step
-    */
-    function delist(uint _listingId) external {
+     * @notice Seller can delist an active listing
+     * @dev Sellers who care about reputation will use this fn, otherwise, unlikely
+     * @param _listingId the ID from list() step
+     */
+    function delist(uint256 _listingId) external {
         Listing storage l = listings[_listingId];
         require(l.isActive, "Listing is already inactive");
         require(msg.sender == l.seller, "Only seller can delist their listing");
@@ -193,16 +182,20 @@ contract NightMarket is ReentrancyGuard {
     }
 
     /**
-    * @notice Buyer can ask for order(s) from active listings
-    * @dev A listing can have multiple orders from same buyer
-    * @param _expectedSharedKeyHash A H(ecdh(buyerPrivKey, sellerPubKey)) computed by Buyer
-    * return orderId Buyer keeps this for future refunds
-    */
-    function ask(uint _listingId, uint _expectedSharedKeyHash) external payable returns (uint orderId) {
+     * @notice Buyer can ask for order(s) from active listings
+     * @dev A listing can have multiple orders from same buyer
+     * @param _expectedSharedKeyHash A H(ecdh(buyerPrivKey, sellerPubKey)) computed by Buyer
+     * return orderId Buyer keeps this for future refunds
+     */
+    function ask(uint256 _listingId, uint256 _expectedSharedKeyHash)
+        external
+        payable
+        returns (uint256 orderId)
+    {
         Listing storage l = listings[_listingId];
         require(l.isActive, "Listing is no longer active");
         require(msg.value == l.price, "Payment is incorrect");
-        
+
         l.orders[l.numOrders++] = Order({
             buyer: payable(msg.sender),
             expectedSharedKeyHash: _expectedSharedKeyHash,
@@ -214,23 +207,23 @@ contract NightMarket is ReentrancyGuard {
     }
 
     /**
-    * @notice Seller can submit a proof of sale.
-    * @dev Seller generates `_proof` offchain in `sale.circom`
-    * @param _buyerPubKey We have buyer input this in the correct format to save gas
-    * It is safe bc any pubKey is ultimately constrained with expectedSharedKeyHash
-    */
+     * @notice Seller can submit a proof of sale.
+     * @dev Seller generates `_proof` offchain in `sale.circom`
+     * @param _buyerPubKey We have buyer input this in the correct format to save gas
+     * It is safe bc any pubKey is ultimately constrained with expectedSharedKeyHash
+     */
     function sale(
-        uint _listingId,
-        uint _orderId,
-        uint[2] memory _buyerPubKey,
-        uint[8] memory _proof,
-        uint[4] memory _keyEncryption,
-        uint _nonce
+        uint256 _listingId,
+        uint256 _orderId,
+        uint256[2] memory _buyerPubKey,
+        uint256[8] memory _proof,
+        uint256[4] memory _keyEncryption,
+        uint256 _nonce
     ) external nonReentrant {
         Listing storage l = listings[_listingId];
         require(l.seller == msg.sender, "Only seller can close sale");
         require(l.isActive, "Listing is inactive");
-        require(_nonce < 2^218, "Nonce must be smaller than 2^218");
+        require(_nonce < 2 ^ 218, "Nonce must be smaller than 2^218");
 
         Order storage o = l.orders[_orderId];
         require(o.isActive, "Order is inactive");
@@ -247,22 +240,26 @@ contract NightMarket is ReentrancyGuard {
             o.expectedSharedKeyHash
         ];
 
-        require(saleVerifier.verify(_proof, publicInputs), "sale proof invalid");
+        require(
+            saleVerifier.verify(_proof, publicInputs),
+            "sale proof invalid"
+        );
 
         o.isActive = false;
 
         l.seller.transfer(l.price);
-        
+
         emit Sold(_nonce);
     }
 
     /**
-    * @notice Anyone can request a refund on a qualifying order
-    * @dev Seller can also force refund (spam) buyers who submitted invalid expectedSharedKeyHash
-    * @param _listingId the ID from list() step
-    * @param _orderId the ID from ask() step
-    */
-    function refund(uint _listingId, uint _orderId) public nonReentrant {        //orderid, callable by anyone? or just buyer... becareful of contract buyers
+     * @notice Anyone can request a refund on a qualifying order
+     * @dev Seller can also force refund (spam) buyers who submitted invalid expectedSharedKeyHash
+     * @param _listingId the ID from list() step
+     * @param _orderId the ID from ask() step
+     */
+    function refund(uint256 _listingId, uint256 _orderId) public nonReentrant {
+        //orderid, callable by anyone? or just buyer... becareful of contract buyers
         Listing storage l = listings[_listingId];
         Order storage o = l.orders[_orderId];
         require(o.isActive, "Order previously refunded");
@@ -276,8 +273,12 @@ contract NightMarket is ReentrancyGuard {
     }
 
     // TODO: safe math this
-    function _escrowExpired(uint _created, uint _escrowTime) internal view returns (bool) {    
-        uint elapsed = block.number - _escrowTime; 
-        return ( elapsed > _created );
+    function _escrowExpired(uint256 _created, uint256 _escrowTime)
+        internal
+        view
+        returns (bool)
+    {
+        uint256 elapsed = block.number - _escrowTime;
+        return (elapsed > _created);
     }
 }
