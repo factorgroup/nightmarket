@@ -24,13 +24,27 @@ let seller;
 let buyer;
 let anyone;
 
-// Planet constants used by tests
-const VALID_X = 1764;
-const VALID_Y = 21888242871839275222246405745257275088548364400416034343698204186575808492485;
+// Valid planet constants
+//@dev: Contracts expect input in format: BigNumber.from(`0x${VALID_LOCATION_ID}`
+const VALID_X = "1764";
+const VALID_Y = "21888242871839275222246405745257275088548364400416034343698204186575808492485";
 let VALID_LOCATION_ID;
 
+
+// Invalid planet constants
 const UNINITIALIZED_PLANET = 123;
 const REVEALED_PLANET = 456;
+
+// List proof constants
+const MESSAGE = [VALID_X, VALID_Y];
+const KEY = [123, 456];
+const LISTING_ID = poseidonCipher.encrypt(MESSAGE, KEY, 0);
+const KEY_COMMITMENT = mimcHash(0)(KEY[0], KEY[1]).toString();
+const NONCE = 0;
+const BIOMBASE = 12;
+
+// Sale proof constants
+
 
 /**
  * Generates a game mock contract and deploys the Verifiers
@@ -47,6 +61,7 @@ before(async function () {
 	// Construct stubs for the game contract
 	fakeGame = await smock.fake(gameJSON.abi);
 
+	// Stub snark constants
 	fakeGame.getSnarkConstants.returns({
 		DISABLE_ZK_CHECKS: false,
 		PLANETHASH_KEY: 7,
@@ -57,6 +72,9 @@ before(async function () {
 		PERLIN_LENGTH_SCALE: 0
 	});
 
+	VALID_LOCATION_ID = mimcHash(fakeGame.PLANETHASH_KEY)(VALID_X, VALID_Y).toString();
+
+	// Stub planet is initialized
 	fakeGame.planetsExtendedInfo.returns({
 		isInitialized: true,
 		createdAt: 0,
@@ -73,17 +91,10 @@ before(async function () {
 		spaceJunk: 0
 	});
 
-	// this.hex = hex;
-	// this.id = BigNumber.from(`0x${hex}`);
-	VALID_LOCATION_ID = mimcHash(fakeGame.PLANETHASH_KEY)(VALID_X.toString(), VALID_Y.toString());
-	console.log(VALID_LOCATION_ID.toString());
-	VALID_LOCATION_ID = 8494374857485429681618758289952517922713085356205028291274975976067104607094;//BigNumber.from(VALID_LOCATION_ID.toString()).toNumber();
-	console.log(VALID_LOCATION_ID);
-
-	// Stub valid planet, TODO fix this
+	// Stub no revealed coordinates
 	fakeGame.revealedCoords.returns({
-		locationId: 0,
-		x: VALID_X,
+		locationId: 3456345,
+		x: 0,
 		y: 0,
 		revealer: constants.AddressZero
 	});
@@ -135,23 +146,31 @@ describe("NightMarket contract", function () {
 			revealer: constants.AddressZero
 		});
 
-		// Note: I would do to.be.revertedWith(error), but this is annoyingly broken in waffle
+		// Note: I would do to.be.revertedWith(error), but this is annoyingly broken
 		let error = await expect(
 			nightmarket.list(
-				getListProof(), getListingId(), 0, 0, UNINITIALIZED_PLANET, 0, 0, 0
+				getListProof(), LISTING_ID, NONCE, KEY_COMMITMENT, UNINITIALIZED_PLANET, BIOMBASE, 0, 0
 			)).to.be.reverted;
-		console.log(error.toString());
 		expect(error.toString()).to.contain('Planet doesn\'t exit or is not initialized');
 
 		error = await expect(
 			nightmarket.list(
-				getListProof(), getListingId(), 0, 0, REVEALED_PLANET, 0, 0, 0
+				getListProof(), LISTING_ID, NONCE, KEY_COMMITMENT, REVEALED_PLANET, BIOMEBASE, 0, 0
 			)).to.be.reverted;
 		expect(error.toString()).to.contain('Planet coordinates have already been revealed');
 	});
 
-	it("List: Seller can list", async function () {
+	it("List: Seller can list with valid proof", async function () {
+		const badProof = [0, 0, 0, 0, 0, 0, 0, 0];
+		let error = await expect(
+			nightmarket.list(
+				badProof, LISTING_ID, NONCE, KEY_COMMITMENT, VALID_LOCATION_ID, BIOMEBASE, 10, 10
+			)).to.be.reverted;
+		expect(error.toString()).to.contain('Seller list coordinates: invalid proof');
+
+
 		// TODO test for events: https://docs.ethers.io/v4/cookbook-testing.html
+
 	});
 
 	it("Delist: Seller can delist", async function () {
@@ -178,10 +197,6 @@ describe("Helper functions", function () {
 // Helper fns
 // Must compute within the field...
 
-// basically these will be refactored as part of plugin
-function getListingId() {
-	return [0, 0, 0, 0]
-}
 function getListInputs() {
 	// const listing_id = poseidonCipher.encrypt(message, key, 0);
 }
