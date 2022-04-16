@@ -9,7 +9,8 @@ const { mimcHash } = require("@darkforest_eth/hashing");
 const poseidonCipher = require("../../client/poseidonCipher.js");
 const { formatDiagnosticsWithColorAndContext } = require("typescript");
 const { isAddress } = require("ethers/lib/utils");
-const { constants } = require("ethers");
+const { constants, BigNumber } = require("ethers");
+const { defaultAbiCoder } = require("@ethersproject/abi");
 
 
 // Contracts
@@ -23,10 +24,13 @@ let seller;
 let buyer;
 let anyone;
 
-// A valid planet used by tests
+// Planet constants used by tests
+const VALID_X = 1764;
+const VALID_Y = 21888242871839275222246405745257275088548364400416034343698204186575808492485;
 let VALID_LOCATION_ID;
-let VALID_X;
-let VALID_Y;
+
+const UNINITIALIZED_PLANET = 123;
+const REVEALED_PLANET = 456;
 
 /**
  * Generates a game mock contract and deploys the Verifiers
@@ -63,28 +67,26 @@ before(async function () {
 		upgradeState1: 0,
 		upgradeState2: 0,
 		hatLevel: 0,
-		hasTriedFindingArtifact: 0,
+		hasTriedFindingArtifact: false,
 		prospectedBlockNumber: 0,
 		destroyed: false,
 		spaceJunk: 0
 	});
 
-	// console.log('is valid address?');
-	// console.log(isAddress(anyone));
-	// anyone.getAddress()
+	// this.hex = hex;
+	// this.id = BigNumber.from(`0x${hex}`);
+	VALID_LOCATION_ID = mimcHash(fakeGame.PLANETHASH_KEY)(VALID_X.toString(), VALID_Y.toString());
+	console.log(VALID_LOCATION_ID.toString());
+	VALID_LOCATION_ID = 8494374857485429681618758289952517922713085356205028291274975976067104607094;//BigNumber.from(VALID_LOCATION_ID.toString()).toNumber();
+	console.log(VALID_LOCATION_ID);
 
+	// Stub valid planet, TODO fix this
 	fakeGame.revealedCoords.returns({
-		locationId: 546783,
-		x: 0,
+		locationId: 0,
+		x: VALID_X,
 		y: 0,
 		revealer: constants.AddressZero
 	});
-
-	// Initialize a valid planet
-	VALID_X = "1764";
-	VALID_Y = "21888242871839275222246405745257275088548364400416034343698204186575808492485";
-	VALID_LOCATION_ID = mimcHash(fakeGame.PLANETHASH_KEY)(9, 9).toString();
-
 });
 
 /**
@@ -108,30 +110,47 @@ describe("NightMarket contract", function () {
 		expect(saleAddress).to.equal(saleVerifier.address);
 	});
 
-	it("List: Coordinate must be valid", async function () {
+	it("validPlanet modifier", async function () {
 
-		const UNINITIALIZED_PLANET = 123;
-		const REVEALED_PLANET = 456;
+		fakeGame.planetsExtendedInfo.whenCalledWith(UNINITIALIZED_PLANET).returns({
+			isInitialized: false,
+			createdAt: 0,
+			lastUpdated: 0,
+			perlin: 0,
+			spaceType: 1,
+			upgradeState0: 0,
+			upgradeState1: 0,
+			upgradeState2: 0,
+			hatLevel: 0,
+			hasTriedFindingArtifact: false,
+			prospectedBlockNumber: 0,
+			destroyed: false,
+			spaceJunk: 0
+		});
 
-		let defaultInfo = await fakeGame.planetsExtendedInfo(9999);
-		fakeGame.planetsExtendedInfo.whenCalledWith(UNINITIALIZED_PLANET).returns(() => {
-			defaultInfo.isInitialized = false;
-			console.log("logging modified info");
-			console.log(i);
-			return i
-		}
-		);
+		fakeGame.revealedCoords.whenCalledWith(REVEALED_PLANET).returns({
+			locationId: REVEALED_PLANET,
+			x: 0,
+			y: 0,
+			revealer: constants.AddressZero
+		});
 
-		// fakeGame.revealedCoords.whenCalledWith(REVEALED_PLANET).returns({
-		// 	locationId: REVEALED_PLANET
-		// });
+		// Note: I would do to.be.revertedWith(error), but this is annoyingly broken in waffle
+		let error = await expect(
+			nightmarket.list(
+				getListProof(), getListingId(), 0, 0, UNINITIALIZED_PLANET, 0, 0, 0
+			)).to.be.reverted;
+		console.log(error.toString());
+		expect(error.toString()).to.contain('Planet doesn\'t exit or is not initialized');
 
-		// TODO: inputs need to be correctly formatted
-		const list = await nightmarket.list(getListProof(), getListingId(), 0, 0, 9999, 0, 0, 0);
-		await expect(list).to.be.revertedWith('error');
+		error = await expect(
+			nightmarket.list(
+				getListProof(), getListingId(), 0, 0, REVEALED_PLANET, 0, 0, 0
+			)).to.be.reverted;
+		expect(error.toString()).to.contain('Planet coordinates have already been revealed');
 	});
 
-	it("List: Proof must be valid", async function () {
+	it("List: Seller can list", async function () {
 		// TODO test for events: https://docs.ethers.io/v4/cookbook-testing.html
 	});
 
@@ -177,4 +196,8 @@ function getSaleInputs() {
 }
 function getSaleProof() {
 
+}
+
+function revertError(e) {
+	return `Error: VM Exception while processing transaction: reverted with reason string '` + e + `'`
 }
