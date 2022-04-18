@@ -1,44 +1,14 @@
-const path = require("path");
-const { groth16 } = require('snarkjs');
-const fs = require('fs');
-const { constants, BigNumber, BigNumberish } = require("ethers");
+import * as path from 'path';
+import { groth16 } from 'snarkjs';
+import 'fs';
+import { constants, BigNumber, BigNumberish } from 'ethers';
 
 
-async function getListProof(
-	PLANETHASH_KEY,
-	BIOMEBASE_KEY,
-	SPACETYPE_KEY,
-	SCALE,
-	xMirror,
-	yMirror,
-	listing_id,
-	nonce,
-	key_commitment,
-	planet_id,
-	biomebase,
-	seller_address,
-	x,
-	y,
-	key
-) {
-	const inputs = {
-		PLANETHASH_KEY,
-		BIOMEBASE_KEY,
-		SPACETYPE_KEY,
-		SCALE,
-		xMirror,
-		yMirror,
-		listing_id,
-		nonce,
-		key_commitment,
-		planet_id,
-		biomebase,
-		seller_address,
-		x,
-		y,
-		key
-	};
+// TODO define interface
+export async function getListProof(inputs: any) {
 
+	console.log("logging inputs");
+	console.log(inputs);
 	// Calculate witness and create proof.
 	// TODO fix ts filepath issues
 	const { proof, publicSignals } = await groth16.fullProve(
@@ -46,13 +16,22 @@ async function getListProof(
 		path.join(__dirname, "..", "..", "..", "client", "list", "list.wasm"),
 		path.join(__dirname, "..", "..", "..", "client", "list", "list.zkey"),
 	);
-	// /message sender is 0.
-	// console.log(proof, null, 1);
 
-	const callArgs = buildContractCallArgs(proof, [listing_id, nonce, key_commitment, planet_id, biomebase]);
-	console.log(callArgs);
+	// component main { public[PLANETHASH_KEY, BIOMEBASE_KEY, SPACETYPE_KEY, SCALE, xMirror, yMirror, listing_id, nonce, key_commitment, planet_id, biomebase, seller_address] } = List();
 
-	// TODO: convert proof into trx friendly format
+	// console.log(inputs.slice(6, 12));
+	const callArgs = buildContractCallArgs(
+		proof,
+		[
+			inputs.listing_id,
+			inputs.nonce, // nonce = 
+			inputs.key_commitment,
+			inputs.planet_id,
+			inputs.biomebase, // key_commitment =
+			inputs.seller_address
+		]
+	);
+
 	return callArgs
 }
 
@@ -115,8 +94,3 @@ function buildContractCallArgs(
 // 	// await fetch(vkpath) top get vkey
 // 	// await groth16.verify(vkey, publicInputs, proof);
 // }
-
-module.exports = {
-	getListProof,
-	// verifyListProof
-}

@@ -2,5 +2,5 @@
 # Patches circom_tester v0.0.10+ to work
 # Replaces all instances of invoking `circom` with `circom2`
 echo "Exporting nicely formatted verifier.sol from vkeys..."
-node ./build/exportVerifier.js list
-node ./build/exportVerifier.js sale
+node ./build/circuits/exportVerifier.js list
+node ./build/circuits/exportVerifier.js sale

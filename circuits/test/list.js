@@ -31,6 +31,9 @@ describe("List coordinates test", function () {
 		const key_commitment = mimcHash(0)(key[0], key[1]).toString();
 		const planet_id = mimcHash(PLANETHASH_KEY)(x, y).toString();
 
+		console.log("valid location id");
+		console.log(planet_id);
+
 		let witness;
 		witness = await circuit.calculateWitness(
 			{

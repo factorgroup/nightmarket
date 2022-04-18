@@ -1,15 +1,12 @@
-const { expect } = require("chai");
-const { ethers } = require("hardhat");
-const { smock } = require("@defi-wonderland/smock");
+import { expect } from 'chai';
+import { ethers } from 'hardhat';
+import { smock } from '@defi-wonderland/smock';
+import { mimcHash } from '@darkforest_eth/hashing';
+import { default as gameJSON } from '../../artifacts/contracts/darkforest/GetterInterface.sol/IGetter.json';
+import * as poseidonCipher from '../../client/util/poseidonCipher.js';
+import { getListProof } from '../../client/util/snarkHelper.js';
+import { constants, BigNumber } from 'ethers';
 
-const gameJSON = require("../../artifacts/contracts/darkforest/GetterInterface.sol/IGetter.json");
-
-// Hash imports
-const { mimcHash } = require("@darkforest_eth/hashing");
-const poseidonCipher = require("../../client/util/poseidonCipher.js");
-const { constants, BigNumber } = require("ethers");
-
-const { getListProof } = require("../../build/client/util/snarkHelper.js");
 
 // Contracts
 let nightmarket;
@@ -21,13 +18,22 @@ let fakeGame;
 let seller;
 let buyer;
 let anyone;
+let addrs;
 
 // Valid planet constants
 //@dev: Contracts expect input in format: BigNumber.from(...)
 const VALID_X = "1764";
 const VALID_Y = "21888242871839275222246405745257275088548364400416034343698204186575808492485";
 const PLANETHASH_KEY = 7;
+
+const X_MIRROR = "0";
+const Y_MIRROR = "0";
+const SCALE = "4096";
+
+// @ts-ignore: String not assignable to Number
 const VALID_LOCATION_ID = mimcHash(PLANETHASH_KEY)(VALID_X, VALID_Y).toString();
+console.log("valid location id:");
+console.log(VALID_LOCATION_ID);
 
 // Invalid planet constants
 const UNINITIALIZED_PLANET = 123;
@@ -37,12 +43,13 @@ const REVEALED_PLANET = 456;
 const MESSAGE = [VALID_X, VALID_Y];
 const KEY = [123, 456];
 const LISTING_ID = poseidonCipher.encrypt(MESSAGE, KEY, 0);
+console.log(LISTING_ID);
 const KEY_COMMITMENT = mimcHash(0)(KEY[0], KEY[1]).toString();
 const NONCE = 0;
 const BIOMEBASE = 12;
 
 // Sale proof constants
-
+// TODO refactor all constants over to testConstants.js
 
 /**
  * Generates a game mock contract and deploys the Verifiers
@@ -96,15 +103,17 @@ before(async function () {
 	});
 });
 
-/**
- * Deploys fresh contract for each unit test
- */
-beforeEach(async function () {
-	const nmFactory = await ethers.getContractFactory("NightMarket");
-	nightmarket = await nmFactory.deploy(listVerifier.address, saleVerifier.address, fakeGame.address);
-});
 
 describe("NightMarket contract", function () {
+
+	/**
+	  * Deploys fresh contract for each unit test
+	  */
+	beforeEach(async function () {
+		const nmFactory = await ethers.getContractFactory("NightMarket");
+		nightmarket = await nmFactory.deploy(listVerifier.address, saleVerifier.address, fakeGame.address);
+	});
+
 	it("Deployment should work", async function () {
 		const zk = await nightmarket.zkConstants();
 		expect(zk.PLANETHASH_KEY.toNumber()).to.equal(7);
@@ -142,7 +151,7 @@ describe("NightMarket contract", function () {
 		});
 
 		// Note: I would do to.be.revertedWith(error), but this is annoyingly broken
-		let error = await expect(
+		let error: any = await expect(
 			nightmarket.list(
 				getMockProof(), LISTING_ID, NONCE, KEY_COMMITMENT, UNINITIALIZED_PLANET, BIOMEBASE, 0, 0
 			)).to.be.reverted;
@@ -155,30 +164,38 @@ describe("NightMarket contract", function () {
 		expect(error.toString()).to.contain('Planet coordinates have already been revealed');
 	});
 
-	it("List: Seller can list with valid proof", async function () {
-		// Test invalid proof
-		let error = await expect(
+	it("List: Seller cannot list with invalid proof", async function () {
+		let error: any = await expect(
 			nightmarket.list(
-				getMockProof(), LISTING_ID, NONCE, KEY_COMMITMENT, VALID_LOCATION_ID, BIOMEBASE, 10, 10
+				getMockProof(),
+				LISTING_ID,
+				NONCE,
+				KEY_COMMITMENT,
+				VALID_LOCATION_ID,
+				BIOMEBASE,
+				10,
+				10
 			)).to.be.reverted;
 		expect(error.toString()).to.contain('Seller list coordinates: invalid proof');
+	});
 
-
-		// TODO different seller cannot reuse valid proof
-
-		const callArgs = await getListProof(...makeListArgs());
-
-		console.log(`call args`);
-		console.log(callArgs);
-
+	it("List: Seller can list with valid proof", async function () {
+		const proofArgs = await getListProof(listProofArgs());
 		const listingId = await nightmarket.connect(seller).list(
-			...callArgs, 10, 10
+			...proofArgs, 10, 10
 		);
-
-		// TODO: hand calculate the proof
+		console.log("listing id: ...");
 		console.log(listingId);
 
-		// Test events: https://docs.ethers.io/v4/cookbook-testing.html
+		// TODOL: Test events: https://docs.ethers.io/v4/cookbook-testing.html
+	});
+
+	it("List: Proof is watermarked to seller only", async function () {
+		const proofArgs = await getListProof(listProofArgs());
+		let error: any = await expect(nightmarket.connect(anyone).list(
+			...proofArgs, 10, 10
+		)).to.be.reverted;
+		expect(error.toString()).to.contain("Seller list coordinates: invalid proof");
 	});
 
 	it("Delist: Seller can delist", async function () {
@@ -203,35 +220,29 @@ describe("Helper functions", function () {
 });
 
 // Helper fns
-function makeListArgs() {
+function listProofArgs() {
 
-	return [
+	return {
 		// TODO have to somehow get the following values.
-		"7",
-		BIOMEBASE_KEY = 8,
-		SPACETYPE_KEY = "0",
-		SCALE = "4096",
-		xMirror = "0",
-		yMirror = "0",
-		listing_id = [
-			"12753447148121167434357839709858966792033157573827016815156583788306586540522",
-			"13920243683402356497076284133493391890541532189944281037309009108625911765854",
-			"10521252423187961468633215951909647732214307577253186066693148916796996049063",
-			"4839923218478346912757596955602860545458748119976948681246370335467809039368"
-		],
-		nonce = "0",
-		key_commitment = KEY_COMMITMENT,
-		planet_id = VALID_LOCATION_ID,
-		biomebase = "12",
-		seller_address = seller.address,
-		x = "1764",
-		y = "21888242871839275222246405745257275088548364400416034343698204186575808492485",
-		key = [
-			"123",
-			"456"
-		]
-	]
+		PLANETHASH_KEY: "7",
+		BIOMEBASE_KEY: "8", // biomebasekey
+		SPACETYPE_KEY: "0", //SPACETYPE_KEY = 
+		SCALE,
+		xMirror: X_MIRROR, //xMirror = 
+		yMirror: Y_MIRROR, //yMirror = 
+		listing_id: LISTING_ID,
+		nonce: NONCE, // nonce = 
+		key_commitment: KEY_COMMITMENT,
+		planet_id: VALID_LOCATION_ID,
+		biomebase: BIOMEBASE, // key_commitment =
+		seller_address: seller.address,
+		x: VALID_X, // x
+		y: VALID_Y, // y
+		key: KEY
+	}
 }
+
+
 function getMockProof() {
 	// TODO
 	return [0, 0, 0, 0, 0, 0, 0, 0]

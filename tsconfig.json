@@ -11,14 +11,22 @@
 		"noFallthroughCasesInSwitch": true,
 		"sourceMap": true,
 		"strict": true,
-		// "watch": true,
+		"resolveJsonModule": true,
+		"skipLibCheck": true,
 		"outDir": "./build"
 	},
 	"exclude": [
 		"node_modules/**"
 	],
 	"include": [
-		"./circuits/exportVerifier.ts",
-		"./client"
+		"./circuits",
+		"./client",
+		"./contracts"
+		// "./scripts"
+		// "./typechain-types"
+	],
+	"files": [
+		"./hardhat.config.ts",
+		"./client/util/snarkHelper.ts",
 	]
 }

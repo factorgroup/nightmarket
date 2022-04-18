@@ -1,13 +1,7 @@
-require("hardhat-circom");
-require("@nomiclabs/hardhat-waffle");
-
-task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
-	const accounts = await hre.ethers.getSigners();
-
-	for (const account of accounts) {
-		console.log(account.address);
-	}
-});
+import { task } from 'hardhat/config';
+import 'hardhat-circom';
+import '@nomiclabs/hardhat-ethers';
+import '@nomiclabs/hardhat-waffle';
 
 module.exports = {
 	solidity: "0.8.13",
