@@ -7,27 +7,20 @@ import { constants, BigNumber, BigNumberish } from 'ethers';
 // TODO define interface
 export async function getListProof(inputs: any) {
 
-	console.log("logging inputs");
-	console.log(inputs);
-	// Calculate witness and create proof.
-	// TODO fix ts filepath issues
 	const { proof, publicSignals } = await groth16.fullProve(
 		inputs,
 		path.join(__dirname, "..", "..", "..", "client", "list", "list.wasm"),
 		path.join(__dirname, "..", "..", "..", "client", "list", "list.zkey"),
 	);
 
-	// component main { public[PLANETHASH_KEY, BIOMEBASE_KEY, SPACETYPE_KEY, SCALE, xMirror, yMirror, listing_id, nonce, key_commitment, planet_id, biomebase, seller_address] } = List();
-
-	// console.log(inputs.slice(6, 12));
 	const callArgs = buildContractCallArgs(
 		proof,
 		[
 			inputs.listing_id,
-			inputs.nonce, // nonce = 
+			inputs.nonce,
 			inputs.key_commitment,
 			inputs.planet_id,
-			inputs.biomebase, // key_commitment =
+			inputs.biomebase,
 			inputs.seller_address
 		]
 	);

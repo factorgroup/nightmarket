@@ -8,7 +8,6 @@ import { getListProof } from '../../client/util/snarkHelper.js';
 import { constants, BigNumber } from 'ethers';
 import * as c from './testConstants';
 
-
 // Contracts
 let nightmarket;
 let listVerifier;
@@ -21,21 +20,18 @@ let buyer;
 let anyone;
 let addrs;
 
-// @ts-ignore: String not assignable to Number
-const PLANET_ID = mimcHash(c.PLANETHASH_KEY)(c.X_COORD, c.Y_COORD).toString();
-console.log("valid location id:");
-console.log(PLANET_ID);
-
-// Calculate from constants
+// Calculate commitments from test constants
 const MESSAGE = [c.X_COORD, c.Y_COORD];
 const LISTING_ID = poseidonCipher.encrypt(MESSAGE, c.KEY, 0);
-console.log(LISTING_ID);
 const KEY_COMMITMENT = mimcHash(0)(c.KEY[0], c.KEY[1]).toString();
+// @ts-ignore: String not assignable to Number
+const PLANET_ID = mimcHash(c.PLANETHASH_KEY)(c.X_COORD, c.Y_COORD).toString();
 
 // Sale proof constants
 
 /**
  * Generates a game mock contract and deploys the Verifiers
+ * @dev: Tests are sequential & dependant on state altered by previous test
  */
 before(async function () {
 	[seller, buyer, anyone, ...addrs] = await ethers.getSigners();
@@ -51,18 +47,13 @@ before(async function () {
 	fakeGame.getSnarkConstants.returns(c.SNARK_CONSTANTS);
 	fakeGame.planetsExtendedInfo.returns(c.PLANET_EXTENDED_INFO);
 	fakeGame.revealedCoords.returns(c.REVEALED_COORDS);
+
+	// Deploy game
+	const nmFactory = await ethers.getContractFactory("NightMarket");
+	nightmarket = await nmFactory.deploy(listVerifier.address, saleVerifier.address, fakeGame.address);
 });
 
-
 describe("NightMarket contract", function () {
-
-	/**
-	  * Deploys fresh contract for each unit test
-	  */
-	beforeEach(async function () {
-		const nmFactory = await ethers.getContractFactory("NightMarket");
-		nightmarket = await nmFactory.deploy(listVerifier.address, saleVerifier.address, fakeGame.address);
-	});
 
 	it("Deployment should work", async function () {
 		const zk = await nightmarket.zkConstants();
@@ -146,17 +137,6 @@ describe("NightMarket contract", function () {
 		expect(error.toString()).to.contain('Seller list coordinates: invalid proof');
 	});
 
-	it("List: Seller can list with valid proof", async function () {
-		const proofArgs = await getListProof(listProofArgs());
-		const listingId = await nightmarket.connect(seller).list(
-			...proofArgs, 10, 10
-		);
-		console.log("listing id: ...");
-		console.log(listingId);
-
-		// TODOL: Test events: https://docs.ethers.io/v4/cookbook-testing.html
-	});
-
 	it("List: Proof is watermarked to seller only", async function () {
 		const proofArgs = await getListProof(listProofArgs());
 		let error: any = await expect(nightmarket.connect(anyone).list(
@@ -165,10 +145,30 @@ describe("NightMarket contract", function () {
 		expect(error.toString()).to.contain("Seller list coordinates: invalid proof");
 	});
 
+	it("List: Seller can list many times with valid proof", async function () {
+		const proofArgs = await getListProof(listProofArgs());
+		await nightmarket.connect(seller).list(...proofArgs, 10, 10);
+
+		expect(await nightmarket.numListings()).to.equal(1);
+		expect((await nightmarket.listings(0)).seller).to.equal(seller.address);
+		expect((await nightmarket.listings(0)).keyCommitment).to.equal(KEY_COMMITMENT);
+		expect((await nightmarket.listings(0)).isActive).to.equal(true);
+
+		await nightmarket.connect(seller).list(...proofArgs, 10, 10);
+		expect(await nightmarket.numListings()).to.equal(2);
+		expect((await nightmarket.listings(1)).seller).to.equal(seller.address);
+		expect((await nightmarket.listings(1)).keyCommitment).to.equal(KEY_COMMITMENT);
+		expect((await nightmarket.listings(1)).isActive).to.equal(true);
+	});
+
 	it("Delist: Seller can delist", async function () {
+		const dupeListingId = 1;
+		await nightmarket.connect(seller).delist(dupeListingId);
+		expect((await nightmarket.listings(1)).isActive).to.equal(false);
 	});
 
 	it("Ask: Buyers can make orders", async function () {
+
 	});
 
 	it("Sale: Proof must be valid", async function () {
@@ -209,13 +209,12 @@ function listProofArgs() {
 
 
 function getMockProof() {
-	// TODO
 	return [0, 0, 0, 0, 0, 0, 0, 0]
 }
 
-function getSaleInputs() {
+function saleProofArgs() {
 
 }
-function getSaleProof() {
+function getMockSaleProof() {
 
 }

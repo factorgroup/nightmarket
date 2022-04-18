@@ -4,9 +4,6 @@ pragma solidity >=0.8.0;
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 
-// TODO: remove
-import "hardhat/console.sol";
-
 // Zk verifiers
 import {IVerifier as IListVerifier} from "./ListVerifier.sol";
 import {IVerifier as ISaleVerifier} from "./SaleVerifier.sol";
@@ -276,7 +273,6 @@ contract NightMarket is ReentrancyGuard {
         }
     }
 
-    // TODO: safe math this
     function _escrowExpired(uint256 _created, uint256 _escrowTime)
         internal
         view
