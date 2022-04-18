@@ -6,12 +6,10 @@ const gameJSON = require("../../artifacts/contracts/darkforest/GetterInterface.s
 
 // Hash imports
 const { mimcHash } = require("@darkforest_eth/hashing");
-const poseidonCipher = require("../../client/poseidonCipher.js");
-const { formatDiagnosticsWithColorAndContext } = require("typescript");
-const { isAddress } = require("ethers/lib/utils");
+const poseidonCipher = require("../../client/util/poseidonCipher.js");
 const { constants, BigNumber } = require("ethers");
-const { defaultAbiCoder } = require("@ethersproject/abi");
 
+const { getListProof } = require("../../build/client/util/snarkHelper.js");
 
 // Contracts
 let nightmarket;
@@ -25,11 +23,11 @@ let buyer;
 let anyone;
 
 // Valid planet constants
-//@dev: Contracts expect input in format: BigNumber.from(`0x${VALID_LOCATION_ID}`
+//@dev: Contracts expect input in format: BigNumber.from(...)
 const VALID_X = "1764";
 const VALID_Y = "21888242871839275222246405745257275088548364400416034343698204186575808492485";
-let VALID_LOCATION_ID;
-
+const PLANETHASH_KEY = 7;
+const VALID_LOCATION_ID = mimcHash(PLANETHASH_KEY)(VALID_X, VALID_Y).toString();
 
 // Invalid planet constants
 const UNINITIALIZED_PLANET = 123;
@@ -41,7 +39,7 @@ const KEY = [123, 456];
 const LISTING_ID = poseidonCipher.encrypt(MESSAGE, KEY, 0);
 const KEY_COMMITMENT = mimcHash(0)(KEY[0], KEY[1]).toString();
 const NONCE = 0;
-const BIOMBASE = 12;
+const BIOMEBASE = 12;
 
 // Sale proof constants
 
@@ -64,15 +62,13 @@ before(async function () {
 	// Stub snark constants
 	fakeGame.getSnarkConstants.returns({
 		DISABLE_ZK_CHECKS: false,
-		PLANETHASH_KEY: 7,
+		PLANETHASH_KEY,
 		SPACETYPE_KEY: 0,
 		BIOMEBASE_KEY: 8,
 		PERLIN_MIRROR_X: false,
 		PERLIN_MIRROR_Y: false,
-		PERLIN_LENGTH_SCALE: 0
+		PERLIN_LENGTH_SCALE: 4096
 	});
-
-	VALID_LOCATION_ID = mimcHash(fakeGame.PLANETHASH_KEY)(VALID_X, VALID_Y).toString();
 
 	// Stub planet is initialized
 	fakeGame.planetsExtendedInfo.returns({
@@ -107,7 +103,6 @@ beforeEach(async function () {
 	const nmFactory = await ethers.getContractFactory("NightMarket");
 	nightmarket = await nmFactory.deploy(listVerifier.address, saleVerifier.address, fakeGame.address);
 });
-
 
 describe("NightMarket contract", function () {
 	it("Deployment should work", async function () {
@@ -149,28 +144,41 @@ describe("NightMarket contract", function () {
 		// Note: I would do to.be.revertedWith(error), but this is annoyingly broken
 		let error = await expect(
 			nightmarket.list(
-				getListProof(), LISTING_ID, NONCE, KEY_COMMITMENT, UNINITIALIZED_PLANET, BIOMBASE, 0, 0
+				getMockProof(), LISTING_ID, NONCE, KEY_COMMITMENT, UNINITIALIZED_PLANET, BIOMEBASE, 0, 0
 			)).to.be.reverted;
 		expect(error.toString()).to.contain('Planet doesn\'t exit or is not initialized');
 
 		error = await expect(
 			nightmarket.list(
-				getListProof(), LISTING_ID, NONCE, KEY_COMMITMENT, REVEALED_PLANET, BIOMEBASE, 0, 0
+				getMockProof(), LISTING_ID, NONCE, KEY_COMMITMENT, REVEALED_PLANET, BIOMEBASE, 0, 0
 			)).to.be.reverted;
 		expect(error.toString()).to.contain('Planet coordinates have already been revealed');
 	});
 
 	it("List: Seller can list with valid proof", async function () {
-		const badProof = [0, 0, 0, 0, 0, 0, 0, 0];
+		// Test invalid proof
 		let error = await expect(
 			nightmarket.list(
-				badProof, LISTING_ID, NONCE, KEY_COMMITMENT, VALID_LOCATION_ID, BIOMEBASE, 10, 10
+				getMockProof(), LISTING_ID, NONCE, KEY_COMMITMENT, VALID_LOCATION_ID, BIOMEBASE, 10, 10
 			)).to.be.reverted;
 		expect(error.toString()).to.contain('Seller list coordinates: invalid proof');
 
 
-		// TODO test for events: https://docs.ethers.io/v4/cookbook-testing.html
+		// TODO different seller cannot reuse valid proof
 
+		const callArgs = await getListProof(...makeListArgs());
+
+		console.log(`call args`);
+		console.log(callArgs);
+
+		const listingId = await nightmarket.connect(seller).list(
+			...callArgs, 10, 10
+		);
+
+		// TODO: hand calculate the proof
+		console.log(listingId);
+
+		// Test events: https://docs.ethers.io/v4/cookbook-testing.html
 	});
 
 	it("Delist: Seller can delist", async function () {
@@ -195,13 +203,36 @@ describe("Helper functions", function () {
 });
 
 // Helper fns
-// Must compute within the field...
+function makeListArgs() {
 
-function getListInputs() {
-	// const listing_id = poseidonCipher.encrypt(message, key, 0);
+	return [
+		// TODO have to somehow get the following values.
+		"7",
+		BIOMEBASE_KEY = 8,
+		SPACETYPE_KEY = "0",
+		SCALE = "4096",
+		xMirror = "0",
+		yMirror = "0",
+		listing_id = [
+			"12753447148121167434357839709858966792033157573827016815156583788306586540522",
+			"13920243683402356497076284133493391890541532189944281037309009108625911765854",
+			"10521252423187961468633215951909647732214307577253186066693148916796996049063",
+			"4839923218478346912757596955602860545458748119976948681246370335467809039368"
+		],
+		nonce = "0",
+		key_commitment = KEY_COMMITMENT,
+		planet_id = VALID_LOCATION_ID,
+		biomebase = "12",
+		seller_address = seller.address,
+		x = "1764",
+		y = "21888242871839275222246405745257275088548364400416034343698204186575808492485",
+		key = [
+			"123",
+			"456"
+		]
+	]
 }
-
-function getListProof() {
+function getMockProof() {
 	// TODO
 	return [0, 0, 0, 0, 0, 0, 0, 0]
 }
@@ -211,8 +242,4 @@ function getSaleInputs() {
 }
 function getSaleProof() {
 
-}
-
-function revertError(e) {
-	return `Error: VM Exception while processing transaction: reverted with reason string '` + e + `'`
 }

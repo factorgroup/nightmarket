@@ -11,7 +11,7 @@ const Fr = new F1Field(exports.p);
 
 const wasm_tester = require("circom_tester").wasm;
 
-const poseidonCipher = require("../../client/poseidonCipher.js");
+const poseidonCipher = require("../../client/util/poseidonCipher.js");
 
 const Keypair = require("maci-domainobjs").Keypair;
 

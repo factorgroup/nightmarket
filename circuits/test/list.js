@@ -11,7 +11,7 @@ const wasm_tester = require("circom_tester").wasm;
 
 const { mimcHash } = require("@darkforest_eth/hashing");
 
-const poseidonCipher = require("../../client/poseidonCipher.js");
+const poseidonCipher = require("../../client/util/poseidonCipher.js");
 
 describe("List coordinates test", function () {
 

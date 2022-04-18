@@ -11,12 +11,14 @@
 		"noFallthroughCasesInSwitch": true,
 		"sourceMap": true,
 		"strict": true,
+		// "watch": true,
 		"outDir": "./build"
 	},
 	"exclude": [
 		"node_modules/**"
 	],
 	"include": [
-		"./circuits/exportVerifier.ts"
+		"./circuits/exportVerifier.ts",
+		"./client"
 	]
 }

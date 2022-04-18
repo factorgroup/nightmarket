@@ -4,13 +4,16 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "postinstall": "./scripts/fix_circomtester_dep.sh",
+    "postinstall": "./scripts/postinstall.sh",
     "circom:test": "mocha circuits/test --max-old-space-size=4000",
     "circom:dev": "hardhat circom --deterministic --debug --verbose",
     "circom:prod": "hardhat circom --verbose",
     "sol:verify": "./scripts/reformat-verifier-sol.sh",
     "sol:compile": "npx hardhat compile",
     "sol:test": "npx hardhat test ./contracts/test/NightMarket.js"
+  },
+  "dependencies": {
+    "snarkjs": "^0.4.16"
   },
   "devDependencies": {
     "@darkforest_eth/contracts": "^6.7.29",
