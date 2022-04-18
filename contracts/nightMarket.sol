@@ -2,6 +2,7 @@
 pragma solidity >=0.8.0;
 
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 
 // Zk verifiers
 import {IVerifier as IListVerifier} from "./ListVerifier.sol";
@@ -33,29 +34,27 @@ function boolToUInt(bool x) pure returns (uint256 r) {
  * @custom:experimental
  */
 contract NightMarket is ReentrancyGuard {
-    //  Type
+    using SafeMath for uint256;
+
     struct Order {
         address payable buyer;
         uint256 expectedSharedKeyHash;
-        uint256 created; // block number when order was created
-        bool isActive; // inactive after refund/sale
+        uint256 created;
+        bool isActive;
     }
 
     struct Listing {
         address payable seller;
-        uint256 locationId; // TODO: prob doesn't need to be stored, just emitted
-        uint256 biomebase; // TODO: prob doesn't need to be stored, just emitted
-        uint256 keyCommitment; // H(key) being sold, can't store in events?
-        uint256 nonce; // prob doesn't need to be stored, just emitted
-        uint256 price; // cost of key to coordinates
-        uint256 escrowTime; // Time in "number of blocks" a buyer's deposit is locked up for
-        bool isActive; // depends on if we allow sellers to delist
+        uint256 keyCommitment;
+        uint256 price;
+        uint256 escrowTime;
         uint256 numOrders;
-        mapping(uint256 => Order) orders; // key starts at numOrders=1
+        bool isActive;
+        mapping(uint256 => Order) orders;
     }
 
-    uint256 public numListings; // TODO: maybe use Counters.sol for safer math
-    mapping(uint256 => Listing) public listings; // Key starts at numListings=1
+    uint256 public numListings;
+    mapping(uint256 => Listing) public listings;
 
     // DF storage getter
     IGetter public immutable df;
@@ -69,11 +68,17 @@ contract NightMarket is ReentrancyGuard {
 
     // Events
     event Contract(uint256 planetHash, uint256 SpacetypeHash);
-    event Listed(address indexed seller, uint256 indexed listingId);
+    event Listed(
+        address indexed seller,
+        uint256 indexed listingId,
+        uint256 indexed locationId,
+        uint256 biombase,
+        uint256 nonce
+    );
     event Delisted(address indexed seller, uint256 indexed listingId);
-    event Asked();
-    event Sold(uint256 nonce);
-    event Refunded();
+    event Asked(address indexed buyer, uint256 indexed listingId);
+    event Sold(uint256 indexed listingId, uint256 orderId, uint256 nonce);
+    event Refunded(uint256 indexed listingId, uint256 orderId);
 
     /**
      * @notice Checks planet is in game and not revealed yet
@@ -84,6 +89,7 @@ contract NightMarket is ReentrancyGuard {
             df.planetsExtendedInfo(locationId).isInitialized,
             "Planet doesn't exit or is not initialized"
         );
+
         require(
             df.revealedCoords(locationId).locationId != locationId,
             "Planet coordinates have already been revealed"
@@ -125,7 +131,7 @@ contract NightMarket is ReentrancyGuard {
         uint256 _locationId,
         uint256 _biomebase,
         uint256 _price,
-        uint64 _escrowTime
+        uint256 _escrowTime
     ) external validPlanet(_locationId) returns (uint256 listingId) {
         require(_nonce < 2 ^ 218, "Nonce must be smaller than 2^218");
 
@@ -156,16 +162,12 @@ contract NightMarket is ReentrancyGuard {
 
         Listing storage l = listings[listingId];
         l.seller = payable(msg.sender);
-        l.locationId = _locationId;
-        l.biomebase = _biomebase;
         l.keyCommitment = _keyCommitment;
-        l.nonce = _nonce;
         l.price = _price;
         l.escrowTime = _escrowTime;
         l.isActive = true;
 
-        //TODO: Log more things later as needed
-        emit Listed(msg.sender, listingId);
+        emit Listed(msg.sender, listingId, _locationId, _biomebase, _nonce);
     }
 
     /**
@@ -202,7 +204,7 @@ contract NightMarket is ReentrancyGuard {
             created: block.number,
             isActive: true
         });
-        emit Asked();
+        emit Asked(msg.sender, _listingId);
         return l.numOrders;
     }
 
@@ -249,7 +251,7 @@ contract NightMarket is ReentrancyGuard {
 
         l.seller.transfer(l.price);
 
-        emit Sold(_nonce);
+        emit Sold(_listingId, _orderId, _nonce);
     }
 
     /**
@@ -266,19 +268,17 @@ contract NightMarket is ReentrancyGuard {
 
         if (_escrowExpired(o.created, l.escrowTime) || !l.isActive) {
             o.isActive = false;
-            // TODO triple check this
             o.buyer.transfer(l.price);
-            emit Refunded();
+            emit Refunded(_listingId, _orderId);
         }
     }
 
-    // TODO: safe math this
     function _escrowExpired(uint256 _created, uint256 _escrowTime)
         internal
         view
         returns (bool)
     {
-        uint256 elapsed = block.number - _escrowTime;
+        uint256 elapsed = block.number.sub(_escrowTime);
         return (elapsed > _created);
     }
 }

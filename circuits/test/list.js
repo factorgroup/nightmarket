@@ -11,7 +11,7 @@ const wasm_tester = require("circom_tester").wasm;
 
 const { mimcHash } = require("@darkforest_eth/hashing");
 
-const poseidonCipher = require("../../client/poseidonCipher.js");
+const poseidonCipher = require("../../client/util/poseidonCipher.js");
 
 describe("List coordinates test", function () {
 
@@ -30,6 +30,9 @@ describe("List coordinates test", function () {
 
 		const key_commitment = mimcHash(0)(key[0], key[1]).toString();
 		const planet_id = mimcHash(PLANETHASH_KEY)(x, y).toString();
+
+		console.log("valid location id");
+		console.log(planet_id);
 
 		let witness;
 		witness = await circuit.calculateWitness(

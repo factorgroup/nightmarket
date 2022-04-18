@@ -4,13 +4,15 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "postinstall": "./scripts/fix_circomtester_dep.sh",
-    "circom:test": "mocha circuits/test --max-old-space-size=4000",
+    "postinstall": "./scripts/postinstall.sh",
+    "circom:test": "mocha ./circuits/test --max-old-space-size=4000",
     "circom:dev": "hardhat circom --deterministic --debug --verbose",
     "circom:prod": "hardhat circom --verbose",
-    "sol:verify": "./scripts/reformat-verifier-sol.sh",
-    "sol:compile": "npx hardhat compile",
-    "sol:test": "npx hardhat test ./contracts/test/NightMarket.js"
+    "sol:compile": "./scripts/reformat-verifier-sol.sh && npx hardhat compile",
+    "sol:test": "tsc && npx hardhat test ./build/contracts/test/nightMarket.js"
+  },
+  "dependencies": {
+    "snarkjs": "^0.4.16"
   },
   "devDependencies": {
     "@darkforest_eth/contracts": "^6.7.29",
@@ -19,6 +21,11 @@
     "@nomiclabs/hardhat-ethers": "^2.0.5",
     "@nomiclabs/hardhat-waffle": "^2.0.3",
     "@openzeppelin/contracts": "^4.5.0",
+    "@typechain/ethers-v5": "^10.0.0",
+    "@typechain/hardhat": "^6.0.0",
+    "@types/chai": "^4.3.1",
+    "@types/mocha": "^9.1.0",
+    "@types/node": "^17.0.24",
     "chai": "^4.3.6",
     "circom_tester": "^0.0.10",
     "circomlib": "^2.0.3",
@@ -30,6 +37,8 @@
     "maci-crypto": "^1.0.4",
     "maci-domainobjs": "^1.0.4",
     "mocha": "^9.2.2",
+    "ts-node": "^10.7.0",
+    "typechain": "^8.0.0",
     "typescript": "^4.6.3"
   },
   "engines": {
