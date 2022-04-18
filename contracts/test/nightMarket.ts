@@ -6,6 +6,7 @@ import { default as gameJSON } from '../../artifacts/contracts/darkforest/Getter
 import * as poseidonCipher from '../../client/util/poseidonCipher.js';
 import { getListProof } from '../../client/util/snarkHelper.js';
 import { constants, BigNumber } from 'ethers';
+import * as c from './testConstants';
 
 
 // Contracts
@@ -20,36 +21,18 @@ let buyer;
 let anyone;
 let addrs;
 
-// Valid planet constants
-//@dev: Contracts expect input in format: BigNumber.from(...)
-const VALID_X = "1764";
-const VALID_Y = "21888242871839275222246405745257275088548364400416034343698204186575808492485";
-const PLANETHASH_KEY = 7;
-
-const X_MIRROR = "0";
-const Y_MIRROR = "0";
-const SCALE = "4096";
-
 // @ts-ignore: String not assignable to Number
-const VALID_LOCATION_ID = mimcHash(PLANETHASH_KEY)(VALID_X, VALID_Y).toString();
+const PLANET_ID = mimcHash(c.PLANETHASH_KEY)(c.X_COORD, c.Y_COORD).toString();
 console.log("valid location id:");
-console.log(VALID_LOCATION_ID);
+console.log(PLANET_ID);
 
-// Invalid planet constants
-const UNINITIALIZED_PLANET = 123;
-const REVEALED_PLANET = 456;
-
-// List proof constants
-const MESSAGE = [VALID_X, VALID_Y];
-const KEY = [123, 456];
-const LISTING_ID = poseidonCipher.encrypt(MESSAGE, KEY, 0);
+// Calculate from constants
+const MESSAGE = [c.X_COORD, c.Y_COORD];
+const LISTING_ID = poseidonCipher.encrypt(MESSAGE, c.KEY, 0);
 console.log(LISTING_ID);
-const KEY_COMMITMENT = mimcHash(0)(KEY[0], KEY[1]).toString();
-const NONCE = 0;
-const BIOMEBASE = 12;
+const KEY_COMMITMENT = mimcHash(0)(c.KEY[0], c.KEY[1]).toString();
 
 // Sale proof constants
-// TODO refactor all constants over to testConstants.js
 
 /**
  * Generates a game mock contract and deploys the Verifiers
@@ -63,44 +46,11 @@ before(async function () {
 	const svFactory = await ethers.getContractFactory("contracts/SaleVerifier.sol:Verifier");
 	saleVerifier = await svFactory.deploy();
 
-	// Construct stubs for the game contract
+	// Stub game diamond contract returns
 	fakeGame = await smock.fake(gameJSON.abi);
-
-	// Stub snark constants
-	fakeGame.getSnarkConstants.returns({
-		DISABLE_ZK_CHECKS: false,
-		PLANETHASH_KEY,
-		SPACETYPE_KEY: 0,
-		BIOMEBASE_KEY: 8,
-		PERLIN_MIRROR_X: false,
-		PERLIN_MIRROR_Y: false,
-		PERLIN_LENGTH_SCALE: 4096
-	});
-
-	// Stub planet is initialized
-	fakeGame.planetsExtendedInfo.returns({
-		isInitialized: true,
-		createdAt: 0,
-		lastUpdated: 0,
-		perlin: 0,
-		spaceType: 1,
-		upgradeState0: 0,
-		upgradeState1: 0,
-		upgradeState2: 0,
-		hatLevel: 0,
-		hasTriedFindingArtifact: false,
-		prospectedBlockNumber: 0,
-		destroyed: false,
-		spaceJunk: 0
-	});
-
-	// Stub no revealed coordinates
-	fakeGame.revealedCoords.returns({
-		locationId: 3456345,
-		x: 0,
-		y: 0,
-		revealer: constants.AddressZero
-	});
+	fakeGame.getSnarkConstants.returns(c.SNARK_CONSTANTS);
+	fakeGame.planetsExtendedInfo.returns(c.PLANET_EXTENDED_INFO);
+	fakeGame.revealedCoords.returns(c.REVEALED_COORDS);
 });
 
 
@@ -126,6 +76,9 @@ describe("NightMarket contract", function () {
 	});
 
 	it("validPlanet modifier", async function () {
+		// Invalid planet constants
+		const UNINITIALIZED_PLANET = 123;
+		const REVEALED_PLANET = 456;
 
 		fakeGame.planetsExtendedInfo.whenCalledWith(UNINITIALIZED_PLANET).returns({
 			isInitialized: false,
@@ -153,13 +106,27 @@ describe("NightMarket contract", function () {
 		// Note: I would do to.be.revertedWith(error), but this is annoyingly broken
 		let error: any = await expect(
 			nightmarket.list(
-				getMockProof(), LISTING_ID, NONCE, KEY_COMMITMENT, UNINITIALIZED_PLANET, BIOMEBASE, 0, 0
+				getMockProof(),
+				LISTING_ID,
+				c.NONCE,
+				KEY_COMMITMENT,
+				UNINITIALIZED_PLANET,
+				c.BIOMEBASE,
+				0,
+				0
 			)).to.be.reverted;
 		expect(error.toString()).to.contain('Planet doesn\'t exit or is not initialized');
 
 		error = await expect(
 			nightmarket.list(
-				getMockProof(), LISTING_ID, NONCE, KEY_COMMITMENT, REVEALED_PLANET, BIOMEBASE, 0, 0
+				getMockProof(),
+				LISTING_ID,
+				c.NONCE,
+				KEY_COMMITMENT,
+				REVEALED_PLANET,
+				c.BIOMEBASE,
+				0,
+				0
 			)).to.be.reverted;
 		expect(error.toString()).to.contain('Planet coordinates have already been revealed');
 	});
@@ -169,10 +136,10 @@ describe("NightMarket contract", function () {
 			nightmarket.list(
 				getMockProof(),
 				LISTING_ID,
-				NONCE,
+				c.NONCE,
 				KEY_COMMITMENT,
-				VALID_LOCATION_ID,
-				BIOMEBASE,
+				PLANET_ID,
+				c.BIOMEBASE,
 				10,
 				10
 			)).to.be.reverted;
@@ -221,24 +188,22 @@ describe("Helper functions", function () {
 
 // Helper fns
 function listProofArgs() {
-
 	return {
-		// TODO have to somehow get the following values.
-		PLANETHASH_KEY: "7",
-		BIOMEBASE_KEY: "8", // biomebasekey
-		SPACETYPE_KEY: "0", //SPACETYPE_KEY = 
-		SCALE,
-		xMirror: X_MIRROR, //xMirror = 
-		yMirror: Y_MIRROR, //yMirror = 
+		PLANETHASH_KEY: c.PLANETHASH_KEY,
+		BIOMEBASE_KEY: c.BIOMEBASE_KEY,
+		SPACETYPE_KEY: c.SPACETYPE_KEY,
+		SCALE: c.SCALE,
+		xMirror: c.X_MIRROR,
+		yMirror: c.Y_MIRROR,
 		listing_id: LISTING_ID,
-		nonce: NONCE, // nonce = 
+		nonce: c.NONCE,
 		key_commitment: KEY_COMMITMENT,
-		planet_id: VALID_LOCATION_ID,
-		biomebase: BIOMEBASE, // key_commitment =
+		planet_id: PLANET_ID,
+		biomebase: c.BIOMEBASE,
 		seller_address: seller.address,
-		x: VALID_X, // x
-		y: VALID_Y, // y
-		key: KEY
+		x: c.X_COORD,
+		y: c.Y_COORD,
+		key: c.KEY
 	}
 }
 
