@@ -1,12 +1,17 @@
 import { expect } from 'chai';
 import { ethers } from 'hardhat';
 import { smock } from '@defi-wonderland/smock';
-import { mimcHash } from '@darkforest_eth/hashing';
-import { default as gameJSON } from '../../artifacts/contracts/darkforest/GetterInterface.sol/IGetter.json';
-import * as poseidonCipher from '../../client/util/poseidonCipher.js';
-import { getListProof } from '../../client/util/snarkHelper.js';
 import { constants, BigNumber } from 'ethers';
+
+import { default as gameJSON } from '../../artifacts/contracts/darkforest/GetterInterface.sol/IGetter.json';
+import * as poseidon from '../../client/util/poseidonCipher.js';
+import { getListProof } from '../../client/util/snarkHelper.js';
 import * as c from './testConstants';
+
+// DF dependencies use BigInteger for BigInts.
+import bigInt, { BigInteger } from 'big-integer';
+import { mimcHash, mimcSponge } from '@darkforest_eth/hashing';
+
 
 // Contracts
 let nightmarket;
@@ -22,8 +27,10 @@ let addrs;
 
 // Calculate commitments from test constants
 const MESSAGE = [c.X_COORD, c.Y_COORD];
-const LISTING_ID = poseidonCipher.encrypt(MESSAGE, c.KEY, 0);
+const LISTING_ID = poseidon.encrypt(MESSAGE, c.KEY, 0);
+// @ts-ignore: String not assignable to Number
 const KEY_COMMITMENT = mimcHash(0)(c.KEY[0], c.KEY[1]).toString();
+
 // @ts-ignore: String not assignable to Number
 const PLANET_ID = mimcHash(c.PLANETHASH_KEY)(c.X_COORD, c.Y_COORD).toString();
 
@@ -168,7 +175,10 @@ describe("NightMarket contract", function () {
 	});
 
 	it("Ask: Buyers can make orders", async function () {
-
+		// TODO ecdh get shared key
+		// const sharedkey;
+		// const expectedkeyhash;
+		// await nightmarket.connect(buyer).ask(0, expectedkeyhash);
 	});
 
 	it("Sale: Proof must be valid", async function () {

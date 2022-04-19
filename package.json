@@ -26,6 +26,7 @@
     "@types/chai": "^4.3.1",
     "@types/mocha": "^9.1.0",
     "@types/node": "^17.0.24",
+    "big-integer": "^1.6.51",
     "chai": "^4.3.6",
     "circom_tester": "^0.0.10",
     "circomlib": "^2.0.3",

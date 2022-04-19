@@ -4,10 +4,10 @@ const chai = require("chai");
 const path = require("path");
 const assert = chai.assert;
 
-const F1Field = require("ffjavascript").F1Field;
+const ZqField = require("ffjavascript").ZqField;
 const Scalar = require("ffjavascript").Scalar;
-exports.p = Scalar.fromString("21888242871839275222246405745257275088548364400416034343698204186575808495617");
-const Fr = new F1Field(exports.p);
+const p = Scalar.fromString("21888242871839275222246405745257275088548364400416034343698204186575808495617");
+const F = new ZqField(p);
 
 const wasm_tester = require("circom_tester").wasm;
 
@@ -15,8 +15,6 @@ const poseidonCipher = require("../../client/util/poseidonCipher.js");
 
 const Keypair = require("maci-domainobjs").Keypair;
 
-// mimc hashing helpers
-const mimc = require("@darkforest_eth/hashing").mimcHash;
 
 describe("Sale test", function () {
 
@@ -25,8 +23,8 @@ describe("Sale test", function () {
 	it("Should generate sale receipt correctly", async () => {
 		const circuit = await wasm_tester(path.join(__dirname, "..", "sale", "sale.circom"));
 
-		const key = [123, 456];
-		const nonce = 0;
+		const key = [F.e("123"), F.e("456")];
+		const nonce = "0";
 
 		const seller_keypair = new Keypair();
 		const buyer_keypair = new Keypair();
