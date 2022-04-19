@@ -7,7 +7,7 @@ export const SCALE = 4096;
 export const X_MIRROR = 0;
 export const Y_MIRROR = 0;
 
-export const NONCE = 0;
+export const NONCE = "0";
 export const BIOMEBASE = 12;
 
 // Private

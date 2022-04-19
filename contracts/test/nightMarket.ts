@@ -30,7 +30,6 @@ const MESSAGE = [c.X_COORD, c.Y_COORD];
 const LISTING_ID = poseidon.encrypt(MESSAGE, c.KEY, 0);
 // @ts-ignore: String not assignable to Number
 const KEY_COMMITMENT = mimcHash(0)(c.KEY[0], c.KEY[1]).toString();
-
 // @ts-ignore: String not assignable to Number
 const PLANET_ID = mimcHash(c.PLANETHASH_KEY)(c.X_COORD, c.Y_COORD).toString();
 
