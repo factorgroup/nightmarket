@@ -13,6 +13,7 @@ const wasm_tester = require("circom_tester").wasm;
 
 const poseidonCipher = require("../../client/util/poseidonCipher.js");
 
+// Note: this is EdDSA keys
 const Keypair = require("maci-domainobjs").Keypair;
 
 
@@ -59,18 +60,19 @@ describe("Sale test", function () {
 		let witness;
 		witness = await circuit.calculateWitness(
 			{
-				"buyer_pub_key": buyer_keypair.pubKey.asCircuitInputs(),
+				// "buyer_pub_key": buyer_keypair.pubKey.asCircuitInputs(),
 				receipt_id,
 				nonce,
 				key_commitment,
 				shared_key_commitment,
-				"seller_prv_key": seller_keypair.privKey.asCircuitInputs(),
+				shared_key,
+				// "seller_prv_key": seller_keypair.privKey.asCircuitInputs(),
 				key
 			}, true);
 
-		// Shared key is correct
-		await circuit.assertOut(witness, { kx: shared_key[0] });
-		await circuit.assertOut(witness, { ky: shared_key[1] });
+		// // Shared key is correct
+		// await circuit.assertOut(witness, { : shared_key[0] });
+		// await circuit.assertOut(witness, { ky: shared_key[1] });
 
 		await circuit.checkConstraints(witness);
 	});
