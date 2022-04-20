@@ -3,7 +3,33 @@ import 'hardhat-circom';
 import '@nomiclabs/hardhat-ethers';
 import '@nomiclabs/hardhat-waffle';
 
+task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
+	const accounts = await hre.ethers.getSigners();
+
+	for (const account of accounts) {
+		console.log(account.address);
+	}
+});
+
 module.exports = {
+	networks: {
+		hardhat: {
+			accounts: [
+				{
+					privateKey: "0x0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+					balance: "10000000000000000000000"
+				},
+				{
+					privateKey: "0x499001d75778eb171b3ab6638deb936c840cb4ece21be6b53526e81990e48bce",
+					balance: "10000000000000000000000"
+				},
+				{
+					privateKey: "0x5364d14f699055a4148c53b7bbcb2c8acea3580aad2ffc3553b60061ddc989d1",
+					balance: "10000000000000000000000"
+				}
+			]
+		}
+	},
 	solidity: "0.8.13",
 	circom: {
 		// (optional) Base path for files being read, defaults to `./circuits/`

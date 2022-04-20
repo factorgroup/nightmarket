@@ -273,6 +273,17 @@ contract NightMarket is ReentrancyGuard {
         }
     }
 
+    /**
+     * @notice Returns an order from listing
+     */
+    function getOrder(uint256 listingId, uint256 orderId)
+        public
+        view
+        returns (Order memory)
+    {
+        return listings[listingId].orders[orderId];
+    }
+
     function _escrowExpired(uint256 _created, uint256 _escrowTime)
         internal
         view
