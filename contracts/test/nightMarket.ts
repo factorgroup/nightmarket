@@ -12,6 +12,7 @@ import * as c from './testConstants';
 import bigInt, { BigInteger } from 'big-integer';
 import { mimcHash, mimcSponge } from '@darkforest_eth/hashing';
 import { formatPrivKeyForBabyJub, genEcdhSharedKey, genPubKey } from 'maci-crypto';
+import { ethers } from 'hardhat';
 
 const ZqField = require("ffjavascript").ZqField;
 const Scalar = require("ffjavascript").Scalar;
@@ -118,8 +119,8 @@ describe("NightMarket contract", function () {
 				KEY_COMMITMENT,
 				UNINITIALIZED_PLANET,
 				c.BIOMEBASE,
-				0,
-				0
+				c.PRICE,
+				c.ESCROW_TIME
 			)).to.be.reverted;
 		expect(error.toString()).to.contain('Planet doesn\'t exit or is not initialized');
 
@@ -131,8 +132,8 @@ describe("NightMarket contract", function () {
 				KEY_COMMITMENT,
 				REVEALED_PLANET,
 				c.BIOMEBASE,
-				0,
-				0
+				c.PRICE,
+				c.ESCROW_TIME
 			)).to.be.reverted;
 		expect(error.toString()).to.contain('Planet coordinates have already been revealed');
 	});
@@ -146,8 +147,8 @@ describe("NightMarket contract", function () {
 				KEY_COMMITMENT,
 				PLANET_ID,
 				c.BIOMEBASE,
-				10,
-				10
+				c.PRICE,
+				c.ESCROW_TIME
 			)).to.be.reverted;
 		expect(error.toString()).to.contain('Seller list coordinates: invalid proof');
 	});
@@ -155,7 +156,7 @@ describe("NightMarket contract", function () {
 	it("List: Proof is watermarked to seller only", async function () {
 		const proofArgs = await getListProof(listProofArgs());
 		let error: any = await expect(nightmarket.connect(anyone).list(
-			...proofArgs, 10, 10
+			...proofArgs, c.PRICE, c.ESCROW_TIME
 		)).to.be.reverted;
 		expect(error.toString()).to.contain("Seller list coordinates: invalid proof");
 	});
@@ -163,13 +164,13 @@ describe("NightMarket contract", function () {
 	it("List: Seller can list many times with valid proof", async function () {
 		const proofArgs = await getListProof(listProofArgs());
 
-		await nightmarket.connect(seller).list(...proofArgs, 10, 10);
+		await nightmarket.connect(seller).list(...proofArgs, c.PRICE, c.ESCROW_TIME);
 		expect(await nightmarket.numListings()).to.equal(1);
 		expect((await nightmarket.listings(0)).seller).to.equal(seller.address);
 		expect((await nightmarket.listings(0)).keyCommitment).to.equal(KEY_COMMITMENT);
 		expect((await nightmarket.listings(0)).isActive).to.equal(true);
 
-		await nightmarket.connect(seller).list(...proofArgs, 10, 10);
+		await nightmarket.connect(seller).list(...proofArgs, c.PRICE, c.ESCROW_TIME);
 		expect(await nightmarket.numListings()).to.equal(2);
 		expect((await nightmarket.listings(1)).seller).to.equal(seller.address);
 		expect((await nightmarket.listings(1)).keyCommitment).to.equal(KEY_COMMITMENT);
@@ -200,27 +201,26 @@ describe("NightMarket contract", function () {
 		console.log(sharedKey);
 
 		// might need tsignore
-		const expectedkeyhash = mimcHash(0)(F.e(sharedKey[0]), F.e(sharedKey[1])).toString();
+		const sharedhash = mimcHash(0)(F.e(sharedKey[0]), F.e(sharedKey[1])).toString();
+		const expectedkeyhash = BigNumber.from(sharedhash);
 		console.log("Expected key hash is");
 		console.log(expectedkeyhash);
 
-		// @ts-ignore
-		const expectedkeyhash2 = mimcHash(0)(sharedKey[0], sharedKey[1]);
-		console.log("Expected key hash is");
-		console.log(expectedkeyhash2);
+		const error: any = await expect(nightmarket.connect(buyer).ask(0, expectedkeyhash)).to.be.reverted;
+		expect(error.toString()).to.contain('Payment is incorrect');
 
-		// const receipt_id = poseidon.encrypt(c.KEY, sharedKey, c.NONCE); // in prod, nonces should be different
-		const e = BigNumber.from(expectedkeyhash);
-		console.log("contract call made with:");
-		console.log(e);
-		await nightmarket.connect(buyer).ask(0, e);
-		const order = await (await nightmarket.listings(1)).orders(0);
+		const desiredListing = 0;
+		await nightmarket.connect(buyer).ask(desiredListing, expectedkeyhash, { value: c.PRICE });
+		const order = await nightmarket.getOrder(desiredListing, 0);
 		console.log(order);
-		expect(order.isActive).to.equal(true);
 
+		expect((await nightmarket.listings(desiredListing)).numOrders).to.equal(1);
+		expect(order.buyer).to.equal(buyer.address);
+		expect(order.isActive).to.equal(true);
 	});
 
 	it("Sale: Proof must be valid", async function () {
+		// const receipt_id = poseidon.encrypt(c.KEY, sharedKey, c.NONCE); // in prod, nonces should be different
 	});
 
 	it("Refund: Can refund buyers", async function () {
