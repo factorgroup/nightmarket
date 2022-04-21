@@ -8,11 +8,8 @@ import * as poseidon from '../../client/util/poseidonCipher.js';
 import { getListProof, getSaleProof } from '../../client/util/snarkHelper.js';
 import * as c from './testConstants';
 
-// DF dependencies use BigInteger for BigInts.
-import bigInt, { BigInteger } from 'big-integer';
-import { mimcHash, mimcSponge } from '@darkforest_eth/hashing';
-import { formatPrivKeyForBabyJub, genEcdhSharedKey, genPubKey } from 'maci-crypto';
-import { ethers } from 'hardhat';
+import { mimcHash } from '@darkforest_eth/hashing';
+import { genPubKey } from 'maci-crypto';
 
 const provider = hre.waffle.provider;
 const ZqField = require("ffjavascript").ZqField;
@@ -38,6 +35,7 @@ const LISTING_ID = poseidon.encrypt(c.MESSAGE, c.KEY, 0);
 const KEY_COMMITMENT = mimcHash(0)(F.e(c.KEY[0]), F.e(c.KEY[1])).toString();
 const PLANET_ID = mimcHash(c.PLANETHASH_KEY)(F.e(c.X_COORD), F.e(c.Y_COORD)).toString();
 
+let receiptId;
 /**
  * Generates a game mock contract and deploys the Verifiers
  * @dev: Tests are sequential & dependant on state altered by previous test
@@ -211,15 +209,13 @@ describe("NightMarket contract", function () {
 
 	it("Sale: Seller can sale with valid proof", async function () {
 		const sharedKey = getSharedKey(0, 1);
-		const receiptId = poseidon.encrypt(c.KEY, sharedKey, c.NONCE);
+		receiptId = poseidon.encrypt(c.KEY, sharedKey, c.NONCE);
 		const sharedKeyCommitment = mimcHash(0)(F.e(sharedKey[0]), F.e(sharedKey[1])).toString();
 		const listingId = 0;
 		const orderId = 0;
 
 		const proofArgs = await getSaleProof(saleProofArgs(receiptId, KEY_COMMITMENT, sharedKeyCommitment, sharedKey));
-
 		const sellerBalanceBefore = await provider.getBalance(seller.address);
-
 		const trx = await nightmarket.connect(seller).sale(...proofArgs, listingId, orderId);
 		const log = await trx.wait();
 		const gasUsed = log.gasUsed.mul(log.effectiveGasPrice);
@@ -229,19 +225,31 @@ describe("NightMarket contract", function () {
 		expect(sellerBalanceAfter.sub(c.PRICE).add(gasUsed)).to.equal(sellerBalanceBefore);
 	});
 
-	it("Refund: Can refund buyers", async function () {
+	it("Refund: Can refund expired orders", async function () {
+		const listingId = 0;
+		const newOrder = 1;
+
+		// Create a new active order
+		await nightmarket.connect(buyer).ask(listingId, 0, { value: c.PRICE });
+
+		const error: any = await expect(
+			nightmarket.connect(seller).refund(listingId, newOrder)).to.be.reverted;
+		expect(error.toString()).to.contain('Order not refundable at this time');
+
+		// Advance 16 blocks
+		await provider.send('hardhat_mine', ["0x10"]);
+		const buyerBalanceBefore = await provider.getBalance(buyer.address);
+		await nightmarket.connect(anyone).refund(listingId, newOrder);
+		const buyerBalanceAfter = await provider.getBalance(buyer.address);
+		expect(buyerBalanceAfter.sub(buyerBalanceBefore)).to.equal(c.PRICE);
 	});
 
 	it("Buyer can retrieve original coordinates", async function () {
-
-	});
-});
-
-describe("Helper functions", function () {
-	it("boolToInt works", async function () {
-	});
-
-	it("_escrowExpired works", async function () {
+		const sharedKey = getSharedKey(1, 0);
+		const key = poseidon.decrypt(receiptId, sharedKey, c.NONCE, 2);
+		const coords = poseidon.decrypt(LISTING_ID, key, c.NONCE, 2);
+		expect(coords[0].toString()).to.equal(c.X_COORD);
+		expect(coords[0].toString()).to.equal(c.X_COORD);
 	});
 });
 
@@ -293,9 +301,4 @@ function getSharedKey(priv, pub) {
 	// an edDSA, point format using `maci-cryto.genPubKey`
 	// This can be swapped out for another, potentially safer, function.
 	return genPubKey(F.e(sharedKeyHex))
-}
-
-
-function getMockSaleProof() {
-
 }

@@ -262,12 +262,14 @@ contract NightMarket is ReentrancyGuard {
         Listing storage l = listings[_listingId];
         Order storage o = l.orders[_orderId];
         require(o.isActive, "Order previously refunded");
+        require(
+            _escrowExpired(o.created, l.escrowTime) || !l.isActive,
+            "Order not refundable at this time"
+        );
 
-        if (_escrowExpired(o.created, l.escrowTime) || !l.isActive) {
-            o.isActive = false;
-            o.buyer.transfer(l.price);
-            emit Refunded(_listingId, _orderId);
-        }
+        o.isActive = false;
+        o.buyer.transfer(l.price);
+        emit Refunded(_listingId, _orderId);
     }
 
     /**
