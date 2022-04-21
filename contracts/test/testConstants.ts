@@ -20,7 +20,7 @@ export const KEY = [
 ]
 
 // Formatted for contracts
-export const PRICE = 10;
+export const PRICE = 1000000000000;
 export const ESCROW_TIME = 10;
 
 export const SNARK_CONSTANTS = {

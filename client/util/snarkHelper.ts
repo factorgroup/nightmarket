@@ -55,7 +55,6 @@ interface SnarkJSProof {
 	pi_c: [string, string, string];
 }
 
-// type ContractCallArgs = ListContractCallArgs; // SaleContractCallArgs
 /**
  * Method for converting the output of snarkJS `fullProve` into args that can be
  * passed into DarkForestCore smart contract functions which perform zk proof

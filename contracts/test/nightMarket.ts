@@ -14,6 +14,7 @@ import { mimcHash, mimcSponge } from '@darkforest_eth/hashing';
 import { formatPrivKeyForBabyJub, genEcdhSharedKey, genPubKey } from 'maci-crypto';
 import { ethers } from 'hardhat';
 
+const provider = hre.waffle.provider;
 const ZqField = require("ffjavascript").ZqField;
 const Scalar = require("ffjavascript").Scalar;
 const p = Scalar.fromString("21888242871839275222246405745257275088548364400416034343698204186575808495617");
@@ -212,9 +213,20 @@ describe("NightMarket contract", function () {
 		const sharedKey = getSharedKey(0, 1);
 		const receiptId = poseidon.encrypt(c.KEY, sharedKey, c.NONCE);
 		const sharedKeyCommitment = mimcHash(0)(F.e(sharedKey[0]), F.e(sharedKey[1])).toString();
+		const listingId = 0;
+		const orderId = 0;
 
-		const proof = await getSaleProof(saleProofArgs(receiptId, KEY_COMMITMENT, sharedKeyCommitment, sharedKey))
+		const proofArgs = await getSaleProof(saleProofArgs(receiptId, KEY_COMMITMENT, sharedKeyCommitment, sharedKey));
 
+		const sellerBalanceBefore = await provider.getBalance(seller.address);
+
+		const trx = await nightmarket.connect(seller).sale(...proofArgs, listingId, orderId);
+		const log = await trx.wait();
+		const gasUsed = log.gasUsed.mul(log.effectiveGasPrice);
+		const sellerBalanceAfter = await provider.getBalance(seller.address);
+
+		expect((await nightmarket.getOrder(listingId, orderId)).isActive).to.equal(false);
+		expect(sellerBalanceAfter.sub(c.PRICE).add(gasUsed)).to.equal(sellerBalanceBefore);
 	});
 
 	it("Refund: Can refund buyers", async function () {
