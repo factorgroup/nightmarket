@@ -37,8 +37,6 @@ const LISTING_ID = poseidon.encrypt(c.MESSAGE, c.KEY, 0);
 const KEY_COMMITMENT = mimcHash(0)(F.e(c.KEY[0]), F.e(c.KEY[1])).toString();
 const PLANET_ID = mimcHash(c.PLANETHASH_KEY)(F.e(c.X_COORD), F.e(c.Y_COORD)).toString();
 
-// Sale proof constants
-
 /**
  * Generates a game mock contract and deploys the Verifiers
  * @dev: Tests are sequential & dependant on state altered by previous test
@@ -196,22 +194,34 @@ describe("NightMarket contract", function () {
 	});
 
 	it("Sale: Invalid proof fails", async function () {
-		const sharedKey = getSharedKey(1, 0);
-		const proofArgs = await getSaleProof(saleProofArgs());
 		const listingId = 0;
 		const orderId = 0;
-		await nightmarket.connect(seller).sale(...getMockProof(), listingId, orderId, c.NONCE);
-		expect(await nightmarket.numListings()).to.equal(1);
-		// const receipt_id = poseidon.encrypt(c.KEY, sharedKey, c.NONCE); // in prod, nonces should be different
 
+		const error: any = await expect(
+			nightmarket.connect(seller).sale(
+				getMockProof(),
+				[0, 0, 0, 0],
+				0,
+				listingId,
+				orderId
+			)).to.be.reverted;
+		expect(error.toString()).to.contain('sale proof invalid');
 	});
 
 	it("Sale: Seller can sale with valid proof", async function () {
-		const sharedKey = getSharedKey(1, 0);
+		const sharedKey = getSharedKey(0, 1);
+		const receiptId = poseidon.encrypt(c.KEY, sharedKey, c.NONCE);
+		const sharedKeyCommitment = mimcHash(0)(F.e(sharedKey[0]), F.e(sharedKey[1])).toString();
+
+		const proof = await getSaleProof(saleProofArgs(receiptId, KEY_COMMITMENT, sharedKeyCommitment, sharedKey))
 
 	});
 
 	it("Refund: Can refund buyers", async function () {
+	});
+
+	it("Buyer can retrieve original coordinates", async function () {
+
 	});
 });
 
@@ -244,6 +254,16 @@ function listProofArgs() {
 	}
 }
 
+function saleProofArgs(receipt_id, key_commitment, shared_key_commitment, shared_key) {
+	return {
+		receipt_id,
+		nonce: c.NONCE,
+		key_commitment,
+		shared_key_commitment,
+		shared_key,
+		key: c.KEY
+	}
+}
 
 function getMockProof() {
 	return [0, 0, 0, 0, 0, 0, 0, 0]
@@ -263,9 +283,7 @@ function getSharedKey(priv, pub) {
 	return genPubKey(F.e(sharedKeyHex))
 }
 
-function saleProofArgs() {
 
-}
 function getMockSaleProof() {
 
 }

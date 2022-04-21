@@ -1,27 +1,23 @@
 /*
-    Prove: I have (...) such that:
-    - ECDH(buyerPubKey, myPrivKey) => sharedkey
-    - Encrypt(key[0], key[1], sharedkey) => receipt
-    - MiMCSponge(x,y,PLANETKEY) = planet_id commitment
-    - Hash(key[0],key[1],0) = same key as before
+    Prove:
+    - Encrypt(key[0], key[1], sharedkey) => receipt_ids
+    - MiMCSponge(key[0], key[1],0) = key commitment
+    - MiMCSponge(sharedkey,sharedkey, 0) = sharedkey commitment
 */
 
 pragma circom 2.0.3;
 
-include "../util/ecdh.circom";
 include "../util/poseidon.circom";
 include "../../node_modules/circomlib/circuits/mimcsponge.circom";
 
 template Sale () {
 	// public inputs
-    // signal input buyer_pub_key[2];
     signal input receipt_id[4];             // Seller encrypts(key[2], kx,ky)
 	signal input nonce;                     // Needed to decrypt key[2]
     signal input key_commitment;            // Should be same as in the listing
     signal input shared_key_commitment;     // Contract verifies buyer has the same
 
     // private inputs
-    // signal input seller_prv_key;
     signal input shared_key[2];                    // The computed shared key
     signal input key[2];                     // Original keys to unlock xy coordinates
 
@@ -31,20 +27,6 @@ template Sale () {
     m.ins[1] <== key[1];
     m.k <== 0;
     key_commitment === m.outs[0];
-
-    // TODO: consider having seller input `sharedKey` as direct private input instead
-    // Since we are checking H(shared_key) and constraining at contract level anyway
-    // Verify shared key is calculated correctly
-    // component ecdh = Ecdh();
-    // ecdh.public_key[0] <== buyer_pub_key[0];
-    // ecdh.public_key[1] <== buyer_pub_key[1];
-    // ecdh.private_key <== seller_prv_key;
-
-    // Shared key, interim signals
-    // signal kx;
-    // signal ky;
-    // kx <== ecdh.shared_key[0];
-    // ky <== ecdh.shared_key[1];
 
     // Constrain H(shared_key) is same as buyer's expectation
     component mm = MiMCSponge(2, 220, 1);

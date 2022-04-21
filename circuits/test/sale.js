@@ -46,8 +46,6 @@ describe("Sale test", function () {
 		const key_commitment = mimcHash(0)(key[0], key[1]).toString();
 
 		// Used to generate sale.inputs.json:
-		// console.log("buyer pub key:");
-		// console.log(buyer_keypair.pubKey.asCircuitInputs())
 		console.log("receipt_id:");
 		console.log(receipt_id);
 		console.log("Shared key:");
@@ -56,8 +54,6 @@ describe("Sale test", function () {
 		console.log(shared_key_commitment);
 		console.log("key commit:");
 		console.log(key_commitment);
-		// console.log("seller priv:");
-		// console.log(seller_keypair.privKey.asCircuitInputs());
 
 		let witness;
 		witness = await circuit.calculateWitness(
@@ -71,10 +67,6 @@ describe("Sale test", function () {
 				// "seller_prv_key": seller_keypair.privKey.asCircuitInputs(),
 				key
 			}, true);
-
-		// // Shared key is correct
-		// await circuit.assertOut(witness, { : shared_key[0] });
-		// await circuit.assertOut(witness, { ky: shared_key[1] });
 
 		await circuit.checkConstraints(witness);
 	});
