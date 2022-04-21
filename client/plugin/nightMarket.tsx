@@ -2,7 +2,6 @@ import { h, render } from "preact";
 
 import { AppView } from "./views/AppView";
 
-
 import GameManager from "@df/GameManager";
 import GameUIManager from "@df/GameUIManager";
 
@@ -17,35 +16,42 @@ declare const ui: GameUIManager;
  */
 
 console.log(df, ui);
+console.log("in nightmarket.tsx");
+
+// export { default } from 'http://127.0.0.1:2222/nightMarket.js?dev';
 
 class NightMarketPlugin {
 	container: HTMLDivElement | null;
 
 	constructor() {
+		this.container = null;
 	}
 
 	/**
 	 * Called when plugin is launched with the "run" button.
 	 */
-	async render(container) {
+	async render(container: HTMLDivElement) {
 
 		container.style.width = "600px";
 		container.style.height = "400px";
-		container.style.padding = 0;
 
 		try {
 			// const contract = await getContract();
+			console.log("Here in try block");
+			const contract = null;
 			render(<AppView />, container);
-		} catch (err) {
+		} catch (err: any) {
 			console.error("[NightMarketPlugin] Error starting plugin:", err);
-			render(<div>{ err.message } < /div>, this.container);
-    	}
+			render(<div>{err.message}hello woooorld </div>, container);
+		}
 	}
 
 	/**
 	 * Called when plugin modal is closed.
 	 */
-	destroy() { }
+	destroy() {
+		render(null, this.container);
+	}
 }
 
 /**

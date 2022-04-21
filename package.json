@@ -11,8 +11,8 @@
     "sol:clean": "npx hardhat clean",
     "sol:compile": "./scripts/reformat-verifier-sol.sh && npx hardhat compile",
     "sol:test": "tsc && npx hardhat test ./build/contracts/test/nightMarket.js",
-    "app:dev": "df-plugin-dev-server --glob client/plugin/*.ts --preact",
-    "app:build": "df-plugin-dev-server bundle --glob client/plugin/*.ts --outdir=TBA --preact"
+    "app:dev": "df-plugin-dev-server --glob client/plugin/*.tsx --preact",
+    "app:build": "df-plugin-dev-server bundle --glob client/plugin/*.tsx --outdir=TBA --preact"
   },
   "dependencies": {
     "preact": "^10.7.1",
