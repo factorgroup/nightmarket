@@ -13,15 +13,32 @@ export async function getListProof(inputs: any) {
 		path.join(__dirname, "..", "..", "..", "client", "list", "list.zkey"),
 	);
 
-	const callArgs = buildContractCallArgs(
+	const callArgs = buildListContractCallArgs(
 		proof,
 		[
 			inputs.listing_id,
 			inputs.nonce,
 			inputs.key_commitment,
 			inputs.planet_id,
-			inputs.biomebase,
-			inputs.seller_address
+			inputs.biomebase
+		]
+	);
+
+	return callArgs
+}
+
+export async function getSaleProof(inputs: any) {
+	const { proof, publicSignals } = await groth16.fullProve(
+		inputs,
+		path.join(__dirname, "..", "..", "..", "client", "sale", "sale.wasm"),
+		path.join(__dirname, "..", "..", "..", "client", "sale", "sale.zkey"),
+	);
+
+	const callArgs = buildSaleContractCallArgs(
+		proof,
+		[
+			inputs.receipt_id,
+			inputs.nonce,
 		]
 	);
 
@@ -38,7 +55,6 @@ interface SnarkJSProof {
 	pi_c: [string, string, string];
 }
 
-// type ContractCallArgs = ListContractCallArgs; // SaleContractCallArgs
 /**
  * Method for converting the output of snarkJS `fullProve` into args that can be
  * passed into DarkForestCore smart contract functions which perform zk proof
@@ -48,7 +64,7 @@ interface SnarkJSProof {
  * @param publicSignals the circuit's public signals (i.e. output signals and
  * public input signals)
  */
-function buildContractCallArgs(
+function buildListContractCallArgs(
 	proof: SnarkJSProof,
 	publicSignals: string[]
 ) {
@@ -61,14 +77,35 @@ function buildContractCallArgs(
 		BigNumber.from(proof.pi_b[1][0]),
 		BigNumber.from(proof.pi_c[0]),
 		BigNumber.from(proof.pi_c[1])],
-		[BigNumber.from(publicSignals[0][0]),
+		[BigNumber.from(publicSignals[0][0]), // coordEncryption
 		BigNumber.from(publicSignals[0][1]),
 		BigNumber.from(publicSignals[0][2]),
 		BigNumber.from(publicSignals[0][3])],
-		BigNumber.from(publicSignals[1]),
-		BigNumber.from(publicSignals[2]),
-		BigNumber.from(publicSignals[3]),
-		BigNumber.from(publicSignals[4]),
+		BigNumber.from(publicSignals[1]), //nonce
+		BigNumber.from(publicSignals[2]), //keyCommitment
+		BigNumber.from(publicSignals[3]), //locationId
+		BigNumber.from(publicSignals[4]), // biomebase
+	];
+}
+
+function buildSaleContractCallArgs(
+	proof: SnarkJSProof,
+	publicSignals: string[]
+) {
+	return [
+		[BigNumber.from(proof.pi_a[0]),
+		BigNumber.from(proof.pi_a[1]),
+		BigNumber.from(proof.pi_b[0][1]),
+		BigNumber.from(proof.pi_b[0][0]),
+		BigNumber.from(proof.pi_b[1][1]),
+		BigNumber.from(proof.pi_b[1][0]),
+		BigNumber.from(proof.pi_c[0]),
+		BigNumber.from(proof.pi_c[1])],
+		[BigNumber.from(publicSignals[0][0]), //keyEncryption
+		BigNumber.from(publicSignals[0][1]),
+		BigNumber.from(publicSignals[0][2]),
+		BigNumber.from(publicSignals[0][3])],
+		BigNumber.from(publicSignals[1]) // nonce
 	];
 }
 

@@ -187,7 +187,7 @@ contract NightMarket is ReentrancyGuard {
      * @notice Buyer can ask for order(s) from active listings
      * @dev A listing can have multiple orders from same buyer
      * @param _expectedSharedKeyHash A H(ecdh(buyerPrivKey, sellerPubKey)) computed by Buyer
-     * return orderId Buyer keeps this for future refunds
+     * @return orderId Buyer keeps this for future refunds
      */
     function ask(uint256 _listingId, uint256 _expectedSharedKeyHash)
         external
@@ -211,16 +211,15 @@ contract NightMarket is ReentrancyGuard {
     /**
      * @notice Seller can submit a proof of sale.
      * @dev Seller generates `_proof` offchain in `sale.circom`
-     * @param _buyerPubKey We have buyer input this in the correct format to save gas
-     * It is safe bc any pubKey is ultimately constrained with expectedSharedKeyHash
+     * @dev Seller ensures he can derive buyer's `sharedKeyCommitment`
+     * before submitting the sale trx
      */
     function sale(
-        uint256 _listingId,
-        uint256 _orderId,
-        uint256[2] memory _buyerPubKey,
         uint256[8] memory _proof,
         uint256[4] memory _keyEncryption,
-        uint256 _nonce
+        uint256 _nonce,
+        uint256 _listingId,
+        uint256 _orderId
     ) external nonReentrant {
         Listing storage l = listings[_listingId];
         require(l.seller == msg.sender, "Only seller can close sale");
@@ -230,9 +229,7 @@ contract NightMarket is ReentrancyGuard {
         Order storage o = l.orders[_orderId];
         require(o.isActive, "Order is inactive");
 
-        uint256[9] memory publicInputs = [
-            _buyerPubKey[0],
-            _buyerPubKey[1],
+        uint256[7] memory publicInputs = [
             _keyEncryption[0],
             _keyEncryption[1],
             _keyEncryption[2],
@@ -265,12 +262,14 @@ contract NightMarket is ReentrancyGuard {
         Listing storage l = listings[_listingId];
         Order storage o = l.orders[_orderId];
         require(o.isActive, "Order previously refunded");
+        require(
+            _escrowExpired(o.created, l.escrowTime) || !l.isActive,
+            "Order not refundable at this time"
+        );
 
-        if (_escrowExpired(o.created, l.escrowTime) || !l.isActive) {
-            o.isActive = false;
-            o.buyer.transfer(l.price);
-            emit Refunded(_listingId, _orderId);
-        }
+        o.isActive = false;
+        o.buyer.transfer(l.price);
+        emit Refunded(_listingId, _orderId);
     }
 
     /**
