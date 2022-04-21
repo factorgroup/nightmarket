@@ -13,6 +13,7 @@ export const BIOMEBASE = 12;
 // Private
 export const X_COORD = "1764";
 export const Y_COORD = "21888242871839275222246405745257275088548364400416034343698204186575808492485";
+export const MESSAGE = [X_COORD, Y_COORD];
 export const KEY = [
 	"123",
 	"456"

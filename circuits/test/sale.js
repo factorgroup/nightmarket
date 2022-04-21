@@ -48,12 +48,14 @@ describe("Sale test", function () {
 		// Used to generate sale.inputs.json:
 		// console.log("buyer pub key:");
 		// console.log(buyer_keypair.pubKey.asCircuitInputs())
-		// console.log("receipt_id:");
-		// console.log(receipt_id);
-		// console.log("shared:");
-		// console.log(shared_key_commitment);
-		// console.log("key commit:");
-		// console.log(key_commitment);
+		console.log("receipt_id:");
+		console.log(receipt_id);
+		console.log("Shared key:");
+		console.log(shared_key);
+		console.log("Shared key commitment:");
+		console.log(shared_key_commitment);
+		console.log("key commit:");
+		console.log(key_commitment);
 		// console.log("seller priv:");
 		// console.log(seller_keypair.privKey.asCircuitInputs());
 

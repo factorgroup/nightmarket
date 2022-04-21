@@ -5,7 +5,7 @@ import { constants, BigNumber, utils } from 'ethers';
 
 import { default as gameJSON } from '../../artifacts/contracts/darkforest/GetterInterface.sol/IGetter.json';
 import * as poseidon from '../../client/util/poseidonCipher.js';
-import { getListProof } from '../../client/util/snarkHelper.js';
+import { getListProof, getSaleProof } from '../../client/util/snarkHelper.js';
 import * as c from './testConstants';
 
 // DF dependencies use BigInteger for BigInts.
@@ -29,18 +29,13 @@ let fakeGame;
 let seller;
 let buyer;
 let anyone;
-let addrs;
-let mnemonic;
-let walletMnemonic;
-// TODO nonce can be achieved through: genRandomBabyJubValue
+
+// TODO: helper fn to calculate nonce, maybe through: genRandomBabyJubValue
 
 // Calculate commitments from test constants
-const MESSAGE = [c.X_COORD, c.Y_COORD];
-const LISTING_ID = poseidon.encrypt(MESSAGE, c.KEY, 0);
-// @ts-ignore: String not assignable to Number
-const KEY_COMMITMENT = mimcHash(0)(c.KEY[0], c.KEY[1]).toString();
-// @ts-ignore: String not assignable to Number
-const PLANET_ID = mimcHash(c.PLANETHASH_KEY)(c.X_COORD, c.Y_COORD).toString();
+const LISTING_ID = poseidon.encrypt(c.MESSAGE, c.KEY, 0);
+const KEY_COMMITMENT = mimcHash(0)(F.e(c.KEY[0]), F.e(c.KEY[1])).toString();
+const PLANET_ID = mimcHash(c.PLANETHASH_KEY)(F.e(c.X_COORD), F.e(c.Y_COORD)).toString();
 
 // Sale proof constants
 
@@ -184,43 +179,36 @@ describe("NightMarket contract", function () {
 	});
 
 	it("Ask: Buyers can make orders", async function () {
-		// Construct wallets used to compute the sharedSecrets
-		const sellerPrivateKey = hre.config.networks.hardhat.accounts[0].privateKey;
-		const sellerSigningKey = new utils.SigningKey(sellerPrivateKey);
+		const sharedKey = getSharedKey(1, 0);
+		const sharedKeyCommitment = mimcHash(0)(F.e(sharedKey[0]), F.e(sharedKey[1])).toString();
+		const expectedKeyCommitment = BigNumber.from(sharedKeyCommitment);
 
-		const buyerPrivateKey = hre.config.networks.hardhat.accounts[1].privateKey;
-		const buyerSigningKey = new utils.SigningKey(buyerPrivateKey);
-
-		console.log("Seller private key");
-		console.log(sellerPrivateKey);
-		// Note: we convert a ecdsa pubkey (hex format) to a eddsa pubkey (point format)
-		const buyerPubKey = genPubKey(F.e(buyerSigningKey.publicKey)); 		// key is in hex format though....
-		// TODO(later): genEcdh is potentially unsafe bc of the previous conversion step
-		const sharedKey = genEcdhSharedKey(F.e(sellerPrivateKey), buyerPubKey);	// key is in hex format through...
-		console.log("Shared key is");
-		console.log(sharedKey);
-
-		// might need tsignore
-		const sharedhash = mimcHash(0)(F.e(sharedKey[0]), F.e(sharedKey[1])).toString();
-		const expectedkeyhash = BigNumber.from(sharedhash);
-		console.log("Expected key hash is");
-		console.log(expectedkeyhash);
-
-		const error: any = await expect(nightmarket.connect(buyer).ask(0, expectedkeyhash)).to.be.reverted;
+		const error: any = await expect(nightmarket.connect(buyer).ask(0, expectedKeyCommitment)).to.be.reverted;
 		expect(error.toString()).to.contain('Payment is incorrect');
 
 		const desiredListing = 0;
-		await nightmarket.connect(buyer).ask(desiredListing, expectedkeyhash, { value: c.PRICE });
-		const order = await nightmarket.getOrder(desiredListing, 0);
-		console.log(order);
+		await nightmarket.connect(buyer).ask(desiredListing, expectedKeyCommitment, { value: c.PRICE });
 
+		const order = await nightmarket.getOrder(desiredListing, 0);
 		expect((await nightmarket.listings(desiredListing)).numOrders).to.equal(1);
 		expect(order.buyer).to.equal(buyer.address);
 		expect(order.isActive).to.equal(true);
 	});
 
-	it("Sale: Proof must be valid", async function () {
+	it("Sale: Invalid proof fails", async function () {
+		const sharedKey = getSharedKey(1, 0);
+		const proofArgs = await getSaleProof(saleProofArgs());
+		const listingId = 0;
+		const orderId = 0;
+		await nightmarket.connect(seller).sale(...getMockProof(), listingId, orderId, c.NONCE);
+		expect(await nightmarket.numListings()).to.equal(1);
 		// const receipt_id = poseidon.encrypt(c.KEY, sharedKey, c.NONCE); // in prod, nonces should be different
+
+	});
+
+	it("Sale: Seller can sale with valid proof", async function () {
+		const sharedKey = getSharedKey(1, 0);
+
 	});
 
 	it("Refund: Can refund buyers", async function () {
@@ -259,6 +247,20 @@ function listProofArgs() {
 
 function getMockProof() {
 	return [0, 0, 0, 0, 0, 0, 0, 0]
+}
+
+function getSharedKey(priv, pub) {
+	const privateKeyHolder = hre.config.networks.hardhat.accounts[priv].privateKey;
+	const privateSigningKey = new utils.SigningKey(privateKeyHolder);
+	const publicKeyHolder = hre.config.networks.hardhat.accounts[pub].privateKey;
+	const publicSigningKey = new utils.SigningKey(publicKeyHolder);
+
+	const sharedKeyHex = privateSigningKey.computeSharedSecret(publicSigningKey.publicKey);
+
+	// Note: we expect users to convert `sharedKey` from ecdsa, hex format into
+	// an edDSA, point format using `maci-cryto.genPubKey`
+	// This can be swapped out for another, potentially safer, function.
+	return genPubKey(F.e(sharedKeyHex))
 }
 
 function saleProofArgs() {
