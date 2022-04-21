@@ -8,6 +8,7 @@
     "circom:test": "mocha ./circuits/test --max-old-space-size=4000",
     "circom:dev": "hardhat circom --deterministic --debug --verbose",
     "circom:prod": "hardhat circom --verbose",
+    "sol:clean": "npx hardhat clean",
     "sol:compile": "./scripts/reformat-verifier-sol.sh && npx hardhat compile",
     "sol:test": "tsc && npx hardhat test ./build/contracts/test/nightMarket.js"
   },

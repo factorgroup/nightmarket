@@ -31,7 +31,7 @@ let anyone;
 // TODO: helper fn to calculate nonce, maybe through: genRandomBabyJubValue
 
 // Calculate commitments from test constants
-const LISTING_ID = poseidon.encrypt(c.MESSAGE, c.KEY, 0);
+const LISTING_ID = poseidon.encrypt(c.MESSAGE, c.KEY, c.LIST_NONCE);
 const KEY_COMMITMENT = mimcHash(0)(F.e(c.KEY[0]), F.e(c.KEY[1])).toString();
 const PLANET_ID = mimcHash(c.PLANETHASH_KEY)(F.e(c.X_COORD), F.e(c.Y_COORD)).toString();
 

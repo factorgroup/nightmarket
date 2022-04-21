@@ -1,5 +1,6 @@
 import { constants } from 'ethers';
 
+// Private inputs
 export const PLANETHASH_KEY = 7;
 export const BIOMEBASE_KEY = 8;
 export const SPACETYPE_KEY = 8;
@@ -10,7 +11,7 @@ export const LIST_NONCE = "1";
 export const SALE_NONCE = "2";
 export const BIOMEBASE = 12;
 
-// Private
+// Private inputs
 export const X_COORD = "1764";
 export const Y_COORD = "21888242871839275222246405745257275088548364400416034343698204186575808492485";
 export const MESSAGE = [X_COORD, Y_COORD];
