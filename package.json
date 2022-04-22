@@ -11,6 +11,7 @@
     "sol:clean": "npx hardhat clean",
     "sol:compile": "./scripts/reformat-verifier-sol.sh && npx hardhat compile",
     "sol:test": "tsc && npx hardhat test ./build/contracts/test/nightMarket.js",
+    "sol:deploy": "tsc && npx hardhat run ./build/contracts/scripts/deploy.js --network xdai",
     "app:dev": "df-plugin-dev-server --glob client/plugin/*.tsx --preact",
     "app:build": "df-plugin-dev-server bundle --glob client/plugin/*.tsx --outdir=TBA --preact"
   },

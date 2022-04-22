@@ -12,6 +12,7 @@ task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
 });
 
 module.exports = {
+	solidity: "0.8.13",
 	networks: {
 		hardhat: {
 			accounts: [
@@ -28,9 +29,14 @@ module.exports = {
 					balance: "10000000000000000000000"
 				}
 			]
+		},
+		xdai: {
+			url: "https://rpc-df.xdaichain.com/",
+			accounts: [`${process.env.XDAI_PRIVATEKEY}`],
+			chainId: 100,
+			gasMultiplier: 5,
 		}
 	},
-	solidity: "0.8.13",
 	circom: {
 		// (optional) Base path for files being read, defaults to `./circuits/`
 		inputBasePath: "./circuits/",
