@@ -15,6 +15,7 @@
     "app:build": "df-plugin-dev-server bundle --glob client/plugin/*.tsx --outdir=TBA --preact"
   },
   "dependencies": {
+    "htm": "^3.1.0",
     "preact": "^10.7.1",
     "snarkjs": "^0.4.16"
   },
