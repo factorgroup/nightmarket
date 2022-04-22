@@ -12,6 +12,8 @@ A 0xParc Learning Group project - work in progress.
 - Deploy circuits: `yarn circom:prod`
 - Compile contracts: `yarn sol:compile`
 - Test contracts: `yarn sol:test`
+- Run plugin server: `yarn app:dev`
+- Deploy plugin: `yarn app:build`
 
 ## Directory
 - `/circuits/list`: Circuits for generating a coordinate listing
@@ -60,6 +62,19 @@ Scheme: Encryption using a 5-wide Poseidon in SpongeWrap with (0, len=2, Kx ,Ky 
 - `sale(..., saleProof)`: sellers can close a sale and fulfill a buyer order.
 - `refund(...)`: anyone can refund buyers deposit if seller delists or if the `escrowTime` lockup is over.
 
+## Plugin/UI Implementation (IN PROGRESS)
+- Players can deploy a new escrow contract for each round (if it doesnt exist yet)
+- Buyers can sort by listTime, planetId, price what other criteria makes sense?
+- Why do players reveal coords? Seems like a interaction that can be replaced with sell instead.
+
+## Warning
+The circuits and smart contracts written for this marketplace has not been audited, use at your own risk.
+
+## Danger
+Plugins are evaluated in the context of your game and can access all of your private information (including private key!). Plugins can dynamically load data, which can be switched out from under you!!! Use these plugins at your own risk.
+
+You should not use any plugins that you haven't written yourself or by someone you trust completely. You or someone you trust should control the entire pipeline (such as imported dependencies) and should review plugins before you use them.
+
 ## Acknowledgements
 - 0xParc for study group
 - [DF plugins](https://github.com/darkforest-eth/plugins)
@@ -67,3 +82,7 @@ Scheme: Encryption using a 5-wide Poseidon in SpongeWrap with (0, len=2, Kx ,Ky 
 - [EthMarketPlace](https://github.com/nulven/EthDataMarketplace)
 - [Maci](https://github.com/appliedzkp/maci/)
 - [Poseidon Encryption](https://github.com/iden3/circomlib/pull/60), [Paper](https://drive.google.com/file/d/1EVrP3DzoGbmzkRmYnyEDcIQcXVU7GlOd/view)
+- [DF plugin](https://github.com/Bind/my-first-plugin)
+- [Darksea Market](https://github.com/snowtigersoft/darksea-market)
+- [Artifact Market](https://github.com/dfdao/artifact-market/)
+- [Play to earn](https://github.com/projectsophon/df-play-to-earn)
