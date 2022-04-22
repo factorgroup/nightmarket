@@ -1,0 +1,51 @@
+import { ArtifactId, Biome, EthAddress, LocationId, Planet, UpgradeBranchName } from '@darkforest_eth/types';
+import { HSLVec, RGBAVec, RGBVec } from '../../Frontend/Renderers/GameRenderer/EngineTypes';
+import { PlanetCosmeticInfo, RuinsInfo } from '../Utils/UtilsTypes';
+export declare type PixelCoords = {
+    x: number;
+    y: number;
+};
+export declare type QuoteData = {
+    quote: string;
+    author: string;
+};
+export declare class ProcgenUtils {
+    private static blurbsById;
+    private static blurbs2ById;
+    private static cosmeticByLocId;
+    private static baseByBiome;
+    private static oceanByBiome;
+    private static strByBiome;
+    static getBiomeRgbStr(biome: Biome): string;
+    static grayColors: PlanetCosmeticInfo;
+    private static namesById;
+    private static taglinesById;
+    private static huesByHash;
+    private static rgbsByHash;
+    static ellipsisStr(str: string, maxLen: number): string;
+    static ellipsStrEnd(str: string, maxLen: number): string;
+    static hslStr(h: number, s: number, l: number): string;
+    static rgbStr(rgb: RGBVec): string;
+    static hslToRgb([h, s, l]: HSLVec): RGBVec;
+    static hashToInt(hash: string): number;
+    static hashToHue(hash: string): number;
+    static getPlayerColor(player: EthAddress): string;
+    static getPlayerColorVec(player: EthAddress): RGBAVec;
+    static getOwnerColorVec(planet: Planet): RGBAVec;
+    static getOwnerColor(planet: Planet): string;
+    static getPlanetClass(planet: Planet): UpgradeBranchName;
+    static planetPerlin(loc: LocationId): (coords: PixelCoords) => number;
+    static planetRandom(loc: LocationId): () => number;
+    static planetRandomInt(loc: LocationId): () => number;
+    static artifactRandom(loc: ArtifactId): () => number;
+    static artifactRandomInt(loc: ArtifactId): () => number;
+    static getRuinsInfo(loc: LocationId): RuinsInfo;
+    static getPlanetCosmetic(planet: Planet | undefined): PlanetCosmeticInfo;
+    static getPlanetTitle(planet: Planet | undefined): string;
+    static getPlanetName(planet: Planet | undefined): string;
+    static getPlanetNameHash(locId: LocationId): string;
+    static getPlanetTagline(planet: Planet | undefined): string;
+    static getPlanetBlurb(planet: Planet | undefined): string;
+    static getPlanetBlurb2(planet: Planet | undefined): string;
+    static getHatSizeName(planet: Planet): string;
+}

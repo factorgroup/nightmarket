@@ -31,7 +31,7 @@ let anyone;
 // TODO: helper fn to calculate nonce, maybe through: genRandomBabyJubValue
 
 // Calculate commitments from test constants
-const LISTING_ID = poseidon.encrypt(c.MESSAGE, c.KEY, 0);
+const LISTING_ID = poseidon.encrypt(c.MESSAGE, c.KEY, c.LIST_NONCE);
 const KEY_COMMITMENT = mimcHash(0)(F.e(c.KEY[0]), F.e(c.KEY[1])).toString();
 const PLANET_ID = mimcHash(c.PLANETHASH_KEY)(F.e(c.X_COORD), F.e(c.Y_COORD)).toString();
 
@@ -107,7 +107,7 @@ describe("NightMarket contract", function () {
 			nightmarket.list(
 				getMockProof(),
 				LISTING_ID,
-				c.NONCE,
+				c.LIST_NONCE,
 				KEY_COMMITMENT,
 				UNINITIALIZED_PLANET,
 				c.BIOMEBASE,
@@ -120,7 +120,7 @@ describe("NightMarket contract", function () {
 			nightmarket.list(
 				getMockProof(),
 				LISTING_ID,
-				c.NONCE,
+				c.LIST_NONCE,
 				KEY_COMMITMENT,
 				REVEALED_PLANET,
 				c.BIOMEBASE,
@@ -135,7 +135,7 @@ describe("NightMarket contract", function () {
 			nightmarket.list(
 				getMockProof(),
 				LISTING_ID,
-				c.NONCE,
+				c.LIST_NONCE,
 				KEY_COMMITMENT,
 				PLANET_ID,
 				c.BIOMEBASE,
@@ -209,7 +209,7 @@ describe("NightMarket contract", function () {
 
 	it("Sale: Seller can sale with valid proof", async function () {
 		const sharedKey = getSharedKey(0, 1);
-		receiptId = poseidon.encrypt(c.KEY, sharedKey, c.NONCE);
+		receiptId = poseidon.encrypt(c.KEY, sharedKey, c.SALE_NONCE);
 		const sharedKeyCommitment = mimcHash(0)(F.e(sharedKey[0]), F.e(sharedKey[1])).toString();
 		const listingId = 0;
 		const orderId = 0;
@@ -246,8 +246,8 @@ describe("NightMarket contract", function () {
 
 	it("Buyer can retrieve original coordinates", async function () {
 		const sharedKey = getSharedKey(1, 0);
-		const key = poseidon.decrypt(receiptId, sharedKey, c.NONCE, 2);
-		const coords = poseidon.decrypt(LISTING_ID, key, c.NONCE, 2);
+		const key = poseidon.decrypt(receiptId, sharedKey, c.SALE_NONCE, 2);
+		const coords = poseidon.decrypt(LISTING_ID, key, c.LIST_NONCE, 2);
 		expect(coords[0].toString()).to.equal(c.X_COORD);
 		expect(coords[0].toString()).to.equal(c.X_COORD);
 	});
@@ -263,7 +263,7 @@ function listProofArgs() {
 		xMirror: c.X_MIRROR,
 		yMirror: c.Y_MIRROR,
 		listing_id: LISTING_ID,
-		nonce: c.NONCE,
+		nonce: c.LIST_NONCE,
 		key_commitment: KEY_COMMITMENT,
 		planet_id: PLANET_ID,
 		biomebase: c.BIOMEBASE,
@@ -277,7 +277,7 @@ function listProofArgs() {
 function saleProofArgs(receipt_id, key_commitment, shared_key_commitment, shared_key) {
 	return {
 		receipt_id,
-		nonce: c.NONCE,
+		nonce: c.SALE_NONCE,
 		key_commitment,
 		shared_key_commitment,
 		shared_key,

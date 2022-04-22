@@ -10,8 +10,8 @@ A 0xParc Learning Group project - work in progress.
 - Install: `yarn install`
 - Test circuits: `yarn circom:test`
 - Deploy circuits: `yarn circom:prod`
-- Format verifier contracts: `yarn sol:verify`
 - Compile contracts: `yarn sol:compile`
+- Test contracts: `yarn sol:test`
 
 ## Directory
 - `/circuits/list`: Circuits for generating a coordinate listing
@@ -29,16 +29,16 @@ A 0xParc Learning Group project - work in progress.
 ## Circuit Design
 #### LIST
 Prove: Seller has (x,y) coords, and sell a `KEY` used to encrypt it
-- `hash(XY,PLANETHASH_KEY) ==> valid_coord` // I know a valid data/coordinate
-- `ENCODE(XY, KEY)` // I encrypted data with key
-- `hash(KEY)` // I commit to the secret key
+- `hash(XY,PLANETHASH_KEY) ==> valid_coord` // commit to a valid data/coordinate
+- `ENCODE(XY, KEY)` // encrypt data with key
+- `hash(KEY)` // commit to the secret key
 
 #### SALE
-Prove: Seller encrypted `KEY` with a `SHARED_KEY` from a ECDH key exchange with Buyer
-- `SHAREDKEY <== ecdh(sellerPrivKey, buyerPubKey)` // An ECDH shared key
-- `ENCODE(KEY, SHARED_KEY)` // Encrypt KEY, s.t. buyer can decrypt offline
-- `hash(KEY) ==> output` // I encrypted the correct key
-- `BUYER_PUBKEY ==> output` // I used the correct buyer key
+Prove: Seller encrypted `KEY` with a `SHARED_KEY` from an (offline) ECDH key exchange with Buyer
+- `SHAREDKEY <== ecdh(sellerPrivKey, buyerPubKey)`
+- `ENCODE(KEY, SHARED_KEY)`
+- `hash(KEY)` // commit to the original key
+- `hash(SHAREDKEY)` // commit to the same shared key
 
 #### ENCODE
 Scheme: Encryption using a 5-wide Poseidon in SpongeWrap with (0, len=2, Kx ,Ky , N) as input.
@@ -59,6 +59,7 @@ Scheme: Encryption using a 5-wide Poseidon in SpongeWrap with (0, len=2, Kx ,Ky 
 - `ask(...)`: buyers can create (duplicate) orders on listings and lock up a payment for `escrowTime` blocks.
 - `sale(..., saleProof)`: sellers can close a sale and fulfill a buyer order.
 - `refund(...)`: anyone can refund buyers deposit if seller delists or if the `escrowTime` lockup is over.
+
 ## Acknowledgements
 - 0xParc for study group
 - [DF plugins](https://github.com/darkforest-eth/plugins)

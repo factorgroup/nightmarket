@@ -15,7 +15,22 @@
 		"strict": true,
 		"resolveJsonModule": true,
 		"skipLibCheck": true,
-		"outDir": "./build"
+		"outDir": "./build",
+		"baseUrl": ".",
+		"paths": {
+			"@df_client/*": [
+				"./client/client_declarations/*"
+			],
+			"@df/*": [
+				"./client/client_declarations/src/Backend/GameLogic/*"
+			]
+		},
+		"jsx": "react",
+		"jsxFactory": "h",
+		"jsxFragmentFactory": "Fragment",
+		"types": [
+			"preact"
+		]
 	},
 	"exclude": [
 		"node_modules/**"
