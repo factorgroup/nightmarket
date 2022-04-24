@@ -10,23 +10,24 @@ const styles = {
 		position: "relative",
 		height: "100%",
 	},
-	content: {
-		paddingBottom: "44px",
-		height: "100%",
-		overflowY: "scroll",
-	},
 	tabs: {
 		display: "grid",
 		position: "absolute",
 		padding: "8px",
 		gridColumnGap: "8px",
 		justifyContent: "flex-start",
-		gridTemplateColumns: "auto auto auto auto 1fr",
+		gridTemplateColumns: "auto auto auto auto auto 1fr",
 		alignItems: "center",
-		bottom: 0,
+		top: 0,
 		width: "100%",
 		background: colors.background,
-		borderTop: `1px solid ${colors.borderlight}`,
+		borderBottom: `1px solid ${colors.borderlight}`,
+	},
+	content: {
+		paddingTop: "40px",
+		paddingBottom: "40px",
+		height: "100%",
+		overflowY: "scroll",
 	},
 };
 
@@ -42,9 +43,6 @@ export function Navigation({ tabs }) {
 
 	return (
 		<div style={styles.container}>
-			<div style={styles.content}>
-				<TabContent />
-			</div>
 			<div style={styles.tabs}>
 				{tabs.map((tab) => (
 					<Button
@@ -62,6 +60,10 @@ export function Navigation({ tabs }) {
 						{/* {balanceShort} xDai */}
 					</Button>
 				</div>
+			</div>
+			<div>Some random text</div>
+			<div style={styles.content}>
+				<TabContent />
 			</div>
 		</div>
 	);

@@ -21,6 +21,7 @@ class NightMarketPlugin {
 	async render(container) {
 
 		container.style.width = "600px";
+		container.style.height = "400px";
 
 		try {
 			const contracts = await getContracts();
