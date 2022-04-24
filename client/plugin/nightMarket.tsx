@@ -1,19 +1,12 @@
 import { h, render } from "preact";
 import { AppView } from "./views/AppView";
+import { getContracts } from "./helpers/contracts";
 
-// import GameManager from "@df/GameManager";
-// import GameUIManager from "@df/GameUIManager";
+import GameManager from "@df/GameManager";
+import GameUIManager from "@df/GameUIManager";
 
-// declare const df: GameManager;
-// declare const ui: GameUIManager;
-
-/**
- * Remember, you have access these globals:
- * 1. df - Just like the df object in your console.
- * 2. ui - For interacting with the game's user interface.
- *
- * Let's log these to the console when you run your plugin!
- */
+declare const df: GameManager;
+declare const ui: GameUIManager;
 
 class NightMarketPlugin {
 
@@ -28,13 +21,10 @@ class NightMarketPlugin {
 	async render(container) {
 
 		container.style.width = "600px";
-		container.style.height = "400px";
 
 		try {
-			// const contract = await getContract();
-			console.log("Here in try block");
-			const contract = null;
-			render(<AppView />, container);
+			const contracts = await getContracts();
+			render(<AppView contracts={contracts} />, container);
 		} catch (err: any) {
 			console.error("[NightMarketPlugin] Error starting plugin:", err);
 			render(<div>{err.message}</div>, container);
