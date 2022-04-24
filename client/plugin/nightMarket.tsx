@@ -1,12 +1,6 @@
 import { h, render } from "preact";
 import { AppView } from "./views/AppView";
-import { getContracts } from "./helpers/contracts";
-
-import GameManager from "@df/GameManager";
-import GameUIManager from "@df/GameUIManager";
-
-declare const df: GameManager;
-declare const ui: GameUIManager;
+import { getContract } from "./helpers/contracts";
 
 class NightMarketPlugin {
 
@@ -19,16 +13,18 @@ class NightMarketPlugin {
 	 * Called when plugin is launched with the "run" button.
 	 */
 	async render(container) {
-
+		// @ts-ignore
+		this.container = container;
 		container.style.width = "600px";
 		container.style.height = "400px";
 
 		try {
-			const contracts = await getContracts();
-			render(<AppView contracts={contracts} />, container);
+			const contract = await getContract();
+			render(<AppView contract={contract} />, container);
 		} catch (err: any) {
 			console.error("[NightMarketPlugin] Error starting plugin:", err);
-			render(<div>{err.message}</div>, container);
+			// @ts-ignore
+			render(<div>{err.message}</div>, this.container);
 		}
 	}
 
@@ -36,7 +32,7 @@ class NightMarketPlugin {
 	 * Called when plugin modal is closed.
 	 */
 	destroy() {
-		// @ts-expect-error
+		// @ts-ignore
 		render(null, this.container);
 	}
 }

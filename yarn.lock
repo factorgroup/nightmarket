@@ -325,6 +325,17 @@
     gl-matrix "^3.3.0"
     type-fest "^2.12.1"
 
+"@darkforest_eth/types@^6.7.29":
+  version "6.7.29"
+  resolved "https://registry.yarnpkg.com/@darkforest_eth/types/-/types-6.7.29.tgz#e97d0857ee8a1b134a28d9bf5e193872fd981dca"
+  integrity sha512-D8HT7fTeqsI4kzpbDiqs61mSCsH3LnAtC6uvzrfVkzclmQ+EHe7CtmXEbJGlT2Bi2jZ45aZIbghjavLd59z9Yw==
+  dependencies:
+    "@types/gl-matrix" "^3.2.0"
+    big-integer "^1.6.48"
+    ethers "^5.5.1"
+    gl-matrix "^3.3.0"
+    type-fest "^2.12.1"
+
 "@defi-wonderland/smock@^2.0.7":
   version "2.0.7"
   resolved "https://registry.yarnpkg.com/@defi-wonderland/smock/-/smock-2.0.7.tgz#59d5fc93e175ad120c5dcdd8294e07525606c855"

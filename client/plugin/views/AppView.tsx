@@ -9,12 +9,12 @@ import { MarketView } from "./MarketView";
 import { GuideView } from "./GuideView";
 
 
-export function AppView({ contracts }) {
+export function AppView({ contract }) {
 	const [activeTabId, setActiveTab] = useState(0);
 
 	return (
 		// contractsProvider has `game` and `market` contracts
-		<ContractsProvider value={contracts}>
+		<ContractsProvider value={contract}>
 			<Navigation
 				tabs={[
 					{ name: "Market", TabContent: MarketView },
