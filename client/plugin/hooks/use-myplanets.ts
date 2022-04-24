@@ -17,14 +17,17 @@ export function useMyPlanets() {
 	useEffect(() => {
 		const fetchMyPlanets = () => {
 			const planetsIter = df.getAllPlanets();
+			const planets = [] as Planet[];
 			for (var planet of planetsIter) {
-				if (df.getLocationOfPlanet(planet.locationId)) {
-					setMyPlanets((myPlanets) => [
-						...myPlanets,
-						planet
-					]);
+				// Filters for known locations and not yet revealed
+				if (
+					df.getLocationOfPlanet(planet.locationId) &&
+					!planet.coordsRevealed
+				) {
+					planets.push(planet);
 				}
 			}
+			setMyPlanets(planets);
 			// setError(err);
 			setLoading(false);
 		}

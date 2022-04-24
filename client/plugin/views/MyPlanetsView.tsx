@@ -11,9 +11,6 @@ export function MyPlanetsView() {
 	if (error) return <ErrorLabel error={error} />;
 	if (loading) return <Loading />;
 
-	console.log("my planets");
-	console.log(myPlanets);
-
 	return (
 		<div>
 			<title>My known coordinates</title>
@@ -21,7 +18,6 @@ export function MyPlanetsView() {
 				emptyState="I don't know of any planet coordinates."
 				planets={myPlanets}
 			/>
-			Helloo my planets
 		</div>
 	)
 }
