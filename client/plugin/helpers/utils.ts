@@ -1,6 +1,7 @@
-import { utils, BigNumber } from "ethers";
 import { mimcHash } from '@darkforest_eth/hashing';
 
+// @ts-ignore
+import { utils, BigNumber } from 'https://cdn.skypack.dev/ethers';
 // @ts-ignore
 import maciCrypto from 'https://cdn.skypack.dev/maci-crypto';
 // @ts-ignore

@@ -3,44 +3,37 @@ import { useState, useEffect } from "preact/hooks";
 import { NumInput, TextInput } from "../components/Input";
 import { Button } from "../components/Button";
 import { useMarket } from "../hooks/use-market";
+// import { genListProofArgs } from "../helpers/genProofArgs";
+// import { getListProof } from "../helpers/snarks";
+// import { passwordToKey, genRandomNonce } from "../helpers/utils";
 
-import { genListProofArgs } from "../helpers/genProofArgs";
-import { getListProof } from "../helpers/snarks";
-import { passwordToKey, genRandomNonce } from "../helpers/utils";
-
-import { utils } from "ethers";
+// @ts-ignore
+// import { utils } from 'https://cdn.skypack.dev/ethers';
 
 export function SellPlanetView({ planet, setActivePlanet }) {
 	// hooks
 	const { list } = useMarket();
 
-	// local state
+	const [proof, setProof] = useState([] as any); //// An array of bigNumbers, hence `as any`
 	const [price, setPrice] = useState(0);
 	const [escrowTime, setEscrowTime] = useState(0);
-
-	// Confirm === generateProof
 	const [confirm, setConfirm] = useState(false);
 	const [error, setError] = useState();
-
-	// Proof input calculations, display the following in ui
-	const [nonce, setNonce] = useState(genRandomNonce());
-
-	// pw is used to generate the keypair
+	// const [nonce, setNonce] = useState(genRandomNonce());
+	const [nonce, setNonce] = useState(0);
 	const [password, setPassword] = useState("");
 	const [key, setKey] = useState([] as any); // two BigNumbers
 	setPassword((password) => {
-		setKey(passwordToKey(password));
+		// setKey(passwordToKey(password));
+		setKey([0, 0]);
 		return password
 	})
 
-	const [proof, setProof] = useState([] as any); //// An array of bigNumbers, hence `as any`
-
 	// Triggers proof generation
 	const onClickConfirm = async () => {
-		setKey(passwordToKey(password));
-		const inputs = genListProofArgs(planet, nonce, key);
+		// const inputs = genListProofArgs(planet, nonce, key);
 		console.log("inputs are: ");
-		console.log(inputs);
+		// console.log(inputs);
 		// setProof(await getListProof(inputs));
 		setConfirm(true);
 	}
@@ -62,51 +55,6 @@ export function SellPlanetView({ planet, setActivePlanet }) {
 
 	return (
 		<div>
-			<label for="price">Price (in Eth):</label>
-			<NumInput
-				name="price"
-				type="number"
-				value={price}
-				onChange={setPrice}
-				style={{ width: "128px" }}
-			/>
-			{/* TODO convert to gwei */}
-
-			<label>Escrow time (in blocks)</label>
-			<NumInput
-				name="escrowTime"
-				type="number"
-				value={escrowTime}
-				onChange={setEscrowTime}
-				style={{ width: "128px" }}
-			/>
-			{/* TODO estimate how many minutes */}
-
-			<label>Listing unique password (write it down and dont resuse!!)</label>
-			<TextInput
-				name="paswword"
-				type="string"
-				value={escrowTime}
-				placeholder={"your password"}
-				onChange={setPassword}
-				style={{ width: "75px" }}
-			/>
-
-			<Button
-				children={confirm ? "confirm list" : "generate proof"}
-				theme={confirm ? "green" : "default"}
-				style={{ width: "128px" }}
-				// TODO handle the async nature of these buttons
-				onClick={confirm ? onClickList : onClickConfirm}
-				disabled={!validateForm()}
-			/>
-
-			<Button
-				theme="red"
-				style={{ width: "128px" }}
-				children="cancel"
-				onClick={() => setActivePlanet(false)}
-			/>
 			<div>
 				nonce: {nonce}
 			</div>

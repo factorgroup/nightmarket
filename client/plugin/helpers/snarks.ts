@@ -1,10 +1,9 @@
 import * as path from 'path';
 
 // @ts-ignore
-import snarkjs from 'https://cdn.skypack.dev/snarkjs';
-const groth16 = snarkjs.groth16;
-import 'fs';
-import { constants, BigNumber, BigNumberish } from 'ethers';
+import { groth16 } from 'https://cdn.skypack.dev/snarkjs';
+// @ts-ignore
+import { BigNumber } from 'https://cdn.skypack.dev/ethers';
 
 export async function getListProof(inputs: any) {
 

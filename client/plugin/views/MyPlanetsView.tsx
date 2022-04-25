@@ -19,6 +19,8 @@ export function MyPlanetsView() {
 
 	// Zoomed View
 	if (activePlanet) {
+		console.log("Viewing Active Planet");
+		console.log(activePlanet);
 		return (
 			<SellPlanetView
 				planet={activePlanet}
@@ -28,6 +30,7 @@ export function MyPlanetsView() {
 	}
 
 	// List view
+	// TODO disable sell button when planet is currently listed
 	return (
 		<div>
 			<title>My known coordinates</title>
