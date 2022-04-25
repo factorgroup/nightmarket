@@ -1,6 +1,6 @@
 import { h, Component } from "preact";
 import { useState } from "preact/hooks";
-import { ContractsProvider } from "../components/ContractsContext";
+import { ContractProvider } from "../components/ContractContext";
 import { Navigation } from "../components/Navigation";
 import { MyPlanetsView } from "./MyPlanetsView";
 import { MyListingsView } from "./MyListingsView";
@@ -14,7 +14,7 @@ export function AppView({ contract }) {
 
 	return (
 		// contractsProvider has `game` and `market` contracts
-		<ContractsProvider value={contract}>
+		<ContractProvider value={contract}>
 			<Navigation
 				tabs={[
 					{ name: "Market", TabContent: MarketView },
@@ -24,6 +24,6 @@ export function AppView({ contract }) {
 					{ name: "Guide", TabContent: GuideView }
 				]}
 			/>
-		</ContractsProvider>
+		</ContractProvider>
 	);
 }

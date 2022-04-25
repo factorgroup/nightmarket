@@ -20,7 +20,7 @@ const styles = {
 	}
 };
 
-export function PlanetItem({ key, planet }) {
+export function PlanetItem({ planet, action }) {
 	console.log("planet x coordinate");
 	return (
 		<div style={styles.planet}>
@@ -31,6 +31,7 @@ export function PlanetItem({ key, planet }) {
 				<div style={styles.longText}>{planet.energy}</div>,
 				<div>{planet.silver}</div>
 			]}
+			<div>{action}</div>
 		</div>
 	);
 }

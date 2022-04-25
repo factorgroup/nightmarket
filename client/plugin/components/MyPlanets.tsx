@@ -16,6 +16,7 @@ const styles = {
 export function MyPlanets({
 	emptyState,
 	planets,
+	setActivePlanet
 }) {
 	console.log("planets");
 	const planetsFormatted =
@@ -23,6 +24,7 @@ export function MyPlanets({
 			<PlanetItem
 				key={planet.locationId}
 				planet={planet}
+				action={setActivePlanet(planet)}
 			/>
 		));
 
