@@ -1,4 +1,4 @@
-import { encrypt } from "client/util/poseidonCipher";
+import { encrypt } from "./poseidon";
 import { mimcHash } from "@darkforest_eth/hashing";
 import { Planet } from "@darkforest_eth/types";
 import GameManager from "@df/GameManager";
@@ -6,10 +6,12 @@ import GameUIManager from "@df/GameUIManager";
 declare const df: GameManager;
 declare const ui: GameUIManager;
 
-const ZqField = require("ffjavascript").ZqField;
-const Scalar = require("ffjavascript").Scalar;
-const p = Scalar.fromString("21888242871839275222246405745257275088548364400416034343698204186575808495617");
-const F = new ZqField(p);
+// @ts-ignore
+import maciCrypto from 'https://cdn.skypack.dev/maci-crypto';
+// @ts-ignore
+import ffjavascript from 'https://cdn.skypack.dev/ffjavascript';
+const p = ffjavascript.Scalar.fromString("21888242871839275222246405745257275088548364400416034343698204186575808495617");
+const F = new ffjavascript.ZqField(p);
 
 // Generates and formats input arguments that go into a proof
 export function genListProofArgs(planet: Planet, nonce, key) {
