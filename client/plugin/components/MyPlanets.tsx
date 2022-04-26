@@ -18,7 +18,7 @@ export function MyPlanets({
 	planets,
 	setActivePlanet
 }) {
-	console.log("planets");
+	console.log("Calling MyPlanets");
 	const planetsFormatted =
 		planets.map((planet: Planet) => (
 			<PlanetItem

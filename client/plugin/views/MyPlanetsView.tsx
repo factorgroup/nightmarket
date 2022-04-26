@@ -8,6 +8,7 @@ import { SellPlanetView } from "./SellPlanetView";
 import { Button } from '../components/Button';
 
 export function MyPlanetsView() {
+	console.log("MyPlanetsView");
 	// Fetch my planets
 	const { myPlanets, loading, error } = useMyPlanets();
 
@@ -19,7 +20,7 @@ export function MyPlanetsView() {
 
 	// Zoomed View
 	if (activePlanet) {
-		console.log("Viewing Active Planet");
+		console.log("Active Planet Mode");
 		console.log(activePlanet);
 		return (
 			<SellPlanetView
