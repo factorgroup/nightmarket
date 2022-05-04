@@ -10,7 +10,7 @@ import { utils, BigNumber } from 'https://cdn.skypack.dev/ethers';
  * Not the randomest generator but it'll do for nonce
  */
 export function genRandomNonce(): string {
-	const max = BigNumber.from(2).pow(218).sub(1);
+	const max = BigNumber.from(2).pow(128).sub(1);
 	const nonce = BigNumber.from(utils.randomBytes(32)).mod(max);
 	return nonce.toString();
 }
