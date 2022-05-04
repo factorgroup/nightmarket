@@ -3,7 +3,7 @@ import { useState, useEffect } from "preact/hooks";
 import { NumInput, TextInput } from "../components/Input";
 import { Button } from "../components/Button";
 import { useMarket } from "../hooks/use-market";
-// import { genListProofArgs } from "../helpers/genProofArgs";
+import { genListProofArgs } from "../helpers/genProofArgs";
 // import { getListProof } from "../helpers/snarks";
 import { passwordToKey, genRandomNonce } from "../helpers/utils";
 
@@ -27,7 +27,7 @@ export function SellPlanetView({ planet, setActivePlanet }) {
 	const onClickConfirm = async () => {
 		setNonce(genRandomNonce());
 		setKey(passwordToKey(password));
-		// const inputs = genListProofArgs(planet, nonce, key);
+		const inputs = genListProofArgs(planet, nonce, key);
 		console.log("Confirm list: computed inputs are: ");
 		// console.log(inputs);
 		// setProof(await getListProof(inputs));
@@ -82,7 +82,7 @@ export function SellPlanetView({ planet, setActivePlanet }) {
 			</div>
 
 			<div>
-				<label>A unique password to encrypt this listing (write it down and dont resuse!!)</label>
+				<label>A unique password (write it down and dont resuse!!)</label>
 			</div>
 			<div>
 				<TextInput
@@ -118,7 +118,7 @@ export function SellPlanetView({ planet, setActivePlanet }) {
 				Nonce: {nonce}
 			</div>
 			<div>
-				Key: {key}
+				Key: {JSON.stringify(key)}
 			</div>
 		</div>
 
