@@ -19,7 +19,7 @@ export function genListProofArgs(planet: Planet, nonce, key) {
 
 	const listing_id = encrypt([x, y], key, nonce);
 	console.log("listing_id");
-	// console.log(listing_id);
+	console.log(listing_id);
 	console.log("nonce");
 	console.log(nonce);
 	console.log("planet");

@@ -1,8 +1,8 @@
 /*
 	Copied from: https://github.com/iden3/circomlib/pull/60
-	Modified to use skypack
+	Modified to use ffjavascript-browser, with assert stubbed out
 */
-const assert = require("assert");
+// const assert = require("assert");
 
 // @ts-ignore
 import { Scalar, ZqField, utils } from 'https://cdn.skypack.dev/ffjavascript-browser@0.0.3';
@@ -11,14 +11,20 @@ const F = new ZqField(Scalar.fromString("218882428718392752222464057452572750885
 
 const two128 = F.e("340282366920938463463374607431768211456");
 
+function assert(expr, message) {
+	if (!Boolean(expr)) {
+		throw new Error(message || 'unknown assertion error');
+	}
+}
+
 export function encrypt(msg, key, nonce) {
-	assert(Array.isArray(msg));
-	assert(Array.isArray(key));
-	assert(key.length === 2);
+
+	assert(Array.isArray(msg), "Poseidon encrypt: msg is not Array");
+	assert(Array.isArray(key), "Poseidon encrypt: key is not Array");
+	assert(key.length === 2, "Poseidon encrypt: key length needs to be 2");
 	msg = msg.map((x) => F.e(x));
 
-	// The nonce must be less than 2 ^ 128
-	assert(nonce < two128);
+	assert(nonce < two128, "nonce must be less than 2 ^ 128");
 
 	const message = [...msg];
 
@@ -71,9 +77,9 @@ export function encrypt(msg, key, nonce) {
 }
 
 export function decrypt(ciphertext, key, nonce, length) {
-	assert(Array.isArray(ciphertext));
-	assert(Array.isArray(key));
-	assert(key.length === 2);
+	assert(Array.isArray(ciphertext), "Poseidon decrypt: ciphertext must be array");
+	assert(Array.isArray(key), "Poseidon decrypt: key must be array");
+	assert(key.length === 2, "Poseidon decrypt: key length must be 2");
 
 	// Create the initial state
 	let state = [
@@ -112,10 +118,10 @@ export function decrypt(ciphertext, key, nonce, length) {
 	// are 0
 	if (length > 3) {
 		if (length % 3 === 2) {
-			assert(F.eq(message[message.length - 1], F.zero));
+			assert(F.eq(message[message.length - 1], F.zero), "Poseidon decrypt: length error 1");
 		} else if (length % 3 === 1) {
-			assert(F.eq(message[message.length - 1], F.zero));
-			assert(F.eq(message[message.length - 2], F.zero));
+			assert(F.eq(message[message.length - 1], F.zero), "Poseidon decrypt: length error 2");
+			assert(F.eq(message[message.length - 2], F.zero), "Poseidon decrypt: length error 3");
 		}
 	}
 
@@ -123,7 +129,7 @@ export function decrypt(ciphertext, key, nonce, length) {
 	state = poseidonPerm(state);
 
 	// Check the last ciphertext element
-	assert(F.eq(ciphertext[ciphertext.length - 1], state[1]));
+	assert(F.eq(ciphertext[ciphertext.length - 1], state[1]), "Poseidon decrypt: last ciphertext bad");
 
 	return message.slice(0, length);
 }
@@ -141,8 +147,8 @@ const N_ROUNDS_P = [56, 57, 56, 60, 60, 63, 64, 63];
 const pow5 = a => F.mul(a, F.square(F.square(a, a)));
 
 export function poseidonPerm(inputs) {
-	assert(inputs.length > 0);
-	assert(inputs.length < N_ROUNDS_P.length);
+	assert(inputs.length > 0, "PoseidonPerm: input length but not be zero");
+	assert(inputs.length < N_ROUNDS_P.length, "PoseidonPerm: input length must be smaller than n rounds p");
 
 	const t = inputs.length;
 	const nRoundsF = N_ROUNDS_F;
