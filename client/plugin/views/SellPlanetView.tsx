@@ -1,5 +1,5 @@
 import { h } from "preact";
-import { useState, useEffect } from "preact/hooks";
+import { useState, useEffect, useRef } from "preact/hooks";
 import { NumInput, TextInput } from "../components/Input";
 import { Button } from "../components/Button";
 import { useMarket } from "../hooks/use-market";
@@ -11,32 +11,39 @@ import { passwordToKey, genRandomNonce } from "../helpers/utils";
 export function SellPlanetView({ planet, setActivePlanet }) {
 	console.log("In SellPlanetView");
 
+	// Custom hooks
 	const { list } = useMarket();
-	const [proof, setProof] = useState([] as string[]); //// An array of bigNumbers, hence `as any`
+
+	// Component lifetime vars
+	const didMount = useRef(false);
+	const nonce = useRef(genRandomNonce());
+
+	// Component states
+	const [proof, setProof] = useState([] as string[]);
 	const [price, setPrice] = useState(0);
 	const [escrowTime, setEscrowTime] = useState(0);
 	const [confirm, setConfirm] = useState(false);
 	const [error, setError] = useState();
-	const [nonce, setNonce] = useState("");
 	const [password, setPassword] = useState("");
-	const [key, setKey] = useState([] as string[]); // two bignumbers
+	const [key, setKey] = useState([] as string[]);
 
-	// Triggered on each user movement
+	// Convert password inputs into keys
 	useEffect(() => {
 		setKey(passwordToKey(password));
 	}, [password]);
-	// dependency array, only use effect when these states change
 
-	// Triggers proof generation
-	const onClickConfirm = () => {
-		if (nonce == "") {
-			setNonce(genRandomNonce());
+	// Generates the listing proof upon seller confirmation
+	useEffect(() => {
+		if (!didMount.current) {
+			// Ignore confirm effect during initial mount
+			didMount.current = true;
+			return
 		}
-		const proofArgs = genListProofArgs(planet, nonce, key);
-		// TODO obv fix this
+		const proofArgs = genListProofArgs(planet, nonce.current, key);
 		setProof([proofArgs.toString()]);
-		setConfirm(true);
-	}
+	}, [confirm]);
+
+	const onClickConfirm = () => setConfirm(true)
 
 	const onClickList = () => {
 		// todo fix this, it logs this trx into myTrxContext
@@ -119,7 +126,7 @@ export function SellPlanetView({ planet, setActivePlanet }) {
 				Proof: {proof}
 			</div>
 			<div>
-				Nonce: {nonce}
+				Nonce: {nonce.current}
 			</div>
 			<div>
 				Key: {JSON.stringify(key)}
