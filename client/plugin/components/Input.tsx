@@ -3,7 +3,7 @@ import { h } from "preact";
 export function NumInput({
 	value,
 	onChange,
-	style,
+	style = {},
 	type,
 	placeholder = 0,
 	min = 0,
@@ -40,7 +40,7 @@ export function NumInput({
 export function TextInput({
 	value,
 	onChange,
-	style,
+	style = {},
 	type,
 	placeholder = "",
 	required = true,

@@ -2,6 +2,7 @@ import * as path from 'path';
 
 // @ts-ignore
 import { groth16 } from 'https://cdn.skypack.dev/snarkjs';
+// might need instead: import * as snarks from 'http://cdn.skypack.dev/@darkforest_eth/snarks';
 // @ts-ignore
 import { BigNumber } from 'https://cdn.skypack.dev/ethers';
 
