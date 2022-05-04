@@ -6,11 +6,12 @@ import GameUIManager from "@df/GameUIManager";
 declare const df: GameManager;
 declare const ui: GameUIManager;
 
-// TODO replace this
 // @ts-ignore
-import ffjavascript from 'https://cdn.skypack.dev/ffjavascript';
-const p = ffjavascript.Scalar.fromString("21888242871839275222246405745257275088548364400416034343698204186575808495617");
-const F = new ffjavascript.ZqField(p);
+import { Scalar, ZqField } from 'https://cdn.skypack.dev/ffjavascript-browser';
+// const Scalar = ffjavascript.Scalar;
+// const ZqField = ffjavascript.ZqField;
+const F = new ZqField(Scalar.fromString("21888242871839275222246405745257275088548364400416034343698204186575808495617"));
+
 
 // Generates and formats input arguments that go into a proof
 export function genListProofArgs(planet: Planet, nonce, key) {
