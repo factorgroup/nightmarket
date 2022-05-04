@@ -123,7 +123,7 @@ export function SellPlanetView({ planet, setActivePlanet }) {
 
 			<div>Listing proof parameters:</div>
 			<div>
-				Proof: {proof}
+				Proof: {JSON.stringify(proof)}
 			</div>
 			<div>
 				Nonce: {nonce.current}
