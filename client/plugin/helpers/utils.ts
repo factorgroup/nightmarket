@@ -1,15 +1,9 @@
 // @ts-ignore
 import { mimcHash } from 'https://cdn.skypack.dev/@darkforest_eth/hashing';
 // @ts-ignore
+import { hashToInt } from 'https://cdn.skypack.dev/@darkforest_eth/serde';
+// @ts-ignore
 import { utils, BigNumber } from 'https://cdn.skypack.dev/ethers';
-// @ts-ignore
-import maciCrypto from 'https://cdn.skypack.dev/maci-crypto';
-
-// @ts-ignore
-// import ffjavascript from 'https://cdn.skypack.dev/ffjavascript';
-// import { Scalar, ZqField } from "../../ffjavascript";
-// const p = Scalar.fromString("21888242871839275222246405745257275088548364400416034343698204186575808495617");
-// const F = new ZqField(p);
 
 /*
  * Convert a BigInt to a Buffer
@@ -34,21 +28,19 @@ export function genRandomNonce(): string {
 	return nonce.toString();
 }
 
+// Deterministicly generates key used to encrypt coordinates
 // @dev: buyer later decrypts key, but has no knowledge of seller password
 export function passwordToKey(pw): BigInt[] {
-	const pwHash = utils.keccak256(utils.toUtf8Bytes(pw));
+	const pwHash = utils.keccak256(utils.toUtf8Bytes(pw)).toString();
 	console.log("pwHash");
 	console.log(pwHash);
-	const bn = BigNumber.from(pwHash);
-	console.log("bn");
-	console.log(pwHash);
-	const keypair = maciCrypto.genPubKey(bn);
+	const password = hashToInt(pwHash.substr(2));
+	const keypair = [mimcHash(0)(password), mimcHash(1)(password)]
 	console.log("keypair");
 	console.log(keypair);
 	const result = [
 		keypair[0],
 		keypair[1],
 	];
-	console.log(result)
 	return result
 }

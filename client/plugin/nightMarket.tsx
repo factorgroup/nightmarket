@@ -13,6 +13,7 @@ class NightMarketPlugin {
 	 * Called when plugin is launched with the "run" button.
 	 */
 	async render(container) {
+
 		// @ts-ignore
 		this.container = container;
 		container.style.width = "600px";

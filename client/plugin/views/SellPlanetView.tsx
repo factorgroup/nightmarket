@@ -9,6 +9,7 @@ import { passwordToKey, genRandomNonce } from "../helpers/utils";
 
 // @dev: bignumber has to be converted to strings before setting react state
 export function SellPlanetView({ planet, setActivePlanet }) {
+	// This component rerenders upon each input
 	console.log("In SellPlanetView");
 	// hooks
 	const { list } = useMarket();
@@ -27,7 +28,7 @@ export function SellPlanetView({ planet, setActivePlanet }) {
 		setNonce(genRandomNonce());
 		setKey(passwordToKey(password));
 		// const inputs = genListProofArgs(planet, nonce, key);
-		console.log("computed inputs are: ");
+		console.log("Confirm list: computed inputs are: ");
 		// console.log(inputs);
 		// setProof(await getListProof(inputs));
 		setConfirm(true);
@@ -38,7 +39,7 @@ export function SellPlanetView({ planet, setActivePlanet }) {
 		// TODO save the pw in trx context?
 		// list(proof, utils.formatUnits(price, "eth"), escrowTime).then().catch(setError);
 		setActivePlanet(false);
-		console.log("listing it now!!");
+		console.log("List: listing it now!!");
 	}
 
 	// returns false if invalid

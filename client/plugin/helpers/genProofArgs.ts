@@ -6,8 +6,7 @@ import GameUIManager from "@df/GameUIManager";
 declare const df: GameManager;
 declare const ui: GameUIManager;
 
-// @ts-ignore
-import maciCrypto from 'https://cdn.skypack.dev/maci-crypto';
+// TODO replace this
 // @ts-ignore
 import ffjavascript from 'https://cdn.skypack.dev/ffjavascript';
 const p = ffjavascript.Scalar.fromString("21888242871839275222246405745257275088548364400416034343698204186575808495617");
