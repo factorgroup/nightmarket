@@ -7,7 +7,7 @@ declare const df: GameManager;
 declare const ui: GameUIManager;
 
 // @ts-ignore
-import { Scalar, ZqField } from 'https://cdn.skypack.dev/ffjavascript-browser';
+import { Scalar, ZqField } from 'https://cdn.skypack.dev/ffjavascript-browser@0.0.3';
 // const Scalar = ffjavascript.Scalar;
 // const ZqField = ffjavascript.ZqField;
 const F = new ZqField(Scalar.fromString("21888242871839275222246405745257275088548364400416034343698204186575808495617"));

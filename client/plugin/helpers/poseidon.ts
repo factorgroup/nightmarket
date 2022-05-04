@@ -5,7 +5,7 @@
 const assert = require("assert");
 
 // @ts-ignore
-import { Scalar, ZqField, utils } from 'https://cdn.skypack.dev/ffjavascript-browser';
+import { Scalar, ZqField, utils } from 'https://cdn.skypack.dev/ffjavascript-browser@0.0.3';
 const { unstringifyBigInts } = utils;
 // const Scalar = ffjavascript.Scalar;
 // const ZqField = ffjavascript.ZqField;
