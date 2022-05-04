@@ -10,7 +10,6 @@ declare const ui: GameUIManager;
 import { Scalar, ZqField } from 'https://cdn.skypack.dev/ffjavascript-browser@0.0.3';
 const F = new ZqField(Scalar.fromString("21888242871839275222246405745257275088548364400416034343698204186575808495617"));
 
-
 // Generates and formats input arguments that go into a proof
 export function genListProofArgs(planet: Planet, nonce, key) {
 	console.log("generating list prof args...");
@@ -18,7 +17,9 @@ export function genListProofArgs(planet: Planet, nonce, key) {
 	const loc = df.getLocationOfPlanet(planet.locationId);
 	const [x, y] = [loc?.coords.x, loc?.coords.y];
 
-	// const listing_id = encrypt([x, y], key, nonce)
+	const listing_id = encrypt([x, y], key, nonce);
+	console.log("listing_id");
+	// console.log(listing_id);
 	console.log("nonce");
 	console.log(nonce);
 	console.log("planet");
@@ -50,7 +51,7 @@ export function genListProofArgs(planet: Planet, nonce, key) {
 	// console.log(inputs);
 
 	// return inputs;
-	return 5;
+	return 5555;
 }
 
 export function genSaleProofArgs() {

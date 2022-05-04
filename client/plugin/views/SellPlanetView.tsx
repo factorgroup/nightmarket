@@ -32,6 +32,9 @@ export function SellPlanetView({ planet, setActivePlanet }) {
 		if (nonce == "") {
 			setNonce(genRandomNonce());
 		}
+		const proofArgs = genListProofArgs(planet, nonce, key);
+		// TODO obv fix this
+		setProof([proofArgs.toString()]);
 		setConfirm(true);
 	}
 
