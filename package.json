@@ -11,8 +11,9 @@
     "sol:clean": "npx hardhat clean",
     "sol:compile": "./scripts/reformat-verifier-sol.sh && npx hardhat compile",
     "sol:test": "tsc && npx hardhat test ./build/contracts/test/nightMarket.js",
-    "app:dev": "df-plugin-dev-server --glob client/plugin/*.tsx --preact",
-    "app:build": "df-plugin-dev-server bundle --glob client/plugin/*.tsx --outdir=TBA --preact"
+    "sol:deploy": "tsc && npx hardhat run ./build/contracts/scripts/deploy.js --network xdai",
+    "app:dev": "tsc && df-plugin-dev-server --glob client/plugin/*.ts* --preact",
+    "app:build": "tsc && df-plugin-dev-server bundle --glob client/plugin/*.ts* --outdir=TBA --preact"
   },
   "dependencies": {
     "htm": "^3.1.0",
@@ -22,6 +23,8 @@
   "devDependencies": {
     "@darkforest_eth/contracts": "^6.7.29",
     "@darkforest_eth/hashing": "^6.7.19",
+    "@darkforest_eth/procedural": "^6.7.29",
+    "@darkforest_eth/types": "^6.7.29",
     "@defi-wonderland/smock": "^2.0.7",
     "@nomiclabs/hardhat-ethers": "^2.0.5",
     "@nomiclabs/hardhat-waffle": "^2.0.3",

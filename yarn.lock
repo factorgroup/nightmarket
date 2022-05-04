@@ -298,13 +298,38 @@
   dependencies:
     "@cspotcode/source-map-consumer" "0.8.0"
 
-"@darkforest_eth/contracts@^6.7.29":
+"@darkforest_eth/constants@6.7.29":
+  version "6.7.29"
+  resolved "https://registry.yarnpkg.com/@darkforest_eth/constants/-/constants-6.7.29.tgz#b3ac44d1a56b440fe94885f6dd1df96623553bac"
+  integrity sha512-KwxzHtxx3LhABuT9zYRHpZl1nI3cxb1eEptjNAWOWsvghOrubFJzdYWgLW1r2Zv12S4yD57T8PuiyVKSFPu7xw==
+  dependencies:
+    "@darkforest_eth/types" "6.7.29"
+    big-integer "^1.6.48"
+
+"@darkforest_eth/contracts@6.7.29", "@darkforest_eth/contracts@^6.7.29":
   version "6.7.29"
   resolved "https://registry.yarnpkg.com/@darkforest_eth/contracts/-/contracts-6.7.29.tgz#8714125e060c64c3b00e64ceb106fba523511244"
   integrity sha512-XRQAeZwg1VxODi67oj4KROgTrP+Tuk15DdDYXXc0hvUswtMBLrqHkYqkfUNeHu+YzyFeJas4OU3nPNJ6V+/eBA==
   dependencies:
     "@ethersproject/providers" "^5.5.1"
     ethers "^5.5.1"
+
+"@darkforest_eth/gamelogic@6.7.29":
+  version "6.7.29"
+  resolved "https://registry.yarnpkg.com/@darkforest_eth/gamelogic/-/gamelogic-6.7.29.tgz#26227a30db75dc6e49a627e1940c1db104823e30"
+  integrity sha512-JxiW+VwhA7ojvVuw1uBo3XI1l1bf8AHX4vkbg2DfkS5Da4NqzEWZNVCcz9CWJGui7qJQogOghzl0e46IVDfoSw==
+  dependencies:
+    "@darkforest_eth/constants" "6.7.29"
+    "@darkforest_eth/serde" "6.7.29"
+    "@darkforest_eth/types" "6.7.29"
+
+"@darkforest_eth/hashing@6.7.29":
+  version "6.7.29"
+  resolved "https://registry.yarnpkg.com/@darkforest_eth/hashing/-/hashing-6.7.29.tgz#61ec24956dab29cdf102fc7509293ab08f87b185"
+  integrity sha512-oiaAnFJif73/vWX0AK0w0hHL2PCZXwG9QSqphqQkJjKDIwAGvBLq8p/VsvlHvkQ3NCOlyHtuAd07zQDd7tP/wA==
+  dependencies:
+    "@darkforest_eth/types" "6.7.29"
+    big-integer "^1.6.48"
 
 "@darkforest_eth/hashing@^6.7.19":
   version "6.7.28"
@@ -314,10 +339,53 @@
     "@darkforest_eth/types" "6.7.28"
     big-integer "^1.6.48"
 
+"@darkforest_eth/hexgen@6.7.29":
+  version "6.7.29"
+  resolved "https://registry.yarnpkg.com/@darkforest_eth/hexgen/-/hexgen-6.7.29.tgz#f838fb7a80b895aa1abbd73cea22e42f13bbfb9a"
+  integrity sha512-NAkpybDPTP2kajDWfD+WqZXar6v7lGP6XW8t54fMbhYNgip9xf++dX1jWWXiKet8OfLqCi7W1co63NUiB4RpQg==
+  dependencies:
+    "@darkforest_eth/types" "6.7.29"
+    big-integer "^1.6.48"
+
+"@darkforest_eth/procedural@^6.7.29":
+  version "6.7.29"
+  resolved "https://registry.yarnpkg.com/@darkforest_eth/procedural/-/procedural-6.7.29.tgz#450e17fe0f3f1b3def396263455d506275422e05"
+  integrity sha512-MAg+6ZIGZSsDc/FQLnk4Tdmqp9bs8r+v0+JGCHN988qNNzd1FU9obF0azQonQ+RLW3NDKFwPik4x0WVeb476zw==
+  dependencies:
+    "@darkforest_eth/constants" "6.7.29"
+    "@darkforest_eth/gamelogic" "6.7.29"
+    "@darkforest_eth/hashing" "6.7.29"
+    "@darkforest_eth/serde" "6.7.29"
+    "@darkforest_eth/types" "6.7.29"
+    big-integer "^1.6.48"
+
+"@darkforest_eth/serde@6.7.29":
+  version "6.7.29"
+  resolved "https://registry.yarnpkg.com/@darkforest_eth/serde/-/serde-6.7.29.tgz#de3e8ac98479e3f85f4617c5e290d3fbf76652eb"
+  integrity sha512-gd8PqwReM9WVHhaF4m+bRR1CQKm5w1/rxe//QNvSmKUVnWEfmP2gmNUGMEAgWqDOQvlWgNInQUJNsJctOMDGxA==
+  dependencies:
+    "@darkforest_eth/constants" "6.7.29"
+    "@darkforest_eth/contracts" "6.7.29"
+    "@darkforest_eth/hexgen" "6.7.29"
+    "@darkforest_eth/types" "6.7.29"
+    big-integer "^1.6.48"
+    ethers "^5.5.1"
+
 "@darkforest_eth/types@6.7.28":
   version "6.7.28"
   resolved "https://registry.yarnpkg.com/@darkforest_eth/types/-/types-6.7.28.tgz#32810392b5ddc2868979350690d1ae6e19a2a7c4"
   integrity sha512-AKOiGR/8zgFQyQVUfyLJ7uUKGI/t9TvTu1GFzJ6vPCCIrhRkfPYvkbO2n1VzUfQVEtJtOkaSr/1Lg71y/J6FaQ==
+  dependencies:
+    "@types/gl-matrix" "^3.2.0"
+    big-integer "^1.6.48"
+    ethers "^5.5.1"
+    gl-matrix "^3.3.0"
+    type-fest "^2.12.1"
+
+"@darkforest_eth/types@6.7.29", "@darkforest_eth/types@^6.7.29":
+  version "6.7.29"
+  resolved "https://registry.yarnpkg.com/@darkforest_eth/types/-/types-6.7.29.tgz#e97d0857ee8a1b134a28d9bf5e193872fd981dca"
+  integrity sha512-D8HT7fTeqsI4kzpbDiqs61mSCsH3LnAtC6uvzrfVkzclmQ+EHe7CtmXEbJGlT2Bi2jZ45aZIbghjavLd59z9Yw==
   dependencies:
     "@types/gl-matrix" "^3.2.0"
     big-integer "^1.6.48"
@@ -3811,6 +3879,11 @@ crypto-browserify@3.12.0:
     public-encrypt "^4.0.0"
     randombytes "^2.0.0"
     randomfill "^1.0.3"
+
+crypto-js@^4.1.1:
+  version "4.1.1"
+  resolved "https://registry.yarnpkg.com/crypto-js/-/crypto-js-4.1.1.tgz#9e485bcf03521041bd85844786b83fb7619736cf"
+  integrity sha512-o2JlM7ydqd3Qk9CA0L4NL6mTzU2sdx96a+oOfPu8Mkl/PK51vSyoi8/rQ8NknZtk44vq15lmhAj9CIAGwgeWKw==
 
 cssom@^0.4.4:
   version "0.4.4"

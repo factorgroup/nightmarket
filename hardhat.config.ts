@@ -11,7 +11,16 @@ task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
 	}
 });
 
+// The xdai config, but it isn't added to networks unless we have a PRIVATEKEY
+const xdai = {
+	url: "https://rpc-df.xdaichain.com/",
+	accounts: [`${process.env.XDAI_PRIVATEKEY}`],
+	chainId: 100,
+	gasMultiplier: 5,
+};
+
 module.exports = {
+	solidity: "0.8.13",
 	networks: {
 		hardhat: {
 			accounts: [
@@ -28,9 +37,10 @@ module.exports = {
 					balance: "10000000000000000000000"
 				}
 			]
-		}
+		},
+		// ONly add xdai configs if developer set envvars, otherwise hardhat complains
+		...(process.env.XDAI_PRIVATEKEY ? { xdai } : undefined),
 	},
-	solidity: "0.8.13",
 	circom: {
 		// (optional) Base path for files being read, defaults to `./circuits/`
 		inputBasePath: "./circuits/",
