@@ -1,3 +1,0 @@
-[submodule "client/ffjavascript"]
-	path = client/ffjavascript
-	url = https://github.com/iden3/ffjavascript.git

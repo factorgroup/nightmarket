@@ -30,17 +30,13 @@ export function genRandomNonce(): string {
 
 // Deterministicly generates key used to encrypt coordinates
 // @dev: buyer later decrypts key, but has no knowledge of seller password
-export function passwordToKey(pw): BigInt[] {
+export function passwordToKey(pw): string[] {
 	const pwHash = utils.keccak256(utils.toUtf8Bytes(pw)).toString();
 	console.log("pwHash");
 	console.log(pwHash);
 	const password = hashToInt(pwHash.substr(2));
-	const keypair = [mimcHash(0)(password), mimcHash(1)(password)]
+	const keypair = [mimcHash(0)(password).toString(), mimcHash(1)(password).toString()];
 	console.log("keypair");
 	console.log(keypair);
-	const result = [
-		keypair[0],
-		keypair[1],
-	];
-	return result
+	return keypair
 }

@@ -3,17 +3,15 @@ import { useState, useEffect } from "preact/hooks";
 import { NumInput, TextInput } from "../components/Input";
 import { Button } from "../components/Button";
 import { useMarket } from "../hooks/use-market";
-// import { genListProofArgs } from "../helpers/genProofArgs";
+import { genListProofArgs } from "../helpers/genProofArgs";
 // import { getListProof } from "../helpers/snarks";
 import { passwordToKey, genRandomNonce } from "../helpers/utils";
 
 // @dev: bignumber has to be converted to strings before setting react state
 export function SellPlanetView({ planet, setActivePlanet }) {
-	// This component rerenders upon each input
 	console.log("In SellPlanetView");
-	// hooks
-	const { list } = useMarket();
 
+	const { list } = useMarket();
 	const [proof, setProof] = useState([] as string[]); //// An array of bigNumbers, hence `as any`
 	const [price, setPrice] = useState(0);
 	const [escrowTime, setEscrowTime] = useState(0);
@@ -21,16 +19,19 @@ export function SellPlanetView({ planet, setActivePlanet }) {
 	const [error, setError] = useState();
 	const [nonce, setNonce] = useState("");
 	const [password, setPassword] = useState("");
-	const [key, setKey] = useState([] as BigInt[]); // two BigNumbers
+	const [key, setKey] = useState([] as string[]); // two bignumbers
+
+	// Triggered on each user movement
+	useEffect(() => {
+		setKey(passwordToKey(password));
+	}, [password]);
+	// dependency array, only use effect when these states change
 
 	// Triggers proof generation
-	const onClickConfirm = async () => {
-		setNonce(genRandomNonce());
-		setKey(passwordToKey(password));
-		// const inputs = genListProofArgs(planet, nonce, key);
-		console.log("Confirm list: computed inputs are: ");
-		// console.log(inputs);
-		// setProof(await getListProof(inputs));
+	const onClickConfirm = () => {
+		if (nonce == "") {
+			setNonce(genRandomNonce());
+		}
 		setConfirm(true);
 	}
 

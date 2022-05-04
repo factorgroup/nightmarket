@@ -7,8 +7,6 @@ const assert = require("assert");
 // @ts-ignore
 import { Scalar, ZqField, utils } from 'https://cdn.skypack.dev/ffjavascript-browser@0.0.3';
 const { unstringifyBigInts } = utils;
-// const Scalar = ffjavascript.Scalar;
-// const ZqField = ffjavascript.ZqField;
 const F = new ZqField(Scalar.fromString("21888242871839275222246405745257275088548364400416034343698204186575808495617"));
 
 const two128 = F.e("340282366920938463463374607431768211456");
