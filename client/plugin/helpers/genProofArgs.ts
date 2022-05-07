@@ -18,17 +18,7 @@ export function genListProofArgs(planet: Planet, nonce, key) {
 	const [x, y] = [loc?.coords.x, loc?.coords.y];
 
 	const listing_id = encrypt([x, y], key, nonce);
-	console.log("listing_id");
-	console.log(listing_id);
-	console.log("nonce");
-	console.log(nonce);
-	console.log("planet");
-	console.log(planet);
-	console.log("key");
-	console.log(key);
 	const key_commitment = mimcHash(0)(F.e(key[0]), F.e(key[1])).toString();
-	console.log("key commitment");
-	console.log(key_commitment);
 
 	const inputs = {
 		PLANETHASH_KEY: c.PLANETHASH_KEY,

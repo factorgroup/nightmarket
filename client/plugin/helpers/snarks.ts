@@ -1,19 +1,20 @@
-import * as path from 'path';
-
 // @ts-ignore
-import { groth16 } from 'https://cdn.skypack.dev/snarkjs';
+// import { groth16 } from 'https://cdn.skypack.dev/snarkjs';
+// import { groth16 } from 'snarkjs.min.js';
 // might need instead: import * as snarks from 'http://cdn.skypack.dev/@darkforest_eth/snarks';
 // @ts-ignore
 import { BigNumber } from 'https://cdn.skypack.dev/ethers';
 
 export async function getListProof(inputs: any) {
-
-	const { proof, publicSignals } = await groth16.fullProve(
+	console.log("asynchronously fetching proof");
+	// @ts-ignore, use snarkjs.min.js shipped in /public
+	const { proof, publicSignals } = await snarkjs.groth16.fullProve(
 		inputs,
-		path.join(__dirname, "..", "..", "list", "list.wasm"),
-		path.join(__dirname, "..", "..", "list", "list.zkey"),
+		require.resolve("./list.wasm"),
+		require.resolve("./list.zkey"),
 	);
 
+	console.log("building smart contract call args");
 	const callArgs = buildListContractCallArgs(
 		proof,
 		[
@@ -29,10 +30,11 @@ export async function getListProof(inputs: any) {
 }
 
 export async function getSaleProof(inputs: any) {
-	const { proof, publicSignals } = await groth16.fullProve(
+	// @ts-ignore
+	const { proof, publicSignals } = await snarkjs.groth16.fullProve(
 		inputs,
-		path.join(__dirname, "..", "..", "sale", "sale.wasm"),
-		path.join(__dirname, "..", "..", "sale", "sale.zkey"),
+		"sale.wasm",
+		"sale.zkey",
 	);
 
 	const callArgs = buildSaleContractCallArgs(
