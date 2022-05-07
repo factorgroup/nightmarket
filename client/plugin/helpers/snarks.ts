@@ -1,18 +1,38 @@
 // @ts-ignore
-// import { groth16 } from 'https://cdn.skypack.dev/snarkjs';
-// import { groth16 } from 'snarkjs.min.js';
-// might need instead: import * as snarks from 'http://cdn.skypack.dev/@darkforest_eth/snarks';
-// @ts-ignore
 import { BigNumber } from 'https://cdn.skypack.dev/ethers';
 
 export async function getListProof(inputs: any) {
 	console.log("asynchronously fetching proof");
-	// @ts-ignore, use snarkjs.min.js shipped in /public
-	const { proof, publicSignals } = await snarkjs.groth16.fullProve(
-		inputs,
-		require.resolve("./list.wasm"),
-		require.resolve("./list.zkey"),
-	);
+
+	// TODO: refactor this into constants, Very annoying to have to do these workarounds
+	const listWasmUrl = 'https://raw.githubusercontent.com/0xSage/nightmarket/main/client/list/list.wasm';
+	const listZKeyUrl = 'https://raw.githubusercontent.com/0xSage/nightmarket/main/client/list/list.zkey';
+
+	// TODO find teh browser version of readfilesync
+	// Workaround: Use generated witness_calculator and groth16.prove instead of groth.fullProve.
+	// See issue: https://github.com/iden3/snarkjs/issues/107
+	// const f = await fastfile.readExisting(listWasmUrl);
+	// const buffer = await f.read();
+	// await f.close();
+
+	const buffer = await fetch(listWasmUrl).then(function (res) {
+		return res.arrayBuffer();
+	}).then(function (ab) {
+		return new Uint8Array(ab);
+	});
+
+	const wc = require("./witness_calculator");
+	const witnessCalculator = await wc(buffer);
+	const witnessBuffer = await witnessCalculator.calculateWTNSBin(inputs, 0);
+
+	// @ts-ignore: we use snarkjs.min.js which is already shipped in Public folder
+	const proof = await snarkjs.groth16.prove(listZKeyUrl, witnessBuffer);
+
+	// const { proof, publicSignals } = await snarkjs.groth16.fullProve(
+	// 	inputs,
+	// 	listWasmUrl,
+	// 	listZKeyUrl
+	// );
 
 	console.log("building smart contract call args");
 	const callArgs = buildListContractCallArgs(
