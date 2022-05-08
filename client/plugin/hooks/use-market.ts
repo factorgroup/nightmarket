@@ -14,7 +14,7 @@ export function useMarket() {
 		return market.list(
 			...proof, price, escrowTime
 		).then(
-			console.log("listing something")
+			console.log("UseMarket hook: listed a coordinate")
 		);
 	};
 

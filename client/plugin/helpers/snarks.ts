@@ -1,17 +1,17 @@
-import * as path from 'path';
-
-// @ts-ignore
-import { groth16 } from 'https://cdn.skypack.dev/snarkjs';
-// might need instead: import * as snarks from 'http://cdn.skypack.dev/@darkforest_eth/snarks';
 // @ts-ignore
 import { BigNumber } from 'https://cdn.skypack.dev/ethers';
 
+import { groth16 } from './snarkjs';
+
+import { LIST_ZKEY_URL, LIST_WASM_URL, SALE_WASM_URL, SALE_ZKEY_URL } from './constants';
+
 export async function getListProof(inputs: any) {
+	console.log("asynchronously fetching proof");
 
 	const { proof, publicSignals } = await groth16.fullProve(
 		inputs,
-		path.join(__dirname, "..", "..", "list", "list.wasm"),
-		path.join(__dirname, "..", "..", "list", "list.zkey"),
+		LIST_WASM_URL,
+		LIST_ZKEY_URL
 	);
 
 	const callArgs = buildListContractCallArgs(
@@ -29,10 +29,11 @@ export async function getListProof(inputs: any) {
 }
 
 export async function getSaleProof(inputs: any) {
+
 	const { proof, publicSignals } = await groth16.fullProve(
 		inputs,
-		path.join(__dirname, "..", "..", "sale", "sale.wasm"),
-		path.join(__dirname, "..", "..", "sale", "sale.zkey"),
+		"sale.wasm",
+		"sale.zkey",
 	);
 
 	const callArgs = buildSaleContractCallArgs(

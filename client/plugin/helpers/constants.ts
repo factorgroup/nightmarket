@@ -13,3 +13,10 @@ export const SALE_VERIFY_ADDR = "0xa5067E2fcc7C5d74f19b1cD17B48B121B0077146";
 
 // Plugin behaviors
 export const POLL_INTERVAL = 5000;
+
+// In browser proof generation
+export const LIST_ZKEY_URL = 'https://raw.githubusercontent.com/0xSage/nightmarket/main/client/list/list.zkey';
+export const LIST_WASM_URL = 'https://raw.githubusercontent.com/0xSage/nightmarket/main/client/list/list.wasm';
+
+export const SALE_ZKEY_URL = 'https://raw.githubusercontent.com/0xSage/nightmarket/main/client/sale/sale.zkey';
+export const SALE_WASM_URL = 'https://raw.githubusercontent.com/0xSage/nightmarket/main/client/sale/sale.wasm';

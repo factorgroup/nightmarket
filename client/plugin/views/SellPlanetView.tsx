@@ -4,7 +4,7 @@ import { NumInput, TextInput } from "../components/Input";
 import { Button } from "../components/Button";
 import { useMarket } from "../hooks/use-market";
 import { genListProofArgs } from "../helpers/genProofArgs";
-// import { getListProof } from "../helpers/snarks";
+import { getListProof } from "../helpers/snarks";
 import { passwordToKey, genRandomNonce } from "../helpers/utils";
 
 // @dev: bignumber has to be converted to strings before setting react state
@@ -18,7 +18,7 @@ export function SellPlanetView({ planet, setActivePlanet }) {
 	const didMount = useRef(false);
 	const nonce = useRef(genRandomNonce());
 
-	// Component states
+	// Component states, refreshed often
 	const [proof, setProof] = useState([] as string[]);
 	const [price, setPrice] = useState(0);
 	const [escrowTime, setEscrowTime] = useState(0);
@@ -34,20 +34,26 @@ export function SellPlanetView({ planet, setActivePlanet }) {
 
 	// Generates the listing proof upon seller confirmation
 	useEffect(() => {
+		// Ignore confirm effect during initial mount
 		if (!didMount.current) {
-			// Ignore confirm effect during initial mount
 			didMount.current = true;
 			return
 		}
 		const proofArgs = genListProofArgs(planet, nonce.current, key);
-		setProof([proofArgs.toString()]);
+
+		// Compute the proof
+		const fetchProof = async () => {
+			const listProof = await getListProof(proofArgs);
+			setProof(listProof);
+		}
+		fetchProof().catch(console.error);
+
 	}, [confirm]);
 
 	const onClickConfirm = () => setConfirm(true)
 
 	const onClickList = () => {
-		// todo fix this, it logs this trx into myTrxContext
-		// TODO save the pw in trx context?
+		// TODO: save the pw in trx context?
 		// list(proof, utils.formatUnits(price, "eth"), escrowTime).then().catch(setError);
 		setActivePlanet(false);
 		console.log("List: listing it now!!");
