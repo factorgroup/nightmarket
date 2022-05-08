@@ -20,7 +20,8 @@ A 0xParc Learning Group project - work in progress.
 - `/circuits/sale`: Circuits for fulfilling a sale to buyer
 - `/circuits/utils`: Shared utility circuits
 - `/circuits/test`: Circuit unit tests
-- `/client`: Dark Forest plugin code
+- `/client`: Shared helpers and circuit files
+- `/client/plugin`: DF plugin, a 100% frontend implementation
 - `/contracts`: Contract and verifier code
 
 ## Spec
