@@ -15,10 +15,10 @@ async function main() {
 	// const svFactory = await hre.ethers.getContractFactory("contracts/SaleVerifier.sol:Verifier");
 	// const saleVerifier = await svFactory.deploy();
 	const saleAddress = "0xa5067E2fcc7C5d74f19b1cD17B48B121B0077146";
-	const nightmarketAddress = "0x1a83aD07b70C4564F24Dc1d7d2438c36CA3a34f1";
-	// const nmFactory = await hre.ethers.getContractFactory("NightMarket");
-	// const nightmarket = await nmFactory.deploy(listAddress, saleAddress, gameAddress);
-
+	const nmFactory = await hre.ethers.getContractFactory("NightMarket");
+	const nightmarket = await nmFactory.deploy(listAddress, saleAddress, gameAddress);
+	// Resulting address:
+	const nightmarketAddress = "0x6792e95058514c51aB07533B0bE4B3ADB6FFa1d8";
 	// console.log("List verifier address:", listVerifier.address);
 	// console.log("Sale verifier address:", saleVerifier.address);
 	// console.log("NightMarket address:", nightmarket.address);

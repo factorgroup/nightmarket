@@ -12,6 +12,7 @@ A 0xParc Learning Group project - work in progress.
 - Deploy circuits: `yarn circom:prod`
 - Compile contracts: `yarn sol:compile`
 - Test contracts: `yarn sol:test`
+- Deploy contract: export `XDAI_PRIVATEKEY`, then `yarn sol:deploy`
 - Run plugin server: `yarn app:dev`
 - Deploy plugin: `yarn app:build`
 
@@ -63,10 +64,12 @@ Scheme: Encryption using a 5-wide Poseidon in SpongeWrap with (0, len=2, Kx ,Ky 
 - `sale(..., saleProof)`: sellers can close a sale and fulfill a buyer order.
 - `refund(...)`: anyone can refund buyers deposit if seller delists or if the `escrowTime` lockup is over.
 
-## Plugin/UI Implementation (IN PROGRESS)
-- Players can deploy a new escrow contract for each round (if it doesnt exist yet)
-- Buyers can sort by listTime, planetId, price what other criteria makes sense?
-- Why do players reveal coords? Seems like a interaction that can be replaced with sell instead.
+## Plugin (IN PROGRESS)
+**Implementation note:**
+DF plugins are esbuild bundled then served as a single JS file, which is limiting given the current SNARKs/circom stack. So the following was done to make snarks possible, purely in browser.
+- NPM `ffjavascript-browser` shim (stub native Node deps like `os` `stream`)
+- Rolluped NPM snarkjs into a `helpers/snarkjs.js` (DF game currently has older version in /Public)
+- `fullprove` fetches an external `raw.githubusercontent` URL (plugin builders can't write files to server)
 
 ## Warning
 The circuits and smart contracts written for this marketplace has not been audited, use at your own risk.

@@ -7,6 +7,9 @@ import { genListProofArgs } from "../helpers/genProofArgs";
 import { getListProof } from "../helpers/snarks";
 import { passwordToKey, genRandomNonce } from "../helpers/utils";
 
+// @ts-ignore
+// import { utils } from 'https://cdn.skypack.dev/ethers';
+
 // @dev: bignumber has to be converted to strings before setting react state
 export function SellPlanetView({ planet, setActivePlanet }) {
 	console.log("In SellPlanetView");
@@ -50,21 +53,25 @@ export function SellPlanetView({ planet, setActivePlanet }) {
 
 	}, [confirm]);
 
-	const onClickConfirm = () => setConfirm(true)
-
+	const onClickConfirm = () => setConfirm(true);
 	const onClickList = () => {
-		// TODO: save the pw in trx context?
-		// list(proof, utils.formatUnits(price, "eth"), escrowTime).then().catch(setError);
-		setActivePlanet(false);
-		console.log("List: listing it now!!");
+		list(proof, price, escrowTime, password)
+			.then(() => setActivePlanet(false))
+			.catch(setError);
+		console.log("Clicked list, sending trx!");
 	}
 
 	// returns false if invalid
 	const validateForm = () => {
-		return (
-			// TODO things are smaller than bignumber
-			true
-		)
+		// two states to check: pending & form not filled
+		// State 1: confirmed, waiting for proof to generate
+
+		if (confirm) {
+			return (proof.length > 1 ? true : false)
+		} else {
+			// TODO: check form is filled correctly
+			return true
+		}
 	}
 
 	return (
@@ -82,7 +89,7 @@ export function SellPlanetView({ planet, setActivePlanet }) {
 					value={price}
 					onChange={setPrice}
 				/>
-				{/* TODO convert to gwei */}
+				{/* TODO convert to eth for people */}
 			</div>
 
 			<div>
