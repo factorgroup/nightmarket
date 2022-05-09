@@ -121,7 +121,7 @@ contract NightMarket is ReentrancyGuard {
      * @dev Seller generates `_proof` offchain in `list.circom`.
      * @param _proof The listing_id proof from seller
      * @param _coordEncryption The pre-encrypted coordinates from seller
-     * @return listingId indexes at 1
+     * @return listingId Enumerates
      */
     function list(
         uint256[8] memory _proof,
@@ -133,7 +133,7 @@ contract NightMarket is ReentrancyGuard {
         uint256 _price,
         uint256 _escrowTime
     ) external validPlanet(_locationId) returns (uint256 listingId) {
-        require(_nonce < 2 ^ 218, "Nonce must be smaller than 2^218");
+        require(_nonce < 2**128, "Nonce must be smaller than 2^128");
 
         uint256[15] memory publicInputs = [
             zkConstants.PLANETHASH_KEY,
