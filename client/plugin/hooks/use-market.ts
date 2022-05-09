@@ -18,7 +18,7 @@ export function useMarket() {
 		console.log(escrowTime);
 		return market.list(
 			...proof, price, escrowTime, {
-			gasLimit: 1000000,
+			gasLimit: 700000, // expected: 533k gas
 		}
 		).then(
 			(res) => {
