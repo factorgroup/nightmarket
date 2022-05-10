@@ -8,7 +8,6 @@ export const useTransactions = () => {
 		myTransactions,
 		setTransactions,
 		addTransaction: (a) => setTransactions([...myTransactions, a]),
-		// Not sure I need this
-		isTrxPending: (a) => myTransactions.map((b) => b.id).includes(a.id),
+		isTransactionPending: (a) => myTransactions.map((b) => b.id).includes(a.id),
 	};
 };

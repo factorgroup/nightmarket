@@ -7,7 +7,7 @@ import { useState } from "preact/hooks";
 export const MyTransactionContext = createContext([] as any);
 
 export const MyTransactionProvider = (props) => {
-	const [transactions, setTransactions] = useState([]);
+	const [transactions, setTransactions] = useState([] as transaction);
 
 	return (
 		<MyTransactionContext.Provider
@@ -15,4 +15,8 @@ export const MyTransactionProvider = (props) => {
 			children={props.children}
 		/>
 	);
+};
+
+export interface transaction {
+
 };
