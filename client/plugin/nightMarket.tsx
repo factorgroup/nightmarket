@@ -1,6 +1,7 @@
 import { h, render } from "preact";
 import { AppView } from "./views/AppView";
 import { getContract } from "./helpers/contracts";
+import { getListings, getTxs } from "./helpers/transactions";
 
 class NightMarketPlugin {
 
@@ -12,7 +13,7 @@ class NightMarketPlugin {
 	/**
 	 * Called when plugin is launched with the "run" button.
 	 */
-	async render(container) {
+	async render (container) {
 
 		// @ts-ignore
 		this.container = container;
@@ -21,7 +22,11 @@ class NightMarketPlugin {
 
 		try {
 			const contract = await getContract();
-			render(<AppView contract={contract} />, container);
+			const signer = await contract.market.signer;
+			const txs = await getTxs(contract.market, signer);
+			const listings = await getListings(contract.market, txs);
+
+			render(<AppView contract={contract} signer={signer} txs={txs} listings={listings} />, container);
 		} catch (err: any) {
 			console.error("[NightMarketPlugin] Error starting plugin:", err);
 			// @ts-ignore
@@ -32,7 +37,7 @@ class NightMarketPlugin {
 	/**
 	 * Called when plugin modal is closed.
 	 */
-	destroy() {
+	destroy () {
 		// @ts-ignore
 		render(null, this.container);
 	}
