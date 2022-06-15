@@ -5,7 +5,7 @@ import { useTransactions } from "./use-mytransactions";
 // Notice functions are a property inside of useMarket() component
 // TODO: it should add to mytransactions history
 export function useMarket() {
-	// @ts-expect-error
+	
 	const { market } = useContract();
 	const { myTransactions, setTransactions } = useTransactions();
 
