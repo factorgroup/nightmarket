@@ -21,7 +21,7 @@ const styles = {
 };
 
 export function PlanetItem({ planet, action }) {
-	console.log("planet x coordinate");
+
 	return (
 		<div style={styles.planet}>
 			{[
