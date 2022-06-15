@@ -15,7 +15,7 @@ export function genListProofArgs(planet: Planet, nonce, key) {
 	console.log("generating list prof args...");
 	const c = df.getContractConstants();
 	const loc = df.getLocationOfPlanet(planet.locationId);
-	const [x, y] = [loc?.coords.x, loc?.coords.y];
+	const [x, y] = [F.e(loc?.coords.x), F.e(loc?.coords.y)];
 
 	const biomebase = loc?.coords ? df.biomebasePerlin(loc?.coords, true) : 999;
 	const listing_id = encrypt([x, y], key, nonce);
