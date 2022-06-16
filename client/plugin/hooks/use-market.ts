@@ -4,8 +4,8 @@ import { useTransactions } from "./use-mytransactions";
 
 // Notice functions are a property inside of useMarket() component
 // TODO: it should add to mytransactions history
-export function useMarket() {
-	
+export function useMarket () {
+
 	const { market } = useContract();
 	const { myTransactions, setTransactions } = useTransactions();
 
@@ -34,11 +34,19 @@ export function useMarket() {
 		});
 	};
 
-	const delist = (planet) => {
-		console.log("delisting planet....");
+	const delist = (listingId: string) => {
+		return market.functions.delist(listingId, {
+			gasLimit: 1000000,
+		}
+		).then(
+			(tx) => console.log(`Delisting ${listingId}`)
+		).catch(
+			(e) => console.log(`Error delisting ${listingId}, ${e}`)
+		);
 	};
 
 	return {
 		list,
-	}
+		delist
+	};
 }
