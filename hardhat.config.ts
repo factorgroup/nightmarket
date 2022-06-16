@@ -13,7 +13,7 @@ task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
 
 // The xdai config, but it isn't added to networks unless we have a PRIVATEKEY
 const xdai = {
-	url: "https://rpc-df.xdaichain.com/",
+	url: "https://rpc.gnosischain.com/",
 	accounts: [`${process.env.XDAI_PRIVATEKEY}`],
 	chainId: 100,
 	gasMultiplier: 5,
