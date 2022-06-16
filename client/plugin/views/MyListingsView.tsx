@@ -60,7 +60,6 @@ export const ListingGridHeaderRow: FunctionalComponent = () => {
 };
 
 export function MyListingsView () {
-	const { myTransactions }: { myTransactions: EthersEvent[]; } = useTransactions();
 	const myListings = useListings();
 	const signer = useSigner() as ActiveSigner;
 	return (
