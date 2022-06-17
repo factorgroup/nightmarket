@@ -10,7 +10,7 @@ import { GuideView } from "./GuideView";
 import { MySignerProvider } from "../components/SignerContext";
 import { MyTransactionProvider } from "../components/MyTransactionContext";
 import { Contract, Signer, Event as EthersEvent } from "ethers";
-import { Listing, MyListingsProvider } from "../components/MyListingsContext";
+import { Listing, ListingsProvider } from "../components/MyListingsContext";
 
 type AppViewProps = {
 	contract: { market: Contract; };
@@ -27,7 +27,7 @@ export function AppView ({ contract, signer, txs, listings }: AppViewProps) {
 		<ContractProvider value={contract}>
 			<MySignerProvider signer={signer}>
 				<MyTransactionProvider txs={txs}>
-					<MyListingsProvider listings={listings}>
+					<ListingsProvider listings={listings}>
 						<Navigation
 							tabs={[
 								{ name: "Market", TabContent: MarketView },
@@ -37,7 +37,7 @@ export function AppView ({ contract, signer, txs, listings }: AppViewProps) {
 								{ name: "Guide", TabContent: GuideView }
 							]}
 						/>
-					</MyListingsProvider>
+					</ListingsProvider>
 				</MyTransactionProvider>
 			</MySignerProvider>
 		</ContractProvider>

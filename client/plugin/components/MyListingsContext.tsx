@@ -1,6 +1,9 @@
-import { Event as EthersEvent } from "ethers";
 import { ComponentChildren, createContext, h } from "preact";
 import { useState } from "preact/hooks";
+import { Event as EthersEvent } from "ethers";
+export type Order = {
+    // TODO: to implement
+};
 
 export type Listing = {
     seller: string;
@@ -9,21 +12,24 @@ export type Listing = {
     escrowTime: BigInt;
     numOrders: BigInt;
     isActive: boolean;
-    txEvent: EthersEvent
-    // mapping(uint256 => Order) orders; (?)
+    orders?: {
+        [ listingId: number ]: Order[];
+    };
+    event: EthersEvent;
 };
 
-export const MyListingsContext = createContext<Listing[]>([]);
+export const ListingsContext = createContext<Listing[]>([]);
 
-type MyListingsProviderProps = {
+type ListingsProviderProps = {
     children: ComponentChildren;
     listings: Listing[];
 };
 
-export const MyListingsProvider = (props: MyListingsProviderProps) => {
+
+export const ListingsProvider = (props: ListingsProviderProps) => {
     const [ listings, setListings ] = useState<Listing[]>(props.listings);
 
     return (
-        <MyListingsContext.Provider value={listings} children={props.children} />
+        <ListingsContext.Provider value={listings} children={props.children} />
     );
 };

@@ -24,7 +24,7 @@ class NightMarketPlugin {
 			const contract = await getContract();
 			const signer = await contract.market.signer;
 			const txs = await getTxs(contract.market, signer);
-			const listings = await getListings(contract.market, txs);
+			const listings = await getListings(contract.market);
 
 			render(<AppView contract={contract} signer={signer} txs={txs} listings={listings} />, container);
 		} catch (err: any) {
