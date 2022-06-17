@@ -10,12 +10,13 @@ import { getListingsForAddress } from "../helpers/transactions";
 
 type ListingItemProps = {
 	listing: Listing;
+	view: 'market' | 'mylistings';
 };
 
 const listingStyles = {
 	listing: {
 		display: "grid",
-		gridTemplateColumns: "1fr 1fr 1fr 1fr 1fr",
+		gridTemplateColumns: "1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr",
 		gridColumnGap: "4px",
 		textAlign: "center"
 	},
@@ -27,6 +28,9 @@ const listingStyles = {
 };
 
 export const ListingItem: FunctionalComponent<ListingItemProps> = (props) => {
+	/**
+	 * TODO: format in function to get proper market data.
+	 */
 	const { delist } = useMarket();
 	const { listing } = props;
 	const listingId = listing.event.args!.listingId.toString();
@@ -34,14 +38,21 @@ export const ListingItem: FunctionalComponent<ListingItemProps> = (props) => {
 	const biomebase = listing.event.args!.biombase.toString();
 	const isActive = listing.isActive.toString();
 	const url = `https://blockscout.com/xdai/mainnet/tx/${listing.event.transactionHash}`;
+	const inMyListing = props.view === 'mylistings';
+	const action = inMyListing ? () => delist(listingId) : () => (console.log('order'));
+	const buttonChildren = inMyListing ? "delist" : "order"
+	const buttonDisabled = inMyListing ? !listing.isActive : false;
 	return (
 		<div style={listingStyles.listing}>
 			{[
 				<div > <a target="_blank" href={url}>{listingId}</a></div>,
 				<div style={listingStyles.longText}> {locationId} </div>,
 				<div style={listingStyles.longText}> {biomebase} </div>,
+				<div style={listingStyles.longText}> {listing.escrowTime.toString()} </div>,
+				<div style={listingStyles.longText}> {listing.price.toString()} </div>,
+				<div style={listingStyles.longText}> {listing.numOrders.toString()} </div>,
 				<div style={listingStyles.longText}> {isActive} </div>,
-				<Button disabled={!listing.isActive} children={("delist")} style={{ width: "100%" }} onClick={() => delist(listingId)} />,
+				<Button disabled={buttonDisabled} children={(buttonChildren)} style={{ width: "100%" }} onClick={action} />,
 			]}
 		</div>
 	);
@@ -54,6 +65,9 @@ export const ListingGridHeaderRow: FunctionalComponent = () => {
 				<div> Listing ID </div>,
 				<div> Location ID </div>,
 				<div> Biomebase </div>,
+				<div> Escrow time </div>,
+				<div> Price </div>,
+				<div> Num orders </div>,
 				<div> Active </div>
 			]}
 		</div>
@@ -70,7 +84,7 @@ export function MyListingsView () {
 			<ListingGridHeaderRow />
 			{
 				myListings.map((listing) => (
-					<ListingItem listing={listing} />
+					<ListingItem view={'mylistings'} listing={listing} />
 				)
 				)
 			}
