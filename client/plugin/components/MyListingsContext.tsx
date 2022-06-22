@@ -1,21 +1,27 @@
 import { ComponentChildren, createContext, h } from "preact";
 import { useState } from "preact/hooks";
-import { Event as EthersEvent } from "ethers";
+import { BigNumber, Event as EthersEvent, Transaction } from "ethers";
+
 export type Order = {
-    // TODO: to implement
+    buyer: string;
+    expectedSharedKeyHash: BigNumber;
+    created: BigNumber;
+    isActive: boolean;
 };
 
 export type Listing = {
     seller: string;
-    keyCommitment: BigInt;
-    price: BigInt;
-    escrowTime: BigInt;
-    numOrders: BigInt;
+    keyCommitment: number;
+    price: number;
+    escrowTime: number;
+    numOrders: number;
     isActive: boolean;
-    orders?: {
-        [ listingId: number ]: Order[];
-    };
-    event: EthersEvent;
+    orders?:  Order[];
+    listingId: number;
+    locationId?: number | 'NA';
+    biomebase?: number | 'NA';
+    txHash?: string | 'NA';
+    tx?: Transaction | 'NA';
 };
 
 export const ListingsContext = createContext<Listing[]>([]);
