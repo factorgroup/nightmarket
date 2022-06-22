@@ -34,7 +34,7 @@ export function useMarket () {
 		});
 	};
 
-	const delist = (listingId: string) => {
+	const delist = (listingId: number) => {
 		return market.functions.delist(listingId, {
 			gasLimit: 1000000,
 		}
@@ -44,6 +44,7 @@ export function useMarket () {
 			(e) => console.log(`Error delisting ${listingId}, ${e}`)
 		);
 	};
+
 
 	return {
 		list,
