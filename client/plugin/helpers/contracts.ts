@@ -6,8 +6,12 @@ import GameUIManager from "@df/GameUIManager";
 declare const df: GameManager;
 declare const ui: GameUIManager;
 
-export async function getContract() {
+export async function getContract () {
 	return {
-		market: await df.loadContract(c.NIGHTMARKET_ADDR, c.NIGHTMARKET_ABI)
-	}
+		market: await df.loadContract(c.NIGHTMARKET_ADDR, c.NIGHTMARKET_ABI),
+	};
 };
+
+export async function getConnection () {
+	return await df.getEthConnection()
+}
