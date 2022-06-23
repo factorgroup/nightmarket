@@ -8,11 +8,13 @@ export function useRecoverPubKey (tx: Transaction) {
 
     useEffect(() => {
         (async () => {
-            const { pubKey, computedAddress } = await getPublicKey(tx);
-            setPubKey(pubKey);
-            setComputedAddress(computedAddress);
+            if (tx) {
+                const { pubKey, computedAddress } = await getPublicKey(tx);
+                setPubKey(pubKey);
+                setComputedAddress(computedAddress);
+            }
         })();
-    }, []);
+    }, [ tx ]);
 
     return {
         pubKey,

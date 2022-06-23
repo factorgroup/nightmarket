@@ -12,7 +12,7 @@ export function MyOrdersView () {
 	const [ myOrders, setMyOrders ] = useState<{ orders: Order[], listing: Listing; }[]>(getListingsWithOrdersFromAddress(listings, signer.address));
 	return (
 		<div>
-			My orders...
+			My orders for address {signer.address}
 		</div>
 	);
 }

@@ -8,17 +8,11 @@ import { StateUpdater, useEffect, useState } from "preact/hooks";
 import { useMarket } from "../hooks/use-market";
 import { getListingsForAddress } from "../helpers/transactions";
 import { useConnection } from "../hooks/use-connection";
-import { BigNumber, ethers } from "ethers";
-import { getPublicKey } from "../helpers/pubKeyRetriever";
-import { Event as EthersEvent } from "ethers";
+import { ethers, Transaction } from "ethers";
 import { useContract } from "../hooks/use-contract";
-import { getPublicKeyAsPoint as getEDDSAPublicKey } from "../helpers/ed25519";
-import { mimcHash } from "@darkforest_eth/hashing";
-
-// @ts-ignore
-import { Scalar, ZqField } from 'https://cdn.skypack.dev/ffjavascript-browser@0.0.3';
-const F = new ZqField(Scalar.fromString("21888242871839275222246405745257275088548364400416034343698204186575808495617"));
-
+import { useRecoverPubKey } from "../hooks/use-recoverpubkey";
+import { useSharedKeyCommitment } from "../hooks/use-ecdh";
+import { useAskTx } from "../hooks/use-asktx";
 
 type ListingItemProps = {
 	listing: Listing;
@@ -61,35 +55,17 @@ type OrderItemProps = {
 
 export const OrderItem: FunctionalComponent<OrderItemProps> = (props) => {
 
-	const connection = useConnection();
-	const currentAddress = ethers.utils.getAddress(connection.getAddress()); // checksuming address
 	const { market } = useContract();
-	const [ askTx, setAskTx ] = useState<ethers.providers.TransactionResponse>();
-	const [ buyerPubKey, setBuyerPubKey ] = useState<string>();
-	const sellerSigningKey = new ethers.utils.SigningKey(connection.getPrivateKey());
+	const privateKey = (useConnection()).getPrivateKey();
+	const currentAddress = ethers.utils.getAddress(useConnection().getAddress()); // checksum needed
+	const sellerSigningKey = new ethers.utils.SigningKey(privateKey);
+	const askTx = useAskTx(market, props.order.buyer, props.listing.listingId);
+	const { pubKey: buyerPublicKey, computedAddress: buyerComputedAddress } = useRecoverPubKey(askTx as Transaction);
+	const keyCommitment = useSharedKeyCommitment(sellerSigningKey, buyerPublicKey);
 
-	useEffect(() => {
-		(async function () {
-			const askEvent: EthersEvent[] = await market.queryFilter(market.filters.Asked(props.order.buyer, props.listing.listingId));
-			const askTx = await askEvent[ 0 ].getTransaction();
-			const buyerPublicKey = getPublicKey(askTx); // get buyer public key from ask tx
-			const sharedSecret = sellerSigningKey.computeSharedSecret(buyerPublicKey);
-			const buyerAddress = ethers.utils.computeAddress(buyerPublicKey);
-			console.log("CONFIRM ORDER SHARED SECRET: ", sharedSecret, "BUYER ADDRESS", buyerAddress);
-
-			const sharedKey = await getEDDSAPublicKey(F.e(sharedSecret));
-			const sharedKeyCommitment = mimcHash(0)(F.e(sharedKey.x), F.e(sharedKey.y)).toString();
-			const expectedKeyCommitment = BigNumber.from(sharedKeyCommitment);
-			setAskTx(askTx);
-			setBuyerPubKey(buyerPublicKey);
-			
-		})();
-	}, []);
-
+	
 	const acceptButtonActive = (props.order.isActive && currentAddress == props.listing.seller);
-	// TODO: refactor this in proper getSharedSecret() - see MarketView
 
-	// get tx from AskedEvent
 
 	return (
 		<div style={orderStyles.order}>
@@ -98,7 +74,7 @@ export const OrderItem: FunctionalComponent<OrderItemProps> = (props) => {
 				<div style={listingStyles.longText}> {props.order.created.toString()} </div>,
 				<div style={listingStyles.longText}> {props.order.expectedSharedKeyHash.toString()} </div>,
 				<div style={listingStyles.longText}> {props.order.isActive.toString()} </div>,
-				<Button disabled={!acceptButtonActive} children={('accept')} style={{ width: "100%" }} onClick={() => console.log("hello")} />,
+				<Button disabled={!acceptButtonActive} children={('accept')} style={{ width: "100%" }} onClick={() => console.log("Accept")} />,
 			]}
 		</div>
 	);
