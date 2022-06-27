@@ -5,7 +5,7 @@ import { default as NightMarketJSON } from '../../../artifacts/contracts/NightMa
 // export const DF_ADDR = "0xa98f6b548a748427acfa591a9f24ab840764d129";
 // export const DF_ABI = gameJSON.abi;
 
-export const NIGHTMARKET_ADDR = "0x6bB571363f8dB78Fe71D3bE347192ecAd26a49D7";
+export const NIGHTMARKET_ADDR = "0xF5222e935729FB86CEda8389D0f03A03e167c804";
 export const NIGHTMARKET_ABI = NightMarketJSON.abi;
 
 export const LIST_VERIFY_ADDR = "0x43869DE76b4739cd9E484df40f307D115C08A892";

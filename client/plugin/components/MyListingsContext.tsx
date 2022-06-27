@@ -7,6 +7,7 @@ export type Order = {
     expectedSharedKeyHash: BigNumber;
     created: BigNumber;
     isActive: boolean;
+    orderId: number;
 };
 
 export type Listing = {
@@ -16,6 +17,7 @@ export type Listing = {
     escrowTime: number;
     numOrders: number;
     isActive: boolean;
+    nonce?: number;
     orders?:  Order[];
     listingId: number;
     locationId?: number | 'NA';

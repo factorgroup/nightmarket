@@ -30,21 +30,21 @@ const orderStyles = { // TODO: unify all styles in single file
 };
 export const OrderView: FunctionalComponent<OrderItemProps> = (props) => {
 	/**
-	 * TODO: should add a whole confirmation flow to the transaction.
+	 * TODO: should add a whole confirmation flow to the transaction + back to market view upon confirmation
 	 */
 	const { market } = useContract();
 	const privateKey = (useConnection()).getPrivateKey();
 	const buyerSigningKey = new ethers.utils.SigningKey(privateKey);
 	const { pubKey: sellerPublicKey, computedAddress: sellerComputedAddress } = useRecoverPubKey(props.listing.tx as Transaction);
-	const keyCommitment = useSharedKeyCommitment(buyerSigningKey, sellerPublicKey);
+	const { sharedKeyCommitment } = useSharedKeyCommitment(buyerSigningKey, sellerPublicKey);
 
 	const makeOrder = async () => {
-		console.log("ASK ORDER KEY COMMITMENT: ", keyCommitment, "SELLER ADDRESS", sellerComputedAddress);
-		const ask = await market.ask(props.listing.listingId, keyCommitment, { value: props.listing.price });
+		console.log(`ask, shared key commitment:, ${sharedKeyCommitment?.toString()}, seller address: ${sellerComputedAddress}`);
+		const ask = await market.ask(props.listing.listingId, sharedKeyCommitment, { value: props.listing.price });
 
 	};
 
-	const keyCommitmentRowTitle = keyCommitment ? 'Shared key commitment' : '';
+	const keyCommitmentRowTitle = sharedKeyCommitment ? 'Shared key commitment' : '';
 
 	return (
 		<div>
@@ -61,7 +61,7 @@ export const OrderView: FunctionalComponent<OrderItemProps> = (props) => {
 				<div>Price</div>
 				<div style={orderStyles.longText}>{props.listing.price.toString()}</div>
 				<div>{keyCommitmentRowTitle}</div>
-				<div style={orderStyles.longText}>{keyCommitment ? keyCommitment.toString() : ''}</div>
+				<div style={orderStyles.longText}>{sharedKeyCommitment ? sharedKeyCommitment.toString() : ''}</div>
 			</div>
 			<div>
 				<Button disabled={!props.listing.isActive} children={('order')} style={{ width: "100%" }} onClick={async () => await makeOrder()} />

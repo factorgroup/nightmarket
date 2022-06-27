@@ -32,8 +32,8 @@ export async function getSaleProof(inputs: any) {
 
 	const { proof, publicSignals } = await groth16.fullProve(
 		inputs,
-		"sale.wasm",
-		"sale.zkey",
+		SALE_WASM_URL,
+		SALE_ZKEY_URL,
 	);
 
 	const callArgs = buildSaleContractCallArgs(

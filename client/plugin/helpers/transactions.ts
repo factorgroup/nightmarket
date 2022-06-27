@@ -12,7 +12,8 @@ import { Listing, Order } from "../components/MyListingsContext";
 const getOrders = async (market: Contract, listingId: number, numOrders: number) => {
     const orders: Order[] = [];
     for (let orderId = 0; orderId < numOrders; orderId++) {
-        let order = await market.getOrder(listingId, orderId);
+        let orderInfo = await market.getOrder(listingId, orderId);
+        const order = {...orderInfo, orderId};
         orders.push(order);
     }
     return orders;
@@ -42,7 +43,7 @@ export const getListings = async (market: Contract, addEvent: boolean) => {
         const biomebase = addEvent ? listingEvent.args!.biombase.toString() : 'NA';
         const txHash = addEvent ? listingEvent.args!.transactionHash : 'NA';
         const tx = addEvent ? await listingEvent.getTransaction() : 'NA';
-
+        const nonce = addEvent ? listingEvent.args!.nonce : 0;
         const orders = listing.numOrders > 0 ? await getOrders(market, listingId, listing.numOrders) : undefined;
 
 
@@ -52,6 +53,7 @@ export const getListings = async (market: Contract, addEvent: boolean) => {
             biomebase: biomebase,
             txHash: txHash,
             tx: tx,
+            nonce: nonce,
             orders: orders
         };
 

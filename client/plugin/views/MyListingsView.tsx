@@ -13,6 +13,10 @@ import { useContract } from "../hooks/use-contract";
 import { useRecoverPubKey } from "../hooks/use-recoverpubkey";
 import { useSharedKeyCommitment } from "../hooks/use-ecdh";
 import { useAskTx } from "../hooks/use-asktx";
+import { TextInput } from "../components/Input";
+import { passwordToKey } from "../helpers/utils";
+import { encrypt } from "../helpers/poseidon";
+import { getSaleProof } from "client/plugin/helpers/snarks";
 
 type ListingItemProps = {
 	listing: Listing;
@@ -56,16 +60,52 @@ type OrderItemProps = {
 export const OrderItem: FunctionalComponent<OrderItemProps> = (props) => {
 
 	const { market } = useContract();
+	const [ confirm, setConfirm ] = useState(false);
+	const [ key, setKey ] = useState([] as string[]);
+	const [ password, setPassword ] = useState("");
+
 	const privateKey = (useConnection()).getPrivateKey();
 	const currentAddress = ethers.utils.getAddress(useConnection().getAddress()); // checksum needed
 	const sellerSigningKey = new ethers.utils.SigningKey(privateKey);
 	const askTx = useAskTx(market, props.order.buyer, props.listing.listingId);
 	const { pubKey: buyerPublicKey, computedAddress: buyerComputedAddress } = useRecoverPubKey(askTx as Transaction);
-	const keyCommitment = useSharedKeyCommitment(sellerSigningKey, buyerPublicKey);
+	const { sharedKeyCommitment, sharedKey } = useSharedKeyCommitment(sellerSigningKey, buyerPublicKey);
 
-	
+	// Convert password inputs into keys
+	useEffect(() => {
+		setKey(passwordToKey(password));
+	}, [ password ]);
+
+	const acceptOrder = async () => {
+		const receiptId = encrypt(key, [ sharedKey!.x, sharedKey!.y ], props.listing.nonce!);
+		const saleProofArgs = {
+			receipt_id: receiptId,
+			nonce: props.listing.nonce!.toString(),
+			key_commitment: props.listing.keyCommitment.toString(),
+			shared_key_commitment: sharedKeyCommitment!.toString(),
+			shared_key: [ sharedKey!.x, sharedKey!.y ],
+			key: key
+		};
+		const saleProof = await getSaleProof(saleProofArgs);
+		const sale = await market.sale(...saleProof, props.listing.listingId, props.order.orderId, {
+			gasLimit: 1000000,
+		});
+		console.log(`sale tx: ${sale}`)
+	};
+
 	const acceptButtonActive = (props.order.isActive && currentAddress == props.listing.seller);
 
+	if (confirm) {
+		return (
+			<div style={orderStyles.order}>
+				{[
+					<TextInput name="password" type="string" value={password} placeholder={"your password"} onChange={setPassword} />,
+					<Button children={('confirm')} style={{ width: "100%" }} onClick={async () => await acceptOrder()} />,
+					<Button children={('cancel')} style={{ width: "100%" }} onClick={() => setConfirm(false)} />
+				]}
+			</div>
+		);
+	}
 
 	return (
 		<div style={orderStyles.order}>
@@ -74,7 +114,7 @@ export const OrderItem: FunctionalComponent<OrderItemProps> = (props) => {
 				<div style={listingStyles.longText}> {props.order.created.toString()} </div>,
 				<div style={listingStyles.longText}> {props.order.expectedSharedKeyHash.toString()} </div>,
 				<div style={listingStyles.longText}> {props.order.isActive.toString()} </div>,
-				<Button disabled={!acceptButtonActive} children={('accept')} style={{ width: "100%" }} onClick={() => console.log("Accept")} />,
+				<Button disabled={!acceptButtonActive} children={('accept')} style={{ width: "100%" }} onClick={() => setConfirm(true)} />,
 			]}
 		</div>
 	);

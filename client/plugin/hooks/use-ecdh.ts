@@ -10,7 +10,8 @@ const F = new ZqField(Scalar.fromString("218882428718392752222464057452572750885
 
 
 export function useSharedKeyCommitment (signingKey: SigningKey, publicKey: string) {
-    const [ keyCommitment, setKeyCommitment ] = useState<BigNumber>();
+    const [ sharedKeyCommitment, setSharedKeyCommitment ] = useState<BigNumber>();
+    const [ sharedKey, setSharedKey ] = useState<{x: BigNumber, y: BigNumber}>();
     const sharedSecret = publicKey != '' ? signingKey.computeSharedSecret(publicKey) : '';
 
     useEffect(() => {
@@ -19,10 +20,11 @@ export function useSharedKeyCommitment (signingKey: SigningKey, publicKey: strin
                 const sharedKey = await getEDDSAPublicKey(F.e(sharedSecret));
                 const sharedKeyCommitment = mimcHash(0)(F.e(sharedKey.x), F.e(sharedKey.y)).toString();
                 const expectedKeyCommitment = BigNumber.from(sharedKeyCommitment);
-                setKeyCommitment(expectedKeyCommitment);
+                setSharedKey(sharedKey);
+                setSharedKeyCommitment(expectedKeyCommitment);
             }
         })();
     }, [ publicKey ]);
 
-    return keyCommitment;
+    return { sharedKeyCommitment, sharedKey };
 }
