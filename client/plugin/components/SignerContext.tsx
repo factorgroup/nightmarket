@@ -1,22 +1,12 @@
 import { createContext } from "preact";
-import { h, ComponentChildren } from "preact";
+import { h } from "preact";
 import { useEffect, useState } from "preact/hooks";
-import { Signer } from "ethers";
+import { SignerProviderProps } from "../typings/typings";
 
 export const SignerContext = createContext({
     address: '',
     signer: {}
 });
-
-type SignerProviderProps = {
-    children: ComponentChildren;
-    signer: Signer;
-};
-
-export type ActiveSigner = {
-    address: string;
-    signer: Signer;
-};
 
 export const MySignerProvider = (props: SignerProviderProps) => {
     const [ address, setAddress ] = useState<string>('');

@@ -1,6 +1,5 @@
 import { h, FunctionalComponent } from "preact";
 import { useSigner } from "../hooks/use-signer";
-import { ActiveSigner } from "../components/SignerContext";
 import { useListings } from "../hooks/use-listings";
 import { Listing, Order } from "../components/MyListingsContext";
 import { Button } from "../components/Button";
@@ -18,13 +17,7 @@ import { passwordToKey } from "../helpers/utils";
 import { encrypt } from "../helpers/poseidon";
 import { getSaleProof } from "client/plugin/helpers/snarks";
 import { OrderDetails } from "./MyOrdersView";
-
-type ListingItemProps = {
-	listing: Listing;
-	view: 'market' | 'mylistings';
-	orderview: any; // state update, changes view to place order. TODO: provide better type
-	listordersview: StateUpdater<Listing | undefined>; // state update. changes view to see all orders for a listed item.
-};
+import { ActiveSigner, ListingItemProps, OrderItemProps, OrdersViewProps } from "../typings/typings";
 
 export const listingStyles = {
 	listing: {
@@ -49,14 +42,6 @@ export const orderStyles = {
 	}
 };
 
-type OrdersViewProps = {
-	listing: Listing;
-};
-
-type OrderItemProps = {
-	order: Order;
-	listing: Listing;
-};
 
 export const OrderItem: FunctionalComponent<OrderItemProps> = (props) => {
 
@@ -93,7 +78,7 @@ export const OrderItem: FunctionalComponent<OrderItemProps> = (props) => {
 		const sale = await market.sale(...saleProof, props.listing.listingId, props.order.orderId, {
 			gasLimit: 1000000,
 		});
-		console.log(`sale tx: ${sale}`)
+		console.log(`sale tx: ${sale}`);
 	};
 
 	if (confirm) {

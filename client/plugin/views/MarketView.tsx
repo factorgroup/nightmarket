@@ -9,11 +9,8 @@ import { ListingGridHeaderRow, ListingItem, OrdersView } from "./MyListingsView"
 import { useRecoverPubKey } from "../hooks/use-recoverpubkey";
 import { useSharedKeyCommitment } from "../hooks/use-ecdh";
 import { useContract } from "../hooks/use-contract";
+import { OrderItemProps, OrderPlacerProps } from "../typings/typings";
 
-
-type OrderItemProps = {
-	listing: Listing;
-};
 
 const orderStyles = { // TODO: unify all styles in single file
 	order: {
@@ -28,6 +25,7 @@ const orderStyles = { // TODO: unify all styles in single file
 		"white-space": "nowrap"
 	}
 };
+
 export const OrderView: FunctionalComponent<OrderItemProps> = (props) => {
 	/**
 	 * TODO: should add a whole confirmation flow to the transaction + back to market view upon confirmation
@@ -41,22 +39,18 @@ export const OrderView: FunctionalComponent<OrderItemProps> = (props) => {
 	const makeOrder = async () => {
 		console.log(`ask, shared key commitment:, ${sharedKeyCommitment?.toString()}, seller address: ${sellerComputedAddress}`);
 		const ask = await market.ask(props.listing.listingId, sharedKeyCommitment, { value: props.listing.price });
-
+		return ask;
 	};
 
 	return (
-		<OrderPlacer listing={props.listing} sharedKeyCommitment={sharedKeyCommitment} makeOrder={makeOrder}/>
+		<OrderPlacer listing={props.listing} sharedKeyCommitment={sharedKeyCommitment} makeOrder={makeOrder} />
 	);
 };
 
-type OrderPlacerProps = {
-	listing: Listing;
-	sharedKeyCommitment: BigNumber | undefined;
-	makeOrder: () => void;
-};
 
-export const OrderPlacer: FunctionalComponent<OrderPlacerProps> = (props: OrderPlacerProps) => {
+export const OrderPlacer: FunctionalComponent<OrderPlacerProps> = (props) => {
 	const keyCommitmentRowTitle = props.sharedKeyCommitment ? 'Shared key commitment' : '';
+	const sharedKeyCommitment = props.sharedKeyCommitment ? props.sharedKeyCommitment : BigNumber.from(0);
 
 	return (
 		<div>
@@ -73,7 +67,7 @@ export const OrderPlacer: FunctionalComponent<OrderPlacerProps> = (props: OrderP
 				<div>Price</div>
 				<div style={orderStyles.longText}>{props.listing.price.toString()}</div>
 				<div>{keyCommitmentRowTitle}</div>
-				<div style={orderStyles.longText}>{props.sharedKeyCommitment}</div>
+				<div style={orderStyles.longText}>{sharedKeyCommitment.toString()}</div>
 			</div>
 			<div>
 				<Button disabled={!props.listing.isActive} children={('order')} style={{ width: "100%" }} onClick={async () => await props.makeOrder()} />
@@ -88,7 +82,9 @@ export const MarketView: FunctionalComponent = () => {
 	const [ listOrdersView, setListOrdersView ] = useState<Listing>(); // TODO: refactor in component.
 
 	if (orderView) {
-		return <OrderView listing={orderView} />;
+		return (
+			<OrderView listing={orderView} />
+		);
 	}
 
 	if (listOrdersView) {
