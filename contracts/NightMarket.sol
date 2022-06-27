@@ -224,7 +224,7 @@ contract NightMarket is ReentrancyGuard {
         Listing storage l = listings[_listingId];
         require(l.seller == msg.sender, "Only seller can close sale");
         require(l.isActive, "Listing is inactive");
-        require(_nonce < 2 ^ 218, "Nonce must be smaller than 2^218");
+        require(_nonce < 2 ** 218, "Nonce must be smaller than 2^218");
 
         Order storage o = l.orders[_orderId];
         require(o.isActive, "Order is inactive");
