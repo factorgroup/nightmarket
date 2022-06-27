@@ -1,6 +1,5 @@
-import { eventLogger } from "@df_client/src/Backend/Network/EventLogger";
 import { Contract, Signer, Event as EthersEvent, BigNumber } from "ethers";
-import { Listing, Order } from "../components/MyListingsContext";
+import { Listing, Order } from "../typings/typings";
 
 
 /**

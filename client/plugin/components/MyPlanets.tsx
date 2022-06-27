@@ -1,19 +1,9 @@
 import { h } from "preact";
 import { Planet } from "@darkforest_eth/types";
-import { PlanetActiveArtifact } from "@df_client/src/Frontend/Views/PlanetCardComponents";
 import { PlanetItem } from "./PlanetItem";
+import { myPlanetstyles } from "../helpers/theme";
 
-const styles = {
-	planets: {
-		display: "grid",
-		gridRowGap: "4px",
-	},
-	empty: {
-		color: "#838383",
-	},
-};
-
-export function MyPlanets({
+export function MyPlanets ({
 	emptyState,
 	planets,
 	setActivePlanet
@@ -30,7 +20,7 @@ export function MyPlanets({
 
 	return (
 		<div>
-			<div style={styles.planets}>{planetsFormatted}</div>
+			<div style={myPlanetstyles.planets}>{planetsFormatted}</div>
 		</div>
-	)
+	);
 }
