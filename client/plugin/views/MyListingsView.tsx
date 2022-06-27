@@ -17,6 +17,7 @@ import { TextInput } from "../components/Input";
 import { passwordToKey } from "../helpers/utils";
 import { encrypt } from "../helpers/poseidon";
 import { getSaleProof } from "client/plugin/helpers/snarks";
+import { OrderDetails } from "./MyOrdersView";
 
 type ListingItemProps = {
 	listing: Listing;
@@ -25,7 +26,7 @@ type ListingItemProps = {
 	listordersview: StateUpdater<Listing | undefined>; // state update. changes view to see all orders for a listed item.
 };
 
-const listingStyles = {
+export const listingStyles = {
 	listing: {
 		display: "grid",
 		gridTemplateColumns: "1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr",
@@ -39,7 +40,7 @@ const listingStyles = {
 	} // TODO: longText should be 
 };
 
-const orderStyles = {
+export const orderStyles = {
 	order: {
 		display: "grid",
 		gridColumnGap: "4px",
@@ -71,6 +72,8 @@ export const OrderItem: FunctionalComponent<OrderItemProps> = (props) => {
 	const { pubKey: buyerPublicKey, computedAddress: buyerComputedAddress } = useRecoverPubKey(askTx as Transaction);
 	const { sharedKeyCommitment, sharedKey } = useSharedKeyCommitment(sellerSigningKey, buyerPublicKey);
 
+	const acceptButtonActive = (props.order.isActive && currentAddress == props.listing.seller && props.listing.isActive);
+
 	// Convert password inputs into keys
 	useEffect(() => {
 		setKey(passwordToKey(password));
@@ -93,8 +96,6 @@ export const OrderItem: FunctionalComponent<OrderItemProps> = (props) => {
 		console.log(`sale tx: ${sale}`)
 	};
 
-	const acceptButtonActive = (props.order.isActive && currentAddress == props.listing.seller);
-
 	if (confirm) {
 		return (
 			<div style={orderStyles.order}>
@@ -108,15 +109,7 @@ export const OrderItem: FunctionalComponent<OrderItemProps> = (props) => {
 	}
 
 	return (
-		<div style={orderStyles.order}>
-			{[
-				<div style={listingStyles.longText}> {props.order.buyer} </div>,
-				<div style={listingStyles.longText}> {props.order.created.toString()} </div>,
-				<div style={listingStyles.longText}> {props.order.expectedSharedKeyHash.toString()} </div>,
-				<div style={listingStyles.longText}> {props.order.isActive.toString()} </div>,
-				<Button disabled={!acceptButtonActive} children={('accept')} style={{ width: "100%" }} onClick={() => setConfirm(true)} />,
-			]}
-		</div>
+		<OrderDetails order={props.order} action={() => setConfirm(true)} childrenAction={'accept'} buttonDisabled={!acceptButtonActive} />
 	);
 };
 
@@ -164,7 +157,6 @@ export const ListingItem: FunctionalComponent<ListingItemProps> = (props) => {
 				<div style={listingStyles.longText}> {isActive} </div>,
 				<Button disabled={buttonDisabled} children={(buttonChildren)} style={{ width: "100%" }} onClick={onClickAction} />,
 			]}
-
 		</div>
 	);
 };
