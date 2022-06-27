@@ -1,4 +1,4 @@
-import { ethers, Transaction } from "ethers";
+import { BigNumber, ethers, Transaction } from "ethers";
 import { FunctionalComponent, h } from "preact";
 import { useState } from "preact/hooks";
 import { Button } from "../components/Button";
@@ -44,7 +44,19 @@ export const OrderView: FunctionalComponent<OrderItemProps> = (props) => {
 
 	};
 
-	const keyCommitmentRowTitle = sharedKeyCommitment ? 'Shared key commitment' : '';
+	return (
+		<OrderPlacer listing={props.listing} sharedKeyCommitment={sharedKeyCommitment} makeOrder={makeOrder}/>
+	);
+};
+
+type OrderPlacerProps = {
+	listing: Listing;
+	sharedKeyCommitment: BigNumber | undefined;
+	makeOrder: () => void;
+};
+
+export const OrderPlacer: FunctionalComponent<OrderPlacerProps> = (props: OrderPlacerProps) => {
+	const keyCommitmentRowTitle = props.sharedKeyCommitment ? 'Shared key commitment' : '';
 
 	return (
 		<div>
@@ -61,10 +73,10 @@ export const OrderView: FunctionalComponent<OrderItemProps> = (props) => {
 				<div>Price</div>
 				<div style={orderStyles.longText}>{props.listing.price.toString()}</div>
 				<div>{keyCommitmentRowTitle}</div>
-				<div style={orderStyles.longText}>{sharedKeyCommitment ? sharedKeyCommitment.toString() : ''}</div>
+				<div style={orderStyles.longText}>{props.sharedKeyCommitment}</div>
 			</div>
 			<div>
-				<Button disabled={!props.listing.isActive} children={('order')} style={{ width: "100%" }} onClick={async () => await makeOrder()} />
+				<Button disabled={!props.listing.isActive} children={('order')} style={{ width: "100%" }} onClick={async () => await props.makeOrder()} />
 			</div>
 		</div>
 	);
