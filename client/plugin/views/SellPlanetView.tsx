@@ -106,7 +106,7 @@ export function SellPlanetView({ planet, setActivePlanet }) {
 			</div>
 
 			<div>
-				<label>A unique password (write it down and dont resuse!!)</label>
+				<label>A unique password (write it down and dont re-use!!)</label>
 			</div>
 			<div>
 				<TextInput

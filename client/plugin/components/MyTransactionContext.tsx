@@ -1,9 +1,9 @@
 import { ComponentChildren, h } from "preact";
 import { createContext } from "preact";
-import { useEffect, useState } from "preact/hooks";
+import { useState } from "preact/hooks";
 import { useContract } from "../hooks/use-contract";
 import { useSigner } from "../hooks/use-signer";
-import { ActiveSigner } from "./SignerContext";
+import { ActiveSigner } from "../typings/typings";
 import { Event as EthersEvent } from "ethers";
 
 // A session history of users on chain transactions

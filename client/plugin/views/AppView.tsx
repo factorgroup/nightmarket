@@ -1,5 +1,5 @@
-import { h, Component } from "preact";
-import { useState, useContext } from "preact/hooks";
+import { h } from "preact";
+import { useState } from "preact/hooks";
 import { ContractProvider } from "../components/ContractContext";
 import { Navigation } from "../components/Navigation";
 import { MyPlanetsView } from "./MyPlanetsView";
@@ -9,18 +9,9 @@ import { MarketView } from "./MarketView";
 import { GuideView } from "./GuideView";
 import { MySignerProvider } from "../components/SignerContext";
 import { MyTransactionProvider } from "../components/MyTransactionContext";
-import { Contract, Signer, Event as EthersEvent } from "ethers";
-import { Listing, ListingsProvider } from "../components/MyListingsContext";
-import EthConnection from "@df_client/src/Backend/Network/EthConnection";
+import { ListingsProvider } from "../components/MyListingsContext";
 import { ConnectionProvider } from "../components/ConnectionContext";
-
-type AppViewProps = {
-	contract: { market: Contract; };
-	signer: Signer;
-	txs: EthersEvent[];
-	listings: Listing[];
-	connection: EthConnection;
-};
+import { AppViewProps } from "../typings/typings";
 
 export function AppView ({ contract, signer, txs, listings, connection }: AppViewProps) {
 	const [ activeTabId, setActiveTab ] = useState(0);

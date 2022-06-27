@@ -1,24 +1,17 @@
 import { Transaction } from "ethers";
 import { FunctionalComponent, h } from "preact";
-import { StateUpdater, useState } from "preact/hooks";
+import { useState } from "preact/hooks";
 import { Button } from "../components/Button";
-import { Listing, Order } from "../components/MyListingsContext";
-import { ActiveSigner } from "../components/SignerContext";
+import {  } from "../components/MyListingsContext";
 import { getListingsWithOrdersFromAddress } from "../helpers/transactions";
 import { useContract } from "../hooks/use-contract";
 import { useListings } from "../hooks/use-listings";
 import { useSigner } from "../hooks/use-signer";
-import { listingStyles, orderStyles } from "./MyListingsView";
+import { Listing, Order, OrderItemProps, ActiveSigner } from "../typings/typings";
+import { listingStyles, orderStyles } from "../helpers/theme";
 
 
-type OrderDetailsProps = {
-	order: Order;
-	action: (() => void) | (() => Promise<Transaction>);
-	childrenAction: string;
-	buttonDisabled: boolean;
-};
-
-export const OrderDetails: FunctionalComponent<OrderDetailsProps> = (props: OrderDetailsProps) => {
+export const OrderItem: FunctionalComponent<OrderItemProps> = (props: OrderItemProps) => {
 	return (
 		<div style={orderStyles.order}>
 			{[
@@ -40,7 +33,7 @@ export function MyOrdersView () {
 	const refund = async (listing: Listing, order: Order): Promise<Transaction> => {
 		const tx = await market.refund(listing.listingId, order.orderId);
 		console.log("refund tx: ", tx);
-		return tx
+		return tx;
 	};
 
 	return (
@@ -50,7 +43,7 @@ export function MyOrdersView () {
 				{myOrders.map((listing) => (
 					<div style={{ display: "grid", rowGap: "4px" }}>
 						{listing.orders.map((order) => (
-							<OrderDetails order={order} action={() => refund(listing.listing, order)} childrenAction={'refund'} buttonDisabled={!order.isActive} />
+							<OrderItem order={order} action={async () => await refund(listing.listing, order)} childrenAction={'refund'} buttonDisabled={!order.isActive} />
 						)
 						)}
 					</div>
