@@ -96,6 +96,7 @@ type ListingItemProps = {
 	listing: Listing;
 	buttonDisabled: boolean;
 	buttonChildren: string;
+    actionButtonTheme: string;
 	onClickOrders: () => void;
 	onClickAction: () => void;
 };

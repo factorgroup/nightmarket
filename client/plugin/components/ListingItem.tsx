@@ -1,4 +1,5 @@
 import { FunctionalComponent, h } from "preact";
+import { useState } from "preact/hooks";
 import { listingStyles } from "../helpers/theme";
 import { useMarket } from "../hooks/use-market";
 import { Listing, ListingItemProps, ListingRowProps } from "../typings/typings";
@@ -15,7 +16,7 @@ export const ListingItem: FunctionalComponent<ListingItemProps> = (props) => {
 				<div style={listingStyles.longText}> {props.listing.price.toString()} </div>,
 				<div style={props.linkMultipleOrder} onClick={props.onClickOrders}> {props.listing.numOrders.toString()} </div>,
 				<div style={listingStyles.longText}> {props.listing.isActive.toString()} </div>,
-				<Button disabled={props.buttonDisabled} children={(props.buttonChildren)} style={{ width: "100%" }} onClick={props.onClickAction} />,
+				<Button disabled={props.buttonDisabled} theme={props.actionButtonTheme} children={(props.buttonChildren)} style={{ width: "100%" }} onClick={props.onClickAction} />,
 			]}
 		</div>
 	);
@@ -50,23 +51,26 @@ export const ListingRow: FunctionalComponent<ListingRowProps> = (props) => {
 	 */
 
 	const { delist } = useMarket();
+	const [ confirmDelist, setConfirmDelist ] = useState(false);
 	const { listing } = props;
 	const inMyListing = props.view === 'mylistings';
 
 	const isActive = listing.isActive.toString();
 	const url = `https://blockscout.com/xdai/mainnet/tx/${listing.txHash}`;
 
-	const onClickAction = inMyListing ? () => delist(listing.listingId) : () => props.orderview(listing);
+	const onClickAction = inMyListing ? (confirmDelist ? () => delist(listing.listingId) : () => setConfirmDelist(true)) : () => props.orderview(listing);
+	const actionButtonTheme = inMyListing ? (confirmDelist ? "green" : "default") : "default";
+	const buttonChildren = inMyListing ? (confirmDelist ? "confirm" : "delist") : "details";
+
 	const onClickOrders = () => props.listordersview(props.listing);
 
-	const buttonChildren = inMyListing ? "delist" : "details";
 	const buttonDisabled = inMyListing ? !listing.isActive : false;
 	const styleOrderDiv = listing.numOrders > 0 ? { ...listingStyles.longText, cursor: "pointer" } : listingStyles.longText;
 
 	return (
 		<ListingItem
 			listing={listing} buttonDisabled={buttonDisabled} buttonChildren={buttonChildren}
-			url={url} linkMultipleOrder={styleOrderDiv}
+			url={url} linkMultipleOrder={styleOrderDiv} actionButtonTheme={actionButtonTheme}
 			onClickOrders={onClickOrders} onClickAction={onClickAction}
 		/>
 	);
