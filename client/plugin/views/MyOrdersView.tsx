@@ -2,7 +2,7 @@ import { Transaction } from "ethers";
 import { FunctionalComponent, h } from "preact";
 import { useState } from "preact/hooks";
 import { Button } from "../components/Button";
-import {  } from "../components/MyListingsContext";
+import { } from "../components/MyListingsContext";
 import { getListingsWithOrdersFromAddress } from "../helpers/transactions";
 import { useContract } from "../hooks/use-contract";
 import { useListings } from "../hooks/use-listings";
@@ -27,7 +27,7 @@ export const OrderItem: FunctionalComponent<OrderItemProps> = (props: OrderItemP
 
 export function MyOrdersView () {
 	const signer = useSigner() as ActiveSigner;
-	const listings = useListings();
+	const { listings } = useListings();
 	const { market } = useContract();
 	const [ myOrders, setMyOrders ] = useState<{ orders: Order[], listing: Listing; }[]>(getListingsWithOrdersFromAddress(listings, signer.address));
 	const refund = async (listing: Listing, order: Order): Promise<Transaction> => {

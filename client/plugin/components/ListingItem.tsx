@@ -1,7 +1,7 @@
 import { FunctionalComponent, h } from "preact";
 import { listingStyles } from "../helpers/theme";
 import { useMarket } from "../hooks/use-market";
-import { ListingItemProps, ListingRowProps } from "../typings/typings";
+import { Listing, ListingItemProps, ListingRowProps } from "../typings/typings";
 import { Button } from "./Button";
 
 export const ListingItem: FunctionalComponent<ListingItemProps> = (props) => {
@@ -21,17 +21,23 @@ export const ListingItem: FunctionalComponent<ListingItemProps> = (props) => {
 	);
 };
 
-export const ListingHeaderRow: FunctionalComponent = () => {
+type ListingHeaderRowProps = {
+	sortBy: { current: string, previous: string; };
+	setSortBy: any;
+};
+
+export const ListingHeaderRow: FunctionalComponent<ListingHeaderRowProps> = (props) => {
+	const clickableStyle = { cursor: "pointer" };
 	return (
 		<div style={listingStyles.listing}>
 			{[
-				<div> Listing ID </div>,
-				<div> Location ID </div>,
+				<div style={clickableStyle} onClick={() => props.setSortBy({ previous: props.sortBy.current, current: 'id' })}> ListID ▲</div>,
+				<div>LocID</div>,
 				<div> Biomebase </div>,
-				<div> Escrow time </div>,
-				<div> Price </div>,
-				<div> Num orders </div>,
-				<div> Active </div>
+				<div style={clickableStyle} onClick={() => props.setSortBy({ previous: props.sortBy.current, current: 'escrow' })}>Escrow ▲</div>,
+				<div style={clickableStyle} onClick={() => props.setSortBy({ previous: props.sortBy.current, current: 'price' })}> Price ▲</div>,
+				<div style={clickableStyle} onClick={() => props.setSortBy({ previous: props.sortBy.current, current: 'numorders' })}> Orders ▲</div>,
+				<div style={clickableStyle} onClick={() => props.setSortBy({ previous: props.sortBy.current, current: 'active' })}> Active ▲</div>
 			]}
 		</div>
 	);
@@ -60,7 +66,7 @@ export const ListingRow: FunctionalComponent<ListingRowProps> = (props) => {
 	return (
 		<ListingItem
 			listing={listing} buttonDisabled={buttonDisabled} buttonChildren={buttonChildren}
-			url={url} linkMultipleOrder={styleOrderDiv} 
+			url={url} linkMultipleOrder={styleOrderDiv}
 			onClickOrders={onClickOrders} onClickAction={onClickAction}
 		/>
 	);

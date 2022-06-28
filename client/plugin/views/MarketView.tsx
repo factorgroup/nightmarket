@@ -5,11 +5,21 @@ import { ListingHeaderRow, ListingRow } from "../components/ListingItem";
 import { OrdersListView } from "./OrdersListView";
 import { Listing } from "../typings/typings";
 import { OrderPlacerView } from "./OrderPlacerView";
+import { sortListings } from "../helpers/utils";
 
 export const MarketView: FunctionalComponent = () => {
-	const listings = useListings();
+	const { listings, setListings } = useListings();
+	const [ sortedListings, setSortedListings ] = useState<Listing[]>(listings);
+	const [ sortBy, setSortBy ] = useState({ current: 'id', previous: 'id' });
+
 	const [ placeOrderView, setPlaceOrderView ] = useState<Listing>();
 	const [ listOrdersView, setListOrdersView ] = useState<Listing>();
+
+	if (sortBy.current != sortBy.previous) {
+		const sorted = sortListings(listings, sortBy);
+		setSortedListings(sorted);
+		setSortBy({ previous: sortBy.current, current: sortBy.current });
+	}
 
 	if (placeOrderView) {
 		// View a single order for order placement (from market view)
@@ -28,9 +38,9 @@ export const MarketView: FunctionalComponent = () => {
 	// View all listings (market view)
 	return (
 		<div style={{ display: "grid", gridRowGap: "4px" }}>
-			<ListingHeaderRow />
+			<ListingHeaderRow sortBy={sortBy} setSortBy={setSortBy} />
 			{
-				listings.map((listing) => (
+				sortedListings.map((listing) => (
 					<ListingRow orderview={setPlaceOrderView} listordersview={setListOrdersView} view={'market'} listing={listing} />
 				)
 				)
