@@ -45,6 +45,7 @@ type OrderPlacerItemProps = {
 	listing: Listing;
 	sharedKeyCommitment: BigNumber | undefined;
 	makeOrder: () => Promise<Transaction>;
+    setPlaceOrderView: StateUpdater<Listing | undefined>;
 };
 
 type OrdersViewProps = {

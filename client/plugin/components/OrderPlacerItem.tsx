@@ -21,6 +21,7 @@ export const OrderPlacerItem: FunctionalComponent<OrderPlacerItemProps> = (props
     return (
         <div>
             <div>Place Order on Listing {props.listing.listingId}</div>
+            <div><a onClick={() => props.setPlaceOrderView(undefined)}>Back to market</a></div>
             <div style={orderPlacerStyles.order}>
                 <div>Seller</div>
                 <div>{props.listing.seller}</div>

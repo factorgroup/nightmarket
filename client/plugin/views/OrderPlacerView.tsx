@@ -26,7 +26,7 @@ export const OrderPlacerView: FunctionalComponent<OrderPlacerViewProps> = (props
 	};
 
 	return (
-		<OrderPlacerItem listing={props.listing} sharedKeyCommitment={sharedKeyCommitment} makeOrder={makeOrder} />
+		<OrderPlacerItem setPlaceOrderView={props.setPlaceOrderView} listing={props.listing} sharedKeyCommitment={sharedKeyCommitment} makeOrder={makeOrder} />
 	);
 };
 
