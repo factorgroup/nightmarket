@@ -12,6 +12,9 @@ import { listingStyles, orderStyles } from "../helpers/theme";
 
 
 export const OrderItem: FunctionalComponent<OrderItemProps> = (props: OrderItemProps) => {
+	const [ confirmAction, setconfirmAction ] = useState(false);
+	const buttonTheme = confirmAction ? "green" : "default";
+	const children = confirmAction ? "confirm" : props.childrenAction;
 	return (
 		<div style={orderStyles.order}>
 			{[
@@ -19,7 +22,8 @@ export const OrderItem: FunctionalComponent<OrderItemProps> = (props: OrderItemP
 				<div style={listingStyles.longText}> {props.order.created.toString()} </div>,
 				<div style={listingStyles.longText}> {props.order.expectedSharedKeyHash.toString()} </div>,
 				<div style={listingStyles.longText}> {props.order.isActive.toString()} </div>,
-				<Button disabled={props.buttonDisabled} children={(props.childrenAction)} style={{ width: "100%" }} onClick={props.action} />,
+				<Button theme={buttonTheme} disabled={props.buttonDisabled} children={(children)}
+					style={{ width: "100%" }} onClick={async () => await (confirmAction ? props.action() : setconfirmAction(true))} />,
 			]}
 		</div>
 	);

@@ -3,10 +3,20 @@ import { orderPlacerStyles } from "../helpers/theme";
 import { BigNumber } from "ethers";
 import { OrderPlacerItemProps } from "../typings/typings";
 import { FunctionalComponent, h } from "preact";
+import { useState } from "preact/hooks";
 
 export const OrderPlacerItem: FunctionalComponent<OrderPlacerItemProps> = (props) => {
+    const [buttonDisabled, setbuttonDisabled] = useState(!props.listing.isActive)
+    const [ confirmOrder, setConfirmOrder ] = useState(false);
+    const buttonTheme = confirmOrder ? "green" : "default";
     const keyCommitmentRowTitle = props.sharedKeyCommitment ? 'Shared key commitment' : '';
     const sharedKeyCommitment = props.sharedKeyCommitment ? props.sharedKeyCommitment : BigNumber.from(0);
+    const buttonChildren = confirmOrder ? "confirm" : "order";
+
+    const orderPlacer = async () => {
+        setbuttonDisabled(true)
+        await props.makeOrder();
+    };
 
     return (
         <div>
@@ -26,7 +36,8 @@ export const OrderPlacerItem: FunctionalComponent<OrderPlacerItemProps> = (props
                 <div style={orderPlacerStyles.longText}>{sharedKeyCommitment.toString()}</div>
             </div>
             <div>
-                <Button disabled={!props.listing.isActive} children={('order')} style={{ width: "100%" }} onClick={async () => await props.makeOrder()} />
+                <Button theme={buttonTheme} disabled={buttonDisabled} children={(buttonChildren)} style={{ width: "100%" }}
+                    onClick={async () => await (confirmOrder ? orderPlacer() : setConfirmOrder(true))} />
             </div>
         </div>
     );

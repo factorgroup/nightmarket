@@ -39,8 +39,11 @@ export const ManageOrderItem: FunctionalComponent<ManageOrderItemProps> = (props
 			<div style={orderStyles.order}>
 				{[
 					<TextInput name="password" type="string" value={password} placeholder={"your password"} onChange={setPassword} />,
-					<Button children={('confirm')} style={{ width: "100%" }} onClick={async () => await sale(props.listing.listingId, props.order!.orderId, key, sharedKey, props.listing.nonce!.toBigInt(), props.listing.keyCommitment, sharedKeyCommitment)} />,
-					<Button children={('cancel')} style={{ width: "100%" }} onClick={() => setConfirm(false)} />
+					<Button children={('confirm')} style={{ width: "100%" }} 
+						onClick={async () => await sale(props.listing.listingId, props.order!.orderId, key, sharedKey, 
+															props.listing.nonce!.toBigInt(), props.listing.keyCommitment, 
+																sharedKeyCommitment)} />,
+					<Button theme="red" children={('cancel')} style={{ width: "100%" }} onClick={() => setConfirm(false)} />
 				]}
 			</div>
 		);

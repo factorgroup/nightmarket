@@ -21,6 +21,7 @@ export const OrderPlacerView: FunctionalComponent<OrderPlacerViewProps> = (props
 	const makeOrder = async () => {
 		console.log(`ask, shared key commitment:, ${sharedKeyCommitment?.toString()}, seller address: ${sellerComputedAddress}`);
 		const ask = await market.ask(props.listing.listingId, sharedKeyCommitment, { value: props.listing.price });
+		props.setPlaceOrderView(undefined)
 		return ask;
 	};
 

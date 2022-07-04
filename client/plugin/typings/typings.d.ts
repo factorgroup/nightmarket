@@ -51,7 +51,10 @@ type OrdersViewProps = {
 	listing: Listing;
 };
 
-type OrderPlacerViewProps = OrdersViewProps;
+type OrderPlacerViewProps = {
+    listing: Listing;
+    setPlaceOrderView: StateUpdater<Listing | undefined>;
+};
 
 type ManageOrderItemProps = {
 	order: Order;

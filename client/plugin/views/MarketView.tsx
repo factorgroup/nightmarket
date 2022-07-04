@@ -24,7 +24,7 @@ export const MarketView: FunctionalComponent = () => {
 	if (placeOrderView) {
 		// View a single order for order placement (from market view)
 		return (
-			<OrderPlacerView listing={placeOrderView} />
+			<OrderPlacerView setPlaceOrderView={setPlaceOrderView} listing={placeOrderView} />
 		);
 	}
 

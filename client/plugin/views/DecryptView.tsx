@@ -47,7 +47,7 @@ export function DecryptView () {
         }
         catch (e) {
             console.log(e);
-            setDecryptedCoords('Error decrypting transaction coordinates. Check that you use correct tx hash and wallet address.');
+            setDecryptedCoords('Error decrypting planet coordinates. Check that you use correct tx hash and wallet address.');
         }
     };
     const styleDecryptDiv = { marginTop: "4px", marginBottom: "4px" };
