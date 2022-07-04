@@ -1,7 +1,8 @@
 import { FunctionalComponent, h } from "preact";
+import { useState } from "preact/hooks";
 import { listingStyles } from "../helpers/theme";
 import { useMarket } from "../hooks/use-market";
-import { ListingItemProps, ListingRowProps } from "../typings/typings";
+import { Listing, ListingItemProps, ListingRowProps } from "../typings/typings";
 import { Button } from "./Button";
 
 export const ListingItem: FunctionalComponent<ListingItemProps> = (props) => {
@@ -15,23 +16,29 @@ export const ListingItem: FunctionalComponent<ListingItemProps> = (props) => {
 				<div style={listingStyles.longText}> {props.listing.price.toString()} </div>,
 				<div style={props.linkMultipleOrder} onClick={props.onClickOrders}> {props.listing.numOrders.toString()} </div>,
 				<div style={listingStyles.longText}> {props.listing.isActive.toString()} </div>,
-				<Button disabled={props.buttonDisabled} children={(props.buttonChildren)} style={{ width: "100%" }} onClick={props.onClickAction} />,
+				<Button disabled={props.buttonDisabled} theme={props.actionButtonTheme} children={(props.buttonChildren)} style={{ width: "100%" }} onClick={props.onClickAction} />,
 			]}
 		</div>
 	);
 };
 
-export const ListingHeaderRow: FunctionalComponent = () => {
+type ListingHeaderRowProps = {
+	sortBy: { current: string, previous: string; };
+	setSortBy: any;
+};
+
+export const ListingHeaderRow: FunctionalComponent<ListingHeaderRowProps> = (props) => {
+	const clickableStyle = { cursor: "pointer" };
 	return (
 		<div style={listingStyles.listing}>
 			{[
-				<div> Listing ID </div>,
-				<div> Location ID </div>,
+				<div style={clickableStyle} onClick={() => props.setSortBy({ previous: props.sortBy.current, current: 'id' })}> ListID ▲</div>,
+				<div>LocID</div>,
 				<div> Biomebase </div>,
-				<div> Escrow time </div>,
-				<div> Price </div>,
-				<div> Num orders </div>,
-				<div> Active </div>
+				<div style={clickableStyle} onClick={() => props.setSortBy({ previous: props.sortBy.current, current: 'escrow' })}>Escrow ▲</div>,
+				<div style={clickableStyle} onClick={() => props.setSortBy({ previous: props.sortBy.current, current: 'price' })}> Price ▲</div>,
+				<div style={clickableStyle} onClick={() => props.setSortBy({ previous: props.sortBy.current, current: 'numorders' })}> Orders ▲</div>,
+				<div style={clickableStyle} onClick={() => props.setSortBy({ previous: props.sortBy.current, current: 'active' })}> Active ▲</div>
 			]}
 		</div>
 	);
@@ -44,23 +51,26 @@ export const ListingRow: FunctionalComponent<ListingRowProps> = (props) => {
 	 */
 
 	const { delist } = useMarket();
+	const [ confirmDelist, setConfirmDelist ] = useState(false);
 	const { listing } = props;
 	const inMyListing = props.view === 'mylistings';
 
 	const isActive = listing.isActive.toString();
 	const url = `https://blockscout.com/xdai/mainnet/tx/${listing.txHash}`;
 
-	const onClickAction = inMyListing ? () => delist(listing.listingId) : () => props.orderview(listing);
+	const onClickAction = inMyListing ? (confirmDelist ? () => delist(listing.listingId) : () => setConfirmDelist(true)) : () => props.orderview(listing);
+	const actionButtonTheme = inMyListing ? (confirmDelist ? "green" : "default") : "default";
+	const buttonChildren = inMyListing ? (confirmDelist ? "confirm" : "delist") : "details";
+
 	const onClickOrders = () => props.listordersview(props.listing);
 
-	const buttonChildren = inMyListing ? "delist" : "details";
 	const buttonDisabled = inMyListing ? !listing.isActive : false;
 	const styleOrderDiv = listing.numOrders > 0 ? { ...listingStyles.longText, cursor: "pointer" } : listingStyles.longText;
 
 	return (
 		<ListingItem
 			listing={listing} buttonDisabled={buttonDisabled} buttonChildren={buttonChildren}
-			url={url} linkMultipleOrder={styleOrderDiv} 
+			url={url} linkMultipleOrder={styleOrderDiv} actionButtonTheme={actionButtonTheme}
 			onClickOrders={onClickOrders} onClickAction={onClickAction}
 		/>
 	);

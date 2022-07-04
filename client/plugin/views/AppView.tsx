@@ -11,6 +11,7 @@ import { MySignerProvider } from "../components/SignerContext";
 import { MyTransactionProvider } from "../components/MyTransactionContext";
 import { ListingsProvider } from "../components/MyListingsContext";
 import { ConnectionProvider } from "../components/ConnectionContext";
+import { DecryptView } from "./DecryptView";
 import { AppViewProps } from "../typings/typings";
 
 export function AppView ({ contract, signer, txs, listings, connection }: AppViewProps) {
@@ -29,6 +30,7 @@ export function AppView ({ contract, signer, txs, listings, connection }: AppVie
 									{ name: "My Listings", TabContent: MyListingsView },
 									{ name: "My Orders", TabContent: MyOrdersView },
 									{ name: "My Planets", TabContent: MyPlanetsView },
+									{ name: "Decrypt", TabContent: DecryptView },
 									{ name: "Guide", TabContent: GuideView }
 								]}
 							/>
