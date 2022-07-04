@@ -20,7 +20,7 @@ export const ManageOrderItem: FunctionalComponent<ManageOrderItemProps> = (props
 	const [ confirm, setConfirm ] = useState(false);
 	const [ key, setKey ] = useState([] as string[]);
 	const [ password, setPassword ] = useState("");
-    const { sale } = useMarket();
+	const { sale } = useMarket();
 	const privateKey = (useConnection()).getPrivateKey();
 	const currentAddress = ethers.utils.getAddress(useConnection().getAddress()); // checksum needed
 	const sellerSigningKey = new ethers.utils.SigningKey(privateKey);
@@ -39,7 +39,7 @@ export const ManageOrderItem: FunctionalComponent<ManageOrderItemProps> = (props
 			<div style={orderStyles.order}>
 				{[
 					<TextInput name="password" type="string" value={password} placeholder={"your password"} onChange={setPassword} />,
-					<Button children={('confirm')} style={{ width: "100%" }} onClick={async () => await sale(props.listing.listingId, props.order!.orderId, key, sharedKey, props.listing.nonce!, props.listing.keyCommitment, sharedKeyCommitment)} />,
+					<Button children={('confirm')} style={{ width: "100%" }} onClick={async () => await sale(props.listing.listingId, props.order!.orderId, key, sharedKey, props.listing.nonce!.toBigInt(), props.listing.keyCommitment, sharedKeyCommitment)} />,
 					<Button children={('cancel')} style={{ width: "100%" }} onClick={() => setConfirm(false)} />
 				]}
 			</div>

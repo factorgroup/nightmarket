@@ -8,7 +8,7 @@ declare const ui: GameUIManager;
 
 // @ts-ignore
 import { Scalar, ZqField } from 'https://cdn.skypack.dev/ffjavascript-browser@0.0.3';
-const F = new ZqField(Scalar.fromString("21888242871839275222246405745257275088548364400416034343698204186575808495617"));
+export const F = new ZqField(Scalar.fromString("21888242871839275222246405745257275088548364400416034343698204186575808495617"));
 
 // Generates and formats input arguments that go into a proof
 export function genListProofArgs(planet: Planet, nonce, key) {

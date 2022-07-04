@@ -1,4 +1,4 @@
-import { Signer } from "ethers";
+import { BigNumber, Signer } from "ethers";
 import { ComponentChildren } from "preact";
 
 /**
@@ -19,7 +19,7 @@ export type Listing = {
     escrowTime: number;
     numOrders: number;
     isActive: boolean;
-    nonce?: number;
+    nonce?: BigNumber;
     orders?:  Order[];
     listingId: number;
     locationId?: number | 'NA';

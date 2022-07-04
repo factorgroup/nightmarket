@@ -38,7 +38,7 @@ export function MyOrdersView () {
 
 	return (
 		<div>
-			My orders for address {signer.address}
+			My orders at address {signer.address}
 			<div style={{ display: "grid", rowGap: "4px" }}>
 				{myOrders.map((listing) => (
 					<div style={{ display: "grid", rowGap: "4px" }}>

@@ -16,7 +16,7 @@ export const OrderPlacerView: FunctionalComponent<OrderPlacerViewProps> = (props
 	const privateKey = (useConnection()).getPrivateKey();
 	const buyerSigningKey = new ethers.utils.SigningKey(privateKey);
 	const { pubKey: sellerPublicKey, computedAddress: sellerComputedAddress } = useRecoverPubKey(props.listing.tx as Transaction);
-	const { sharedKeyCommitment } = useSharedKeyCommitment(buyerSigningKey, sellerPublicKey);
+	const { sharedKeyCommitment, sharedKey } = useSharedKeyCommitment(buyerSigningKey, sellerPublicKey);
 
 	const makeOrder = async () => {
 		console.log(`ask, shared key commitment:, ${sharedKeyCommitment?.toString()}, seller address: ${sellerComputedAddress}`);
