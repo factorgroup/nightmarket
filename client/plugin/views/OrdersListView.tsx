@@ -21,6 +21,7 @@ export const ManageOrderItem: FunctionalComponent<ManageOrderItemProps> = (props
 	const [ key, setKey ] = useState([] as string[]);
 	const [ password, setPassword ] = useState("");
 	const { sale } = useMarket();
+	const [ saleConfirmDisabled, setsaleConfirmDisabled ] = useState(false);
 	const privateKey = (useConnection()).getPrivateKey();
 	const currentAddress = ethers.utils.getAddress(useConnection().getAddress()); // checksum needed
 	const sellerSigningKey = new ethers.utils.SigningKey(privateKey);
@@ -34,16 +35,23 @@ export const ManageOrderItem: FunctionalComponent<ManageOrderItemProps> = (props
 		setKey(passwordToKey(password));
 	}, [ password ]);
 
+	const confirmSale = async () => {
+		setsaleConfirmDisabled(true);
+		await sale(props.listing.listingId, props.order!.orderId, key, sharedKey,
+			props.listing.nonce!.toBigInt(), props.listing.keyCommitment,
+			sharedKeyCommitment);
+		setConfirm(false);
+
+	};
+
 	if (confirm) {
 		return (
 			<div style={orderStyles.order}>
 				{[
 					<TextInput name="password" type="string" value={password} placeholder={"your password"} onChange={setPassword} />,
-					<Button children={('confirm')} style={{ width: "100%" }} 
-						onClick={async () => await sale(props.listing.listingId, props.order!.orderId, key, sharedKey, 
-															props.listing.nonce!.toBigInt(), props.listing.keyCommitment, 
-																sharedKeyCommitment)} />,
-					<Button theme="red" children={('cancel')} style={{ width: "100%" }} onClick={() => setConfirm(false)} />
+					<Button disabled={saleConfirmDisabled} theme="green" children={('sell')} style={{ width: "100%" }}
+						onClick={async () => await confirmSale()} />,
+					<Button disabled={saleConfirmDisabled} theme="red" children={('cancel')} style={{ width: "100%" }} onClick={() => setConfirm(false)} />
 				]}
 			</div>
 		);

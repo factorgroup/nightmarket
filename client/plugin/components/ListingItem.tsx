@@ -2,10 +2,21 @@ import { FunctionalComponent, h } from "preact";
 import { useState } from "preact/hooks";
 import { listingStyles } from "../helpers/theme";
 import { useMarket } from "../hooks/use-market";
-import { Listing, ListingItemProps, ListingRowProps } from "../typings/typings";
+import { ListingItemProps, ListingRowProps } from "../typings/typings";
 import { Button } from "./Button";
 
 export const ListingItem: FunctionalComponent<ListingItemProps> = (props) => {
+	const [ disabledButton, setdisabledButton ] = useState(props.buttonDisabled);
+	const onClickAction = async () => {
+		if (props.buttonChildren == "confirm") {
+			setdisabledButton(true);
+			await props.onClickAction();
+			
+		}
+		else {
+			props.onClickAction();
+		}
+	};
 	return (
 		<div style={listingStyles.listing}>
 			{[
@@ -16,7 +27,9 @@ export const ListingItem: FunctionalComponent<ListingItemProps> = (props) => {
 				<div style={listingStyles.longText}> {props.listing.price.toString()} </div>,
 				<div style={props.linkMultipleOrder} onClick={props.onClickOrders}> {props.listing.numOrders.toString()} </div>,
 				<div style={listingStyles.longText}> {props.listing.isActive.toString()} </div>,
-				<Button disabled={props.buttonDisabled} theme={props.actionButtonTheme} children={(props.buttonChildren)} style={{ width: "100%" }} onClick={props.onClickAction} />,
+				<Button disabled={disabledButton} theme={props.actionButtonTheme}
+					children={(props.buttonChildren)}
+					style={{ width: "100%" }} onClick={async () => await onClickAction()} />,
 			]}
 		</div>
 	);
@@ -58,14 +71,14 @@ export const ListingRow: FunctionalComponent<ListingRowProps> = (props) => {
 	const isActive = listing.isActive.toString();
 	const url = `https://blockscout.com/xdai/mainnet/tx/${listing.txHash}`;
 
-	const onClickAction = inMyListing ? (confirmDelist ? () => delist(listing.listingId) : () => setConfirmDelist(true)) : () => props.orderview(listing);
+	const onClickAction = inMyListing ? (confirmDelist ? async () => await delist(listing.listingId) : () => setConfirmDelist(true)) : () => props.orderview(listing);
 	const actionButtonTheme = inMyListing ? (confirmDelist ? "green" : "default") : "default";
 	const buttonChildren = inMyListing ? (confirmDelist ? "confirm" : "delist") : "details";
 
 	const onClickOrders = () => props.listordersview(props.listing);
 
 	const buttonDisabled = inMyListing ? !listing.isActive : false;
-	const styleOrderDiv = listing.numOrders > 0 ? { ...listingStyles.longText, cursor: "pointer" } : listingStyles.longText;
+	const styleOrderDiv = listing.numOrders > 0 ? { ...listingStyles.longText, cursor: "pointer", textDecoration: "underline" } : listingStyles.longText;
 
 	return (
 		<ListingItem

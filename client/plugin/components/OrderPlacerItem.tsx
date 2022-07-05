@@ -1,5 +1,5 @@
 import { Button } from "../components/Button";
-import { orderPlacerStyles } from "../helpers/theme";
+import { clickableLinkStyle, orderPlacerStyles } from "../helpers/theme";
 import { BigNumber } from "ethers";
 import { OrderPlacerItemProps } from "../typings/typings";
 import { FunctionalComponent, h } from "preact";
@@ -17,11 +17,11 @@ export const OrderPlacerItem: FunctionalComponent<OrderPlacerItemProps> = (props
         setbuttonDisabled(true)
         await props.makeOrder();
     };
-
+    
     return (
         <div>
+            <div style={clickableLinkStyle}><a onClick={() => props.setPlaceOrderView(undefined)}>← Back to market</a></div>
             <div>Place Order on Listing {props.listing.listingId}</div>
-            <div><a onClick={() => props.setPlaceOrderView(undefined)}>Back to market</a></div>
             <div style={orderPlacerStyles.order}>
                 <div>Seller</div>
                 <div>{props.listing.seller}</div>
