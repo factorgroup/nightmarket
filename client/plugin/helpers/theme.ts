@@ -18,6 +18,7 @@ export const colors = {
 	dflegendary: "#f8b73e",
 	dfmythic: "#ff44b7",
 };
+export const clickableLinkStyle = {textDecoration: "underline", cursor: "pointer"}
 
 export const listingStyles = {
 	listing: {

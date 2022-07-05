@@ -62,6 +62,13 @@ type ManageOrderItemProps = {
 	listing: Listing;
 };
 
+type RefreshHeaderProps = {
+	getListings: (market: Contract, addEvent: boolean) => Promise<Listing[]>;
+	setListings: () => void;
+	setSortedListings: StateUpdater<Listing[]>;
+	market: Contract;
+};
+
 type ListingRowProps = {
 	listing: Listing;
 	view: 'market' | 'mylistings';

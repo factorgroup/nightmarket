@@ -6,9 +6,13 @@ import { OrdersListView } from "./OrdersListView";
 import { Listing } from "../typings/typings";
 import { OrderPlacerView } from "./OrderPlacerView";
 import { sortListings } from "../helpers/utils";
+import { getListings } from "../helpers/transactions";
+import { useContract } from "../hooks/use-contract";
+import { RefreshHeader } from "../components/Refresh";
 
 export const MarketView: FunctionalComponent = () => {
 	const { listings, setListings } = useListings();
+	const { market } = useContract();
 	const [ sortedListings, setSortedListings ] = useState<Listing[]>(listings);
 	const [ sortBy, setSortBy ] = useState({ current: 'id', previous: 'id' });
 
@@ -24,7 +28,7 @@ export const MarketView: FunctionalComponent = () => {
 	if (placeOrderView) {
 		// View a single order for order placement (from market view)
 		return (
-			<OrderPlacerView setPlaceOrderView={setPlaceOrderView} listing={placeOrderView} />
+			<OrderPlacerView setPlaceOrderView={setPlaceOrderView} listing={placeOrderView} />
 		);
 	}
 
@@ -37,14 +41,17 @@ export const MarketView: FunctionalComponent = () => {
 
 	// View all listings (market view)
 	return (
-		<div style={{ display: "grid", gridRowGap: "4px" }}>
-			<ListingHeaderRow sortBy={sortBy} setSortBy={setSortBy} />
-			{
-				sortedListings.map((listing) => (
-					<ListingRow orderview={setPlaceOrderView} listordersview={setListOrdersView} view={'market'} listing={listing} />
-				)
-				)
-			}
+		<div>
+			<RefreshHeader getListings={getListings} setListings={setListings} setSortedListings={setSortedListings} market={market} />
+			<div style={{ display: "grid", gridRowGap: "4px" }}>
+				<ListingHeaderRow sortBy={sortBy} setSortBy={setSortBy} />
+				{
+					sortedListings.map((listing) => (
+						<ListingRow orderview={setPlaceOrderView} listordersview={setListOrdersView} view={'market'} listing={listing} />
+					)
+					)
+				}
+			</div>
 		</div>
 	);
 };
