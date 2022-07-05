@@ -63,10 +63,10 @@ type ManageOrderItemProps = {
 };
 
 type RefreshHeaderProps = {
-	getListings: (market: Contract, addEvent: boolean) => Promise<Listing[]>;
 	setListings: () => void;
 	setSortedListings: StateUpdater<Listing[]>;
-	market: Contract;
+    setrefreshOrders?: StateUpdater<boolean>;
+    setMyListings?: StateUpdater<boolean>;
 };
 
 type ListingRowProps = {

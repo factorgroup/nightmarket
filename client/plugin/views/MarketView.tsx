@@ -35,14 +35,16 @@ export const MarketView: FunctionalComponent = () => {
 	if (listOrdersView) {
 		// View a list of orders (from market or mylistings view)
 		return (
-			<OrdersListView listing={listOrdersView} />
+			<div>
+				<OrdersListView listing={listOrdersView} />
+			</div>
 		);
 	}
 
 	// View all listings (market view)
 	return (
 		<div>
-			<RefreshHeader getListings={getListings} setListings={setListings} setSortedListings={setSortedListings} market={market} />
+			<RefreshHeader setListings={setListings} setSortedListings={setSortedListings} />
 			<div style={{ display: "grid", gridRowGap: "4px" }}>
 				<ListingHeaderRow sortBy={sortBy} setSortBy={setSortBy} />
 				{

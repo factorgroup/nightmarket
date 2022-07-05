@@ -13,6 +13,7 @@ import { Button } from "../components/Button";
 import { ManageOrderItemProps, OrdersViewProps } from "../typings/typings";
 import { orderStyles } from "../helpers/theme";
 import { useMarket } from "../hooks/use-market";
+import { RefreshHeader } from "../components/Refresh";
 
 export const ManageOrderItem: FunctionalComponent<ManageOrderItemProps> = (props) => {
 
@@ -63,6 +64,11 @@ export const ManageOrderItem: FunctionalComponent<ManageOrderItemProps> = (props
 };
 
 export const OrdersListView: FunctionalComponent<OrdersViewProps> = (props) => {
+	/**
+	 * TODO: implement refreshing orders list from here.
+	 */
+	const [ refreshOrders, setrefreshOrders ] = useState(false);
+
 	return (
 		<div>
 			<div>Orders for listing {props.listing.listingId}</div>
