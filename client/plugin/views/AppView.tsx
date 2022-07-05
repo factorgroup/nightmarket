@@ -13,6 +13,7 @@ import { ListingsProvider } from "../components/MyListingsContext";
 import { ConnectionProvider } from "../components/ConnectionContext";
 import { DecryptView } from "./DecryptView";
 import { AppViewProps } from "../typings/typings";
+import { AppTitle } from "../components/AppTitle";
 
 export function AppView ({ contract, signer, txs, listings, connection }: AppViewProps) {
 	const [ activeTabId, setActiveTab ] = useState(0);
@@ -24,6 +25,7 @@ export function AppView ({ contract, signer, txs, listings, connection }: AppVie
 				<MySignerProvider signer={signer}>
 					<MyTransactionProvider txs={txs}>
 						<ListingsProvider listings={listings}>
+							<AppTitle />
 							<Navigation
 								tabs={[
 									{ name: "Market", TabContent: MarketView },
