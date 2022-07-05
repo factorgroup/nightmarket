@@ -22,7 +22,7 @@ async function main () {
 	const nightmarketAddress = addresses.nightmarket;
 	// console.log("List verifier address:", listVerifier.address);
 	// console.log("Sale verifier address:", saleVerifier.address);
-	// console.log("NightMarket address:", nightmarket.address);
+	console.log("NightMarket address:", nightmarket.address);
 }
 
 main()
