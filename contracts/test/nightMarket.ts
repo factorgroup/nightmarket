@@ -7,6 +7,7 @@ import { default as gameJSON } from '../../artifacts/contracts/darkforest/Getter
 import * as poseidon from '../../client/util/poseidonCipher.js';
 import { getListProof, getSaleProof } from '../../client/util/snarkHelper.js';
 import * as c from './testConstants';
+import { default as NightMarketJSON } from '../../artifacts/contracts/NightMarket.sol/NightMarket.json';
 
 import { mimcHash } from '@darkforest_eth/hashing';
 import { genPubKey } from 'maci-crypto';
@@ -57,8 +58,11 @@ before(async function () {
 	fakeGame.revealedCoords.returns(c.REVEALED_COORDS);
 
 	// Deploy game
-	const nmFactory = await hre.ethers.getContractFactory("NightMarket");
-	nightmarket = await nmFactory.deploy(listVerifier.address, saleVerifier.address, fakeGame.address);
+	const factoryNightMarketFactory = await hre.ethers.getContractFactory("NightMarketFactory");
+	const deployedNMFactory = await factoryNightMarketFactory.deploy(listVerifier.address, saleVerifier.address);
+	const txInitNm = await deployedNMFactory.setNightMarket(fakeGame.address);
+	const nmAddress = await deployedNMFactory.gameToMarket(fakeGame.address);
+	nightmarket =  await hre.ethers.getContractAt(NightMarketJSON.abi, nmAddress);
 });
 
 describe("NightMarket contract", function () {
