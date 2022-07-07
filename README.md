@@ -7,12 +7,17 @@ A 0xParc Learning Group project - work in progress.
 - [Demo slides](https://docs.google.com/presentation/d/1Dk9gZJF_GiitnknPJThJDwokEA1zd0ncwr6Jqawwtq0/edit?usp=sharing)
 
 ## Quickstart
+> :warning: now using a factory contract. A NM factory is already deployed at `NIGHTMARKET_FACTORY_ADDR` in `client/plugin/helpers/constants.ts`. You will probably want to skip step 2. of `"Deploy contracts below"`.
+
 - Install: `yarn install`
 - Test circuits: `yarn circom:test`
 - Deploy circuits: `yarn circom:prod`
 - Compile contracts: `yarn sol:compile`
 - Test contracts: `yarn sol:test`
-- Deploy contract: export `XDAI_PRIVATEKEY`, then `yarn sol:deploy`
+- Deploy contracts: 
+	1. export `XDAI_PRIVATEKEY`
+	2. Deploy a nightmarket factory if needed: `yarn hardhat init-factory --lv LIST_VERIFIER_ADDRESS --sv SALE_VERIFIER_ADDRESS --network xdai`
+	3. Deploy a nightmarket: `yarn hardhat init-nm --g GAME_ADDRESS --f NIGHTMARKET_FACTORY_ADDR --network xdai`	
 - Run plugin server: `yarn app:dev`
 - Deploy plugin: `yarn app:build`
 
