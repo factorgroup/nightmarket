@@ -7,11 +7,20 @@ declare const df: GameManager;
 declare const ui: GameUIManager;
 
 export async function getContract () {
+	const nmFactoryContract = await df.loadContract(c.NIGHTMARKET_FACTORY_ADDR, c.NIGHTMARKET_FACTORY_ABI);
+	const gameAddress = df.getContractAddress();
+	const marketAddress = await nmFactoryContract.gameToMarket(gameAddress);
+
+	console.log({
+		gameAddress,
+		marketAddress
+	});
+
 	return {
-		market: await df.loadContract(c.NIGHTMARKET_ADDR, c.NIGHTMARKET_ABI),
+		market: await df.loadContract(marketAddress, c.NIGHTMARKET_ABI),
 	};
 };
 
 export async function getConnection () {
-	return await df.getEthConnection()
+	return await df.getEthConnection();
 }
