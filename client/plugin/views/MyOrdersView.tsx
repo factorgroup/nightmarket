@@ -14,8 +14,8 @@ import { listingStyles, orderStyles } from "../helpers/theme";
 export const OrderItem: FunctionalComponent<OrderItemProps> = (props: OrderItemProps) => {
 	const [ confirmAction, setconfirmAction ] = useState(false);
 	const [ disabledButton, setdisabledButton ] = useState(props.buttonDisabled);
-	const buttonTheme = confirmAction ? "green" : "default";
-	const children = confirmAction ? "confirm" : props.childrenAction;
+	const buttonTheme = confirmAction ? (props.refunded ? "red" : "green") : "default";
+	const children = confirmAction ? (props.refunded ? "refunded" : "confirm") : props.childrenAction;
 	const runAction = async () => {
 		setdisabledButton(true);
 		await props.action();
@@ -39,11 +39,16 @@ export function MyOrdersView () {
 	const { listings } = useListings();
 	const { market } = useContract();
 	const [ myOrders, setMyOrders ] = useState<{ orders: Order[], listing: Listing; }[]>(getListingsWithOrdersFromAddress(listings, signer.address));
+	const [ refunded, setrefunded ] = useState(false);
+
 	const refund = async (listing: Listing, order: Order): Promise<Transaction> => {
 		const tx = await market.refund(listing.listingId, order.orderId);
+		setrefunded(true);
 		console.log("refund tx: ", tx);
+		order.isActive = false;
 		return tx;
 	};
+
 
 	return (
 		<div>
@@ -52,7 +57,7 @@ export function MyOrdersView () {
 				{myOrders.map((listing) => (
 					<div style={{ display: "grid", rowGap: "4px" }}>
 						{listing.orders.map((order) => (
-							<OrderItem order={order} action={async () => await refund(listing.listing, order)} childrenAction={'refund'} buttonDisabled={!order.isActive} />
+							<OrderItem refunded={refunded} order={order} action={async () => await refund(listing.listing, order)} childrenAction={'refund'} buttonDisabled={!order.isActive} />
 						)
 						)}
 					</div>
