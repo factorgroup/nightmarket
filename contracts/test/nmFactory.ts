@@ -9,8 +9,8 @@ let deployer, fakeDeployer, listVerifier, saleVerifier, deployedNMFactory, fakeG
 describe("NightMarket Factory contract", async () => {
 
     before(async () => {
-        
-        [deployer, fakeDeployer, ] = await hre.ethers.getSigners();
+
+        [ deployer, fakeDeployer, ] = await hre.ethers.getSigners();
 
         const lvFactory = await hre.ethers.getContractFactory("contracts/ListVerifier.sol:Verifier");
         listVerifier = await lvFactory.deploy();

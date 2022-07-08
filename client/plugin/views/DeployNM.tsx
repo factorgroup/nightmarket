@@ -10,7 +10,7 @@ declare const df: GameManager;
 const deployNM = async (gameAddress: string) => {
     const nmFactoryContract = await loadNMFactoryContract();
     const txInitNm = await nmFactoryContract.setNightMarket(gameAddress);
-    const confirms = txInitNm.wait(5);
+    const confirms = await txInitNm.wait(3);
     const nmAddress = await nmFactoryContract.gameToMarket(gameAddress);
     return nmAddress;
 };
