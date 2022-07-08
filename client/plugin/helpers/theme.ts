@@ -31,7 +31,7 @@ export const listingStyles = {
 		overflow: "hidden",
 		"text-overflow": "ellipsis",
 		"white-space": "nowrap"
-	} // TODO: longText should be 
+	}
 };
 
 export const orderStyles = {

@@ -20,7 +20,7 @@ export type Listing = {
     numOrders: number;
     isActive: boolean;
     nonce?: BigNumber;
-    orders?:  Order[];
+    orders?: Order[];
     listingId: number;
     locationId?: number | 'NA';
     biomebase?: number | 'NA';
@@ -31,7 +31,7 @@ export type Listing = {
 /**
  * FC Props
  */
- type SignerProviderProps = {
+type SignerProviderProps = {
     children: ComponentChildren;
     signer: Signer;
 };
@@ -42,14 +42,14 @@ export type ActiveSigner = {
 };
 
 type OrderPlacerItemProps = {
-	listing: Listing;
-	sharedKeyCommitment: BigNumber | undefined;
-	makeOrder: () => Promise<Transaction>;
+    listing: Listing;
+    sharedKeyCommitment: BigNumber | undefined;
+    makeOrder: () => Promise<Transaction>;
     setPlaceOrderView: StateUpdater<Listing | undefined>;
 };
 
 type OrdersViewProps = {
-	listing: Listing;
+    listing: Listing;
 };
 
 type OrderPlacerViewProps = {
@@ -58,37 +58,38 @@ type OrderPlacerViewProps = {
 };
 
 type ManageOrderItemProps = {
-	order: Order;
-	listing: Listing;
+    order: Order;
+    listing: Listing;
 };
 
 type RefreshHeaderProps = {
-	setListings: () => void;
-	setSortedListings: StateUpdater<Listing[]>;
+    setListings: () => void;
+    setSortedListings: StateUpdater<Listing[]>;
     setrefreshOrders?: StateUpdater<boolean>;
     setMyListings?: StateUpdater<boolean>;
 };
 
 type ListingRowProps = {
-	listing: Listing;
-	view: 'market' | 'mylistings';
-	orderview: any; // state update, changes view to place order. TODO: provide better type
-	listordersview: StateUpdater<Listing | undefined>; // state update. changes view to see all orders for a listed item.
+    listing: Listing;
+    view: 'market' | 'mylistings';
+    orderview: any; // state update, changes view to place order. TODO: provide better type
+    listordersview: StateUpdater<Listing | undefined>; // state update. changes view to see all orders for a listed item.
 };
 
 type OrderItemProps = {
-	order: Order;
-	action: (() => void) | (() => Promise<Transaction>);
-	childrenAction: string;
-	buttonDisabled: boolean;
+    order: Order;
+    action: (() => void) | (() => Promise<Transaction>);
+    childrenAction: string;
+    buttonDisabled: boolean;
+    refunded: boolean;
 };
 
 type AppViewProps = {
-	contract: { market: Contract; };
-	signer: Signer;
-	txs: EthersEvent[];
-	listings: Listing[];
-	connection: EthConnection;
+    contract: { market: Contract; };
+    signer: Signer;
+    txs: EthersEvent[];
+    listings: Listing[];
+    connection: EthConnection;
 };
 
 type SignerProviderProps = {
@@ -102,12 +103,12 @@ export type ActiveSigner = {
 };
 
 type ListingItemProps = {
-	linkMultipleOrder: {};
-	url: string;
-	listing: Listing;
-	buttonDisabled: boolean;
-	buttonChildren: string;
+    linkMultipleOrder: {};
+    url: string;
+    listing: Listing;
+    buttonDisabled: boolean;
+    buttonChildren: string;
     actionButtonTheme: string;
-	onClickOrders: () => void;
-	onClickAction: () => void;
+    onClickOrders: () => void;
+    onClickAction: () => void;
 };

@@ -2,7 +2,7 @@ import { FunctionalComponent, h } from "preact";
 import { useState } from "preact/hooks";
 import { listingStyles } from "../helpers/theme";
 import { useMarket } from "../hooks/use-market";
-import { ListingItemProps, ListingRowProps } from "../typings/typings";
+import { Listing, ListingItemProps, ListingRowProps } from "../typings/typings";
 import { Button } from "./Button";
 
 export const ListingItem: FunctionalComponent<ListingItemProps> = (props) => {
@@ -11,7 +11,7 @@ export const ListingItem: FunctionalComponent<ListingItemProps> = (props) => {
 		if (props.buttonChildren == "confirm") {
 			setdisabledButton(true);
 			await props.onClickAction();
-			
+
 		}
 		else {
 			props.onClickAction();
@@ -65,15 +65,25 @@ export const ListingRow: FunctionalComponent<ListingRowProps> = (props) => {
 
 	const { delist } = useMarket();
 	const [ confirmDelist, setConfirmDelist ] = useState(false);
+	const [ delisted, setdelisted ] = useState(false);
 	const { listing } = props;
+
 	const inMyListing = props.view === 'mylistings';
+
+	const delistListing = async () => {
+		const tx = await delist(listing.listingId);
+		listing.isActive = false;
+		setdelisted(true);
+	};
 
 	const isActive = listing.isActive.toString();
 	const url = `https://blockscout.com/xdai/mainnet/tx/${listing.txHash}`;
 
-	const onClickAction = inMyListing ? (confirmDelist ? async () => await delist(listing.listingId) : () => setConfirmDelist(true)) : () => props.orderview(listing);
-	const actionButtonTheme = inMyListing ? (confirmDelist ? "green" : "default") : "default";
-	const buttonChildren = inMyListing ? (confirmDelist ? "confirm" : "delist") : "details";
+	const onClickAction = inMyListing ? (confirmDelist ? async () => await delistListing() : () => setConfirmDelist(true)) : () => props.orderview(listing);
+
+	// if in my listing view, if confirming delist or if delist has been processed. Not in my listing view -> in market view: click to see details
+	const buttonChildren = inMyListing ? (confirmDelist ? (delisted ? "delisted" : "confirm") : "delist") : "details";
+	const actionButtonTheme = inMyListing ? (confirmDelist ? (delisted ? "red" : "green") : "default") : "default";
 
 	const onClickOrders = () => props.listordersview(props.listing);
 

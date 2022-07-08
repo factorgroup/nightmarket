@@ -59,7 +59,8 @@ export const ManageOrderItem: FunctionalComponent<ManageOrderItemProps> = (props
 	}
 
 	return (
-		<OrderItem order={props.order!} action={() => setConfirm(true)} childrenAction={'accept'} buttonDisabled={!acceptButtonActive} />
+		// refunded at false since seller is accepting an order here.
+		<OrderItem refunded={false} order={props.order!} action={() => setConfirm(true)} childrenAction={'accept'} buttonDisabled={!acceptButtonActive} />
 	);
 };
 
