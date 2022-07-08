@@ -112,3 +112,8 @@ type ListingItemProps = {
     onClickOrders: () => void;
     onClickAction: () => void;
 };
+
+type QuestionAnswerProps = {
+	question: string;
+	answer: string;
+};

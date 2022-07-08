@@ -66,3 +66,10 @@ export const myPlanetstyles = {
 		color: "#838383",
 	},
 };
+
+export const faqStyles = {
+	question: {
+		textDecoration: "underline",
+
+	}
+};
