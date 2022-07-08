@@ -2,6 +2,7 @@
 pragma solidity >=0.8.0;
 
 import "./NightMarket.sol";
+
 import {IVerifier as IListVerifier} from "./ListVerifier.sol";
 import {IVerifier as ISaleVerifier} from "./SaleVerifier.sol";
 
@@ -9,6 +10,7 @@ contract NightMarketFactory {
 
     IListVerifier public immutable listVerifier;
     ISaleVerifier public immutable saleVerifier;
+
     mapping(address => NightMarket) public gameToMarket;
     mapping(address => address) public marketOwner;
 
@@ -16,11 +18,21 @@ contract NightMarketFactory {
         listVerifier = _listVerifier;
         saleVerifier = _saleVerifier;
     }
-    
-    function setNightMarket(address _gameContract) public {
+
+    function initNightMarket(address _gameContract, address _owner) private {
         NightMarket nightmarket = new NightMarket(listVerifier, saleVerifier, _gameContract);
         gameToMarket[_gameContract] = nightmarket;
+        marketOwner[_gameContract] = _owner;
     }
 
+    function setNightMarket(address _gameContract) external {
+        require(address(gameToMarket[_gameContract]) == address(0), "NM already init. for game contract");
+        initNightMarket(_gameContract, msg.sender);
+    }
 
+    function updateNightMarket(address _gameContract) external {
+        require(address(gameToMarket[_gameContract]) != address(0), "NM not init. for game contract");
+        require(marketOwner[_gameContract] == msg.sender, "Can't update NM address if not owner");
+        initNightMarket(_gameContract, msg.sender);
+    }
 }
