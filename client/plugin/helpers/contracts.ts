@@ -16,7 +16,7 @@ export async function getContract () {
 	const nmFactoryContract = await loadNMFactoryContract();
 	const gameAddress = df.getContractAddress();
 
-	const marketAddress = ethers.constants.AddressZero;// await nmFactoryContract.gameToMarket(gameAddress);
+	const marketAddress = await nmFactoryContract.gameToMarket(gameAddress);
 
 	if (marketAddress === ethers.constants.AddressZero) {
 		// NM not deployed for present game.
