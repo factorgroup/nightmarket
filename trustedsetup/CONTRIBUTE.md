@@ -42,13 +42,13 @@ We repeat steps 16/17 [mentioned here](https://github.com/factorgroup/nightmarke
 0. Pull the latest from `main`
 
 1. cd into `/trustedsetup`, run the commands:
-`snarkjs zkey contribute list_PREVNUMBER_final.zkey list_YOURNUMBER.zkey --name="YOUR_GITHUB" -v`
+`snarkjs zkey contribute list_PREVNUMBER_randomized.zkey list_YOURNUMBER.zkey --name="YOUR_GITHUB" -v`
 and then:
-`snarkjs zkey contribute sale_PREVNUMBER_final.zkey sale_YOURNUMBER.zkey --name="YOUR_GITHUB" -v`
+`snarkjs zkey contribute sale_PREVNUMBER_randomized.zkey sale_YOURNUMBER.zkey --name="YOUR_GITHUB" -v`
 
-Note: Because there's no precommitment to the secret for all contributions, the coordinator applies a randomness beacon after each contribution to prevent adaptive attacks and generates the `final` zkey file for your contribution. So make sure your input file is the `...xxxx_final.zkey` one.
+Note: Because there's no precommitment to the secret for all contributions, the coordinator applies a randomness beacon after each contribution to prevent adaptive attacks and generates a `randomized` zkey file after your contribution. So make sure your **input** file is the `...xxxx_randomized.zkey` one.
 
-2. Verify this was done correctly
+2. Verify your contribution was done correctly
 `snarkjs zkey verify ../client/list/list.r1cs ../circuits/pot15_final.ptau list_xxxx.zkey`
 `snarkjs zkey verify ../client/sale/sale.r1cs ../circuits/pot12_final.ptau list_xxx.zkey`
 
@@ -58,8 +58,8 @@ Note: Because there's no precommitment to the secret for all contributions, the 
 
 5. Discard your `entropy` string, i.e. the toxic waste!
 
-6. PR into this repo. 
+6. PR into this repo.
 
-7. The coordinator will apply a random beacon after your contribution
+7. The coordinator will apply a random beacon after your contribution and generate `...YOURNUMBER_randomized.zkey`.
 
-8. Your PR will be merged into `main`
+8. Your PR will be merged into `main` and ready for the next contribution.
