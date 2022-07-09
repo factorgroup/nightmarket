@@ -72,6 +72,12 @@ DF plugins are esbuild bundled then served as a single JS file, which is limitin
 - Rolluped NPM snarkjs into a `helpers/snarkjs.js` (DF game currently has older version in /Public)
 - `fullprove` fetches an external `raw.githubusercontent` URL (plugin builders can't write files to server)
 
+## Benchmarking
+- `List` circuit constraints: 23850
+- `List` smart contract call: 533k gas
+- `Sale` circuit constraints: 3421
+- `Sale` smart contract call: ~TBA gas 
+
 ## Warning
 The circuits and smart contracts written for this marketplace has not been audited, use at your own risk.
 
