@@ -35,22 +35,31 @@ This gives us a final **zkey** file, which:
 `snarkjs powersoftau verify pot15_final.ptau`
 
 ## Phase 2 MPC (Deadline July 11, midnight EST)
+Since we're doing this asynchronously, the first valid PR that is next in the sequence will be accepted. Thank you. 
+
 We repeat steps 16/17 [mentioned here](https://github.com/factorgroup/nightmarket.git) for both circuits.
 
-0. Decide ceremony sequence. Note: 0xSage already generated `list_0001.zkey` and `sale_0001.zkey`
+0. Pull the latest from `main`
 
-1. cd into `/trustedsetup`, run the commands: 
-`snarkjs zkey contribute list_PREVNUMBER.zkey list_YOURNUMBER.zkey --name="YOUR_NAME" -v`
+1. cd into `/trustedsetup`, run the commands:
+`snarkjs zkey contribute list_PREVNUMBER_final.zkey list_YOURNUMBER.zkey --name="YOUR_GITHUB" -v`
 and then:
-`snarkjs zkey contribute sale_PREVNUMBER.zkey sale_YOURNUMBER.zkey --name="your Contributor Name" -v`
+`snarkjs zkey contribute sale_PREVNUMBER_final.zkey sale_YOURNUMBER.zkey --name="YOUR_GITHUB" -v`
+
+Note: Because there's no precommitment to the secret for all contributions, the coordinator applies a randomness beacon after each contribution to prevent adaptive attacks and generates the `final` zkey file for your contribution. So make sure your input file is the `...xxxx_final.zkey` one.
 
 2. Verify this was done correctly
-`snarkjs zkey verify ../client/list/list.r1cs ../circuits/pot15_final.ptau ????.zkey`
+`snarkjs zkey verify ../client/list/list.r1cs ../circuits/pot15_final.ptau list_xxxx.zkey`
+`snarkjs zkey verify ../client/sale/sale.r1cs ../circuits/pot12_final.ptau list_xxx.zkey`
 
-2. Upload your zkey files to `/trustedsetup`
+3. Upload your zkey files to `/trustedsetup` folder
 
-3. Update the README with your `contribution hashes`
+4. Update the README with your `contribution hashes`
 
-4. Discard your `entropy` string, i.e. the toxic waste!
+5. Discard your `entropy` string, i.e. the toxic waste!
 
-5. PR into this repo. since we're doing this asynchronously, the first valid submission in the sequence will be accepted. Thank you. 
+6. PR into this repo. 
+
+7. The coordinator will apply a random beacon after your contribution
+
+8. Your PR will be merged into `main`
