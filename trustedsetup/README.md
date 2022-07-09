@@ -4,6 +4,8 @@ This is a chronology of the trusted setup ceremony conducted for circuits `list.
 
 The random beacon needs a VDF, so we just use the Ethereum block hash at the latest block number. 
 
+Contribution [instructions here](https://github.com/factorgroup/nightmarket/blob/main/trustedsetup/CONTRIBUTE.md)
+
 ### List Circuit
 | Contribution | Contributor | Hash | 
 | -------- | -------- | -------- |
