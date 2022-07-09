@@ -42,15 +42,20 @@ We repeat steps 16/17 [mentioned here](https://github.com/factorgroup/nightmarke
 0. Pull the latest from `main`
 
 1. cd into `/trustedsetup`, run the commands:
+
 `snarkjs zkey contribute list_PREVNUMBER_randomized.zkey list_YOURNUMBER.zkey --name="YOUR_GITHUB" -v`
+
 and then:
+
 `snarkjs zkey contribute sale_PREVNUMBER_randomized.zkey sale_YOURNUMBER.zkey --name="YOUR_GITHUB" -v`
 
 Note: Because there's no precommitment to the secret for all contributions, the coordinator applies a randomness beacon after each contribution to prevent adaptive attacks and generates a `randomized` zkey file after your contribution. So make sure your **input** file is the `...xxxx_randomized.zkey` one.
 
 2. Verify your contribution was done correctly
+
 `snarkjs zkey verify ../client/list/list.r1cs ../circuits/pot15_final.ptau list_xxxx.zkey`
-`snarkjs zkey verify ../client/sale/sale.r1cs ../circuits/pot12_final.ptau list_xxx.zkey`
+
+`snarkjs zkey verify ../client/sale/sale.r1cs ../circuits/pot12_final.ptau sale_xxx.zkey`
 
 3. Upload your zkey files to `/trustedsetup` folder
 
