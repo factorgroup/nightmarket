@@ -34,7 +34,7 @@ This gives us a final **zkey** file, which:
 `snarkjs powersoftau verify pot12_final.ptau`
 `snarkjs powersoftau verify pot15_final.ptau`
 
-## Phase 2 MPC
+## Phase 2 MPC (Deadline July 11, midnight EST)
 We repeat steps 16/17 [mentioned here](https://github.com/factorgroup/nightmarket.git) for both circuits.
 
 0. Decide ceremony sequence. Note: 0xSage already generated `list_0001.zkey` and `sale_0001.zkey`
@@ -52,3 +52,5 @@ and then:
 3. Update the README with your `contribution hashes`
 
 4. Discard your `entropy` string, i.e. the toxic waste!
+
+5. PR into this repo. since we're doing this asynchronously, the first valid submission in the sequence will be accepted. Thank you. 
