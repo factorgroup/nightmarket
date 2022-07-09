@@ -1,5 +1,8 @@
 # Nightmarket Trusted Setup Ceremony
 
+## What is Trusted Setup
+[Explained like I'm 5 slides](https://docs.google.com/presentation/d/1ipvQEkkL-DZdZmwi_PGF_2QaVVyDjWJjTKJdDG3h5Xg/edit?usp=sharing)
+
 ## Overview
 We have 2 circuits: 
 1. list: 23850 constraints (2^15)
