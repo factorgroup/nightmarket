@@ -6,6 +6,7 @@ import { useMarket } from "../hooks/use-market";
 import { genListProofArgs } from "../helpers/genProofArgs";
 import { getListProof } from "../helpers/snarks";
 import { passwordToKey, genRandomNonce } from "../helpers/utils";
+import { listingStyles } from "../helpers/theme";
 
 // @ts-ignore
 // import { utils } from 'https://cdn.skypack.dev/ethers';
@@ -106,7 +107,7 @@ export function SellPlanetView({ planet, setActivePlanet }) {
 			</div>
 
 			<div>
-				<label>A unique password (write it down and dont resuse!!)</label>
+				<label>A unique password (write it down and dont re-use!!)</label>
 			</div>
 			<div>
 				<TextInput
@@ -121,27 +122,27 @@ export function SellPlanetView({ planet, setActivePlanet }) {
 				<Button
 					children={confirm ? "confirm list" : "generate proof"}
 					theme={confirm ? "green" : "default"}
-					style={{ width: "128px" }}
+					style={{ width: "128px", marginRight: "4px", marginTop: "4px" }}
 					// TODO handle the async nature of these buttons
 					onClick={confirm ? onClickList : onClickConfirm}
 					disabled={!validateForm()}
 				/>
 				<Button
 					theme="red"
-					style={{ width: "128px" }}
+					style={{ width: "128px", marginTop: "4px" }}
 					children="cancel"
 					onClick={() => setActivePlanet(false)}
 				/>
 			</div>
 
 			<div>Listing proof parameters:</div>
-			<div>
+			<div style={listingStyles.longText}>
 				Proof: {JSON.stringify(proof)}
 			</div>
 			<div>
 				Nonce: {nonce.current}
 			</div>
-			<div>
+			<div style={listingStyles.longText}>
 				Key: {JSON.stringify(key)}
 			</div>
 		</div>

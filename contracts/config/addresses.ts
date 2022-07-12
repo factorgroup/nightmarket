@@ -1,0 +1,6 @@
+export const addresses = {
+	game: "0xa98f6b548a748427acfa591a9f24ab840764d129",
+	list: "0x43869DE76b4739cd9E484df40f307D115C08A892",
+	sale: "0xa5067E2fcc7C5d74f19b1cD17B48B121B0077146",
+	nightmarket: "0x98d20617BE39f61E42a6c40A5aB26b2dB5778Ec1"
+};

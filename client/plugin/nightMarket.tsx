@@ -1,6 +1,13 @@
 import { h, render } from "preact";
 import { AppView } from "./views/AppView";
-import { getContract } from "./helpers/contracts";
+import { getConnection, getContract } from "./helpers/contracts";
+import { getListings, getTxs } from "./helpers/transactions";
+import { ethers } from "ethers";
+import GameManager from "@df_client/src/Backend/GameLogic/GameManager";
+import { AppTitle } from "./components/AppTitle";
+import { DeployNMView } from "./views/DeployNM";
+
+declare const df: GameManager;
 
 class NightMarketPlugin {
 
@@ -12,16 +19,32 @@ class NightMarketPlugin {
 	/**
 	 * Called when plugin is launched with the "run" button.
 	 */
-	async render(container) {
+	async render (container) {
 
 		// @ts-ignore
 		this.container = container;
 		container.style.width = "600px";
-		container.style.height = "400px";
+		container.style.height = "600px";
 
 		try {
+			const gameAddress = df.getContractAddress();
 			const contract = await getContract();
-			render(<AppView contract={contract} />, container);
+			
+			if (contract.market.address != ethers.constants.AddressZero) {
+				const connection = await getConnection();
+				const signer = await contract.market.signer;
+				const txs = await getTxs(contract.market, signer);
+				const listings = await getListings(contract.market, true); // For now, remove request to get all listing events
+				render(<AppView contract={contract} signer={signer} connection={connection} txs={txs} listings={listings} />, container);
+			}
+			
+			else {
+				render(
+					<DeployNMView />, 
+					container
+				);
+			}
+
 		} catch (err: any) {
 			console.error("[NightMarketPlugin] Error starting plugin:", err);
 			// @ts-ignore
@@ -32,7 +55,7 @@ class NightMarketPlugin {
 	/**
 	 * Called when plugin modal is closed.
 	 */
-	destroy() {
+	destroy () {
 		// @ts-ignore
 		render(null, this.container);
 	}

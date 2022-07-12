@@ -1,11 +1,12 @@
-import { useState, useEffect } from "preact/hooks";
 import { useContract } from "./use-contract";
 import { useTransactions } from "./use-mytransactions";
+import { encrypt } from "../helpers/poseidon";
+import { getSaleProof } from "client/plugin/helpers/snarks";
 
 // Notice functions are a property inside of useMarket() component
 // TODO: it should add to mytransactions history
-export function useMarket() {
-	// @ts-expect-error
+export function useMarket () {
+
 	const { market } = useContract();
 	const { myTransactions, setTransactions } = useTransactions();
 
@@ -34,11 +35,37 @@ export function useMarket() {
 		});
 	};
 
-	const delist = (planet) => {
-		console.log("delisting planet....");
+	const delist = (listingId: number) => {
+		return market.functions.delist(listingId, {
+			gasLimit: 1000000,
+		}
+		).then(
+			(tx) => console.log(`Delisting ${listingId}`)
+		).catch(
+			(e) => console.log(`Error delisting ${listingId}, ${e}`)
+		);
 	};
+
+	const sale = async (listingId, orderId, key, sharedKey, nonce, keyCommitment, sharedKeyCommitment) => {
+		const receiptId = encrypt(key, [ sharedKey.x, sharedKey.y ], nonce);
+		const saleProofArgs = {
+			receipt_id: receiptId,
+			nonce: nonce.toString(),
+			key_commitment: keyCommitment.toString(),
+			shared_key_commitment: sharedKeyCommitment.toString(),
+			shared_key: [ sharedKey.x, sharedKey.y ],
+			key: key
+		};
+		const saleProof = await getSaleProof(saleProofArgs);
+		const sale = await market.sale(...saleProof, listingId, orderId, {
+			gasLimit: 1000000,
+		});
+		console.log(`sale tx: `, sale);
+	}
 
 	return {
 		list,
-	}
+		delist,
+		sale
+	};
 }

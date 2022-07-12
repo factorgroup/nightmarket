@@ -18,3 +18,58 @@ export const colors = {
 	dflegendary: "#f8b73e",
 	dfmythic: "#ff44b7",
 };
+export const clickableLinkStyle = {textDecoration: "underline", cursor: "pointer"}
+
+export const listingStyles = {
+	listing: {
+		display: "grid",
+		gridTemplateColumns: "1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr",
+		gridColumnGap: "4px",
+		textAlign: "center"
+	},
+	longText: {
+		overflow: "hidden",
+		"text-overflow": "ellipsis",
+		"white-space": "nowrap"
+	}
+};
+
+export const orderStyles = {
+	order: {
+		display: "grid",
+		gridColumnGap: "4px",
+		textAlign: "center",
+		gridTemplateColumns: "1fr 1fr 1fr 1fr 1fr"
+	}
+};
+
+export const orderPlacerStyles = { // TODO: unify all styles in single file
+	order: {
+		display: "grid",
+		gridTemplateColumns: "1fr 1fr",
+		columnGap: "4px",
+		rowGap: "4px",
+	},
+	longText: {
+		overflow: "hidden",
+		"text-overflow": "ellipsis",
+		"white-space": "nowrap"
+	}
+};
+
+export const myPlanetstyles = {
+	planets: {
+		display: "grid",
+		gridRowGap: "4px",
+	},
+	empty: {
+		color: "#838383",
+	},
+};
+
+export const faqStyles = {
+	question: {
+		textDecoration: "underline",
+
+	}
+};

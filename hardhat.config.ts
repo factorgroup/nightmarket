@@ -2,6 +2,7 @@ import { task } from 'hardhat/config';
 import 'hardhat-circom';
 import '@nomiclabs/hardhat-ethers';
 import '@nomiclabs/hardhat-waffle';
+import { deployFactory, deployNM } from "./contracts/tasks/deploy";
 
 task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
 	const accounts = await hre.ethers.getSigners();
@@ -11,10 +12,25 @@ task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
 	}
 });
 
+task("init-factory", "Initiate a new nightmarket factory")
+	.addParam("lv", "List Verifier Address")
+	.addParam("sv", "Sale Verifier Address")
+	.setAction(async ({ lv, sv }, hre) => {
+		await deployFactory(hre, lv, sv);
+	});
+
+task("init-nm", "Initiate a new nightmarket for a given game contract")
+	.addParam("g", "Game Address")
+	.addParam("f", "Factory Address")
+	.setAction(async ({g, f}, hre) => {
+		await deployNM(hre, g, f)
+
+});
+
 // The xdai config, but it isn't added to networks unless we have a PRIVATEKEY
 const xdai = {
-	url: "https://rpc-df.xdaichain.com/",
-	accounts: [`${process.env.XDAI_PRIVATEKEY}`],
+	url: "https://rpc.gnosischain.com/",
+	accounts: [ `${process.env.XDAI_PRIVATEKEY}` ],
 	chainId: 100,
 	gasMultiplier: 5,
 };

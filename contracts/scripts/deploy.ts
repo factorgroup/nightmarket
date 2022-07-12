@@ -1,27 +1,28 @@
 import * as hre from 'hardhat';
+import { addresses } from "../config/addresses";
 
-async function main() {
+async function main () {
 	// TODO: fix this later, just need it working on any UI for now
-	const gameAddress = "0xa98f6b548a748427acfa591a9f24ab840764d129";
+	const gameAddress = addresses.game;
 
-	const [deployer] = await hre.ethers.getSigners();
+	const [ deployer ] = await hre.ethers.getSigners();
 	console.log("Deploying contracts with the account:", deployer.address);
 	console.log("Account balance:", (await deployer.getBalance()).toString());
 
 	// const lvFactory = await hre.ethers.getContractFactory("contracts/ListVerifier.sol:Verifier");
 	// const listVerifier = await lvFactory.deploy();
-	const listAddress = "0x43869DE76b4739cd9E484df40f307D115C08A892";
+	const listAddress = addresses.list;
 
 	// const svFactory = await hre.ethers.getContractFactory("contracts/SaleVerifier.sol:Verifier");
 	// const saleVerifier = await svFactory.deploy();
-	const saleAddress = "0xa5067E2fcc7C5d74f19b1cD17B48B121B0077146";
+	const saleAddress = addresses.sale;
 	const nmFactory = await hre.ethers.getContractFactory("NightMarket");
 	const nightmarket = await nmFactory.deploy(listAddress, saleAddress, gameAddress);
 	// Resulting address:
-	const nightmarketAddress = "0x6792e95058514c51aB07533B0bE4B3ADB6FFa1d8";
+	const nightmarketAddress = addresses.nightmarket;
 	// console.log("List verifier address:", listVerifier.address);
 	// console.log("Sale verifier address:", saleVerifier.address);
-	// console.log("NightMarket address:", nightmarket.address);
+	console.log("NightMarket address:", nightmarket.address);
 }
 
 main()

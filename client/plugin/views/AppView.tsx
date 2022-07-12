@@ -1,4 +1,4 @@
-import { h, Component } from "preact";
+import { h } from "preact";
 import { useState } from "preact/hooks";
 import { ContractProvider } from "../components/ContractContext";
 import { Navigation } from "../components/Navigation";
@@ -7,23 +7,39 @@ import { MyListingsView } from "./MyListingsView";
 import { MyOrdersView } from "./MyOrdersView";
 import { MarketView } from "./MarketView";
 import { GuideView } from "./GuideView";
+import { MySignerProvider } from "../components/SignerContext";
+import { MyTransactionProvider } from "../components/MyTransactionContext";
+import { ListingsProvider } from "../components/MyListingsContext";
+import { ConnectionProvider } from "../components/ConnectionContext";
+import { DecryptView } from "./DecryptView";
+import { AppViewProps } from "../typings/typings";
+import { AppTitle } from "../components/AppTitle";
 
-
-export function AppView({ contract }) {
-	const [activeTabId, setActiveTab] = useState(0);
+export function AppView ({ contract, signer, txs, listings, connection }: AppViewProps) {
+	const [ activeTabId, setActiveTab ] = useState(0);
 
 	return (
 		// contractsProvider has `game` and `market` contracts
 		<ContractProvider value={contract}>
-			<Navigation
-				tabs={[
-					{ name: "Market", TabContent: MarketView },
-					{ name: "My Listings", TabContent: MyListingsView },
-					{ name: "My Orders", TabContent: MyOrdersView },
-					{ name: "My Planets", TabContent: MyPlanetsView },
-					{ name: "Guide", TabContent: GuideView }
-				]}
-			/>
+			<ConnectionProvider value={connection}>
+				<MySignerProvider signer={signer}>
+					<MyTransactionProvider txs={txs}>
+						<ListingsProvider listings={listings}>
+							<AppTitle />
+							<Navigation
+								tabs={[
+									{ name: "Market", TabContent: MarketView },
+									{ name: "My Listings", TabContent: MyListingsView },
+									{ name: "My Orders", TabContent: MyOrdersView },
+									{ name: "My Planets", TabContent: MyPlanetsView },
+									{ name: "Decrypt", TabContent: DecryptView },
+									{ name: "Guide", TabContent: GuideView }
+								]}
+							/>
+						</ListingsProvider>
+					</MyTransactionProvider>
+				</MySignerProvider>
+			</ConnectionProvider>
 		</ContractProvider>
 	);
 }

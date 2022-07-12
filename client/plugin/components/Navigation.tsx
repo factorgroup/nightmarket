@@ -16,7 +16,7 @@ const styles = {
 		padding: "8px",
 		gridColumnGap: "8px",
 		justifyContent: "flex-start",
-		gridTemplateColumns: "auto auto auto auto auto 1fr",
+		gridTemplateColumns: "auto auto auto auto auto auto 1fr",
 		alignItems: "center",
 		top: 0,
 		width: "100%",
