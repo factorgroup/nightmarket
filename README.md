@@ -70,7 +70,7 @@ Scheme: Encryption using a 5-wide Poseidon in SpongeWrap with (0, len=2, Kx ,Ky 
 - `sale(..., saleProof)`: sellers can close a sale and fulfill a buyer order.
 - `refund(...)`: anyone can refund buyers deposit if seller delists or if the `escrowTime` lockup is over.
 
-## Plugin (IN PROGRESS)
+## Plugin
 **Implementation note:**
 DF plugins are esbuild bundled then served as a single JS file, which is limiting given the current SNARKs/circom stack. So the following was done to make snarks possible, purely in browser.
 - NPM `ffjavascript-browser` shim (stub native Node deps like `os` `stream`)
