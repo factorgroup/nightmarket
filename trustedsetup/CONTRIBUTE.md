@@ -43,13 +43,13 @@ We repeat steps 16/17 [mentioned here](https://github.com/factorgroup/nightmarke
 
 1. cd into `/trustedsetup`, run the commands:
 
-`snarkjs zkey contribute list_PREVNUMBER_randomized.zkey list_YOURNUMBER.zkey --name="YOUR_GITHUB" -v`
+`snarkjs zkey contribute list_PREVNUMBER.zkey list_YOURNUMBER.zkey --name="YOUR_GITHUB" -v`
 
 and then:
 
-`snarkjs zkey contribute sale_PREVNUMBER_randomized.zkey sale_YOURNUMBER.zkey --name="YOUR_GITHUB" -v`
+`snarkjs zkey contribute sale_PREVNUMBER.zkey sale_YOURNUMBER.zkey --name="YOUR_GITHUB" -v`
 
-Note: Because there's no precommitment to the secret for all contributions, the coordinator applies a randomness beacon after each contribution to prevent adaptive attacks and generates a `randomized` zkey file after your contribution. So make sure your **input** file is the `...xxxx_randomized.zkey` one.
+~~Note: Because there's no precommitment to the secret for all contributions, the coordinator applies a randomness beacon after each contribution to prevent adaptive attacks and generates a `randomized` zkey file after your contribution. So make sure your **input** file is the `...xxxx_randomized.zkey` one.~~
 
 2. Verify your contribution was done correctly
 
@@ -65,6 +65,6 @@ Note: Because there's no precommitment to the secret for all contributions, the 
 
 6. PR into this repo.
 
-7. The coordinator will apply a random beacon after your contribution and generate `...YOURNUMBER_randomized.zkey`.
+~~7. The coordinator will apply a random beacon after your contribution and generate `...YOURNUMBER_randomized.zkey`.~~ 
 
-8. Your PR will be merged into `main` and ready for the next contribution.
+7. Your PR will be merged into `main` and ready for the next contribution.
