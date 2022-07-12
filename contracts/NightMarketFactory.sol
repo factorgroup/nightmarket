@@ -30,9 +30,4 @@ contract NightMarketFactory {
         initNightMarket(_gameContract, msg.sender);
     }
 
-    function updateNightMarket(address _gameContract) external {
-        require(address(gameToMarket[_gameContract]) != address(0), "NM not init. for game contract");
-        require(marketOwner[_gameContract] == msg.sender, "Can't update NM address if not owner");
-        initNightMarket(_gameContract, msg.sender);
-    }
 }

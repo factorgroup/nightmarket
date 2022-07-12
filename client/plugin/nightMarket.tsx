@@ -24,7 +24,7 @@ class NightMarketPlugin {
 		// @ts-ignore
 		this.container = container;
 		container.style.width = "600px";
-		container.style.height = "400px";
+		container.style.height = "600px";
 
 		try {
 			const gameAddress = df.getContractAddress();
