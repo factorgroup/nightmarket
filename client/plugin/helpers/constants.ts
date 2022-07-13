@@ -1,12 +1,6 @@
-// TODO: factory pattern this
 import { default as NightMarketJSON } from '../../../artifacts/contracts/NightMarket.sol/NightMarket.json';
 import { default as NightMarketFactoryJSON } from '../../../artifacts/contracts/NightMarketFactory.sol/NightMarketFactory.json';
-// import { default as gameJSON } from '../../../artifacts/contracts/darkforest/GetterInterface.sol/IGetter.json';
 
-// export const DF_ADDR = "0xa98f6b548a748427acfa591a9f24ab840764d129";
-// export const DF_ABI = gameJSON.abi;
-
-// export const NIGHTMARKET_ADDR = "0x98d20617BE39f61E42a6c40A5aB26b2dB5778Ec1";
 export const NIGHTMARKET_ABI = NightMarketJSON.abi;
 
 export const LIST_VERIFY_ADDR = "0xCc4642bF6a055E94e364699502eE4Ae75244dd16";
