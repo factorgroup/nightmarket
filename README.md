@@ -8,17 +8,27 @@ A 0xParc Learning Group project - work in progress.
 - [Demo slides](https://docs.google.com/presentation/d/1Dk9gZJF_GiitnknPJThJDwokEA1zd0ncwr6Jqawwtq0/edit?usp=sharing)
 
 ## Quickstart
-> :warning: now using a factory contract. A NM factory is already deployed at `NIGHTMARKET_FACTORY_ADDR` in `client/plugin/helpers/constants.ts`. You will probably want to skip step 2. of `"Deploy contracts below"`.
+
+Please read, some warnings:
+
+> :warning: A (minimal) groth16 trusted setup ceremony has been carried out for NightMarket (NM) circuits. We recommend to use the associated generated keys. Do not skip `yarn circom:app` in order to use the application ready keys, found in `trustedsetup/`.
+
+> :warning: On-chain verifiers have already been deployed. To check the currently deployed verifiers addresses: `LIST_VERIFY_ADDR` and `SALE_VERIFY_ADDR` in `client/plugin/helpers/constants.ts`. 
+
+> :warning: We use a factory contract for deploying a NM. Using this factory contract implies that each game can only have a single NM. To check the currently deployed factory address: `NIGHTMARKET_FACTORY_ADDR` in `client/plugin/helpers/constants.ts`. 
 
 - Install: `yarn install`
 - Test circuits: `yarn circom:test`
 - Deploy circuits: `yarn circom:prod`
+- Replace keys with trusted setup generated ones: `yarn circom:app`
 - Compile contracts: `yarn sol:compile`
 - Test contracts: `yarn sol:test`
 - Deploy contracts: 
 	1. export `XDAI_PRIVATEKEY`
-	2. Deploy a nightmarket factory if needed: `yarn hardhat init-factory --lv LIST_VERIFIER_ADDRESS --sv SALE_VERIFIER_ADDRESS --network xdai`
-	3. Deploy a nightmarket: `yarn hardhat init-nm --g GAME_ADDRESS --f NIGHTMARKET_FACTORY_ADDR --network xdai`	
+	2. If needed, deploy verifiers: `yarn deploy:verifiers`. This step can be skipped.
+	3. If needed, deploy a nightmarket factory: `yarn deploy:factory --lv LIST_VERIFIER_ADDRESS --sv SALE_VERIFIER_ADDRESS --network xdai`. This step can be skipped. 
+	4. Deploy a nightmarket (can also be done from plugin view): `yarn deploy:nightmarket --g GAME_ADDRESS --f NIGHTMARKET_FACTORY_ADDR --network xdai`	
+	5. If you ran step 2 and/or 3, modify corresponding addresses in `client/plugin/helpers/constants.ts`.
 - Run plugin server: `yarn app:dev`
 - Deploy plugin: `yarn app:build`
 
@@ -30,6 +40,7 @@ A 0xParc Learning Group project - work in progress.
 - `/client`: Shared helpers and circuit files
 - `/client/plugin`: DF plugin, a 100% frontend implementation
 - `/contracts`: Contract and verifier code
+- `/trustedsetup`: Docs, vkeys and zkeys generated from groth16 trusted setup ceremony.
 
 ## Spec
 - Sellers list any valid Dark Forest coordinates at a fixed price

@@ -13,7 +13,7 @@ async function main () {
     const nmFactory = await hre.ethers.getContractFactory("NightMarket");
     const privateKeyBuyer = hre.config.networks.xdai.accounts[ 0 ];
     const privateSigningKeyBuyer = new hre.ethers.utils.SigningKey(privateKeyBuyer);
-
+    
     const txSale = await hre.ethers.provider.getTransaction(TX_SALE_HASH);
     const txList = await hre.ethers.provider.getTransaction(TX_LIST_HASH);
 
@@ -27,7 +27,7 @@ async function main () {
 
     let encryptedKey = parsedSaleTx.args._keyEncryption;
     encryptedKey = encryptedKey.map((x) => x.toBigInt());
-    
+
     const key = poseidon.decrypt(encryptedKey, [ pubKey.point.x, pubKey.point.y ], parsedSaleTx.args._nonce.toBigInt(), 2); // OK
 
     let coordsEncrypted = parsedListTx.args._coordEncryption.map((x) => x.toBigInt());
