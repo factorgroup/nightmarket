@@ -19,8 +19,8 @@ export const NIGHTMARKET_FACTORY_ABI = NightMarketFactoryJSON.abi;
 export const POLL_INTERVAL = 5000;
 
 // In browser proof generation
-export const LIST_ZKEY_URL = 'https://raw.githubusercontent.com/0xSage/nightmarket/main/client/list/list.zkey';
-export const LIST_WASM_URL = 'https://raw.githubusercontent.com/0xSage/nightmarket/main/client/list/list.wasm';
+export const LIST_ZKEY_URL = 'https://raw.githubusercontent.com/factorgroup/nightmarket/main/client/list/list.zkey';
+export const LIST_WASM_URL = 'https://raw.githubusercontent.com/factorgroup/nightmarket/main/client/list/list.wasm';
 
-export const SALE_ZKEY_URL = 'https://raw.githubusercontent.com/0xSage/nightmarket/main/client/sale/sale.zkey';
-export const SALE_WASM_URL = 'https://raw.githubusercontent.com/0xSage/nightmarket/main/client/sale/sale.wasm';
+export const SALE_ZKEY_URL = 'https://raw.githubusercontent.com/factorgroup/nightmarket/main/client/sale/sale.zkey';
+export const SALE_WASM_URL = 'https://raw.githubusercontent.com/factorgroup/nightmarket/main/client/sale/sale.wasm';
