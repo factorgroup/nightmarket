@@ -1,0 +1,32 @@
+html {
+    height: 100%;
+}
+
+body {
+    font-family: 'Wallpoet', cursive;
+    color: white;
+    font-size: 10vw;
+}
+
+.bg {
+    background-image: url("../imgs/market.jpg");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.subtitle {
+    font-size: 5vw;
+}
+
+.subtext {
+    font-size: 30%;
+}
+
+.img-link {
+    width: 12%;
+}
+
+a {
+    color: white
+}
