@@ -23,6 +23,19 @@ body {
     font-size: 30%;
 }
 
+.heading {
+    font-size: 40%;
+    color:#FF0082;
+}
+
+.p-text {
+    font-size: 25%;
+}
+
+.p-code {
+    font-family: 'Courier New', Courier, monospace;
+}
+
 .img-link {
     width: 12%;
 }

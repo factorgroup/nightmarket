@@ -16,7 +16,7 @@
     "deploy:factory": "hardhat init-factory",
     "deploy:nightmarket": "hardhat init-nm",
     "app:dev": "tsc && df-plugin-dev-server --glob client/plugin/*.ts* --preact",
-    "app:build": "tsc && df-plugin-dev-server bundle --glob client/plugin/*.ts* --outdir=TBA --preact"
+    "app:build": "tsc && df-plugin-dev-server bundle --glob client/plugin/*.ts* --outdir=docs/ --preact"
   },
   "dependencies": {
     "htm": "^3.1.0",
