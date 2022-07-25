@@ -3,7 +3,8 @@
 A zero knowledge marketplace for Dark Forest coordinates.
 A 0xParc Learning Group project - work in progress.
 ## Quicklinks
-- [Current Demo](https://www.loom.com/share/6678a1df7dca4ce482819b55220fb2d0)
+- [Website & Plugin Download](https://nightmart.xyz/)
+- [Old Demo](https://www.loom.com/share/6678a1df7dca4ce482819b55220fb2d0)
 - [Spec & Brainstorm notes](https://hackmd.io/xrXO2QKeRJWY6WApxRrroQ)
 - [Demo slides](https://docs.google.com/presentation/d/1Dk9gZJF_GiitnknPJThJDwokEA1zd0ncwr6Jqawwtq0/edit?usp=sharing)
 
